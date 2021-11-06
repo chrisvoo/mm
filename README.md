@@ -1,7 +1,5 @@
 # mm
 
-
-
 ## Setup and usage
 
 1. Change the NGINX configuration as needed (`./data/nginx/app.conf`)
