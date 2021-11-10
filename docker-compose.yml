@@ -1,7 +1,10 @@
-version: '3'
+version: '3.8'
+
 services:
   nginx:
     image: nginx:latest
+    container_name: nginx
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -15,11 +18,13 @@ services:
     # This will check if your certificate is up for renewal every 12 hours as recommended by Let’s Encrypt.
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     image: certbot/certbot
+    container_name: certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
   gateway:
     image: "node:16"
+    container_name: gateway
     user: "node"
     working_dir: /home/node/app
     environment:
@@ -29,3 +34,36 @@ services:
     expose:
       - "3000"
     command: "npm run dev"
+    depends_on:
+      - nginx  
+  filemanager:
+    container_name: filemanager
+    build:
+      context: filemanager
+      dockerfile: Dockerfile
+    image: filemanager:latest
+    ports:
+      - 3001:8080
+    depends_on:
+      - nginx
+      - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./data/mysql/conf.d:/etc/mysql/conf.d
+      - ./data/mysql/storage:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306    
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080   
+    depends_on:
+      - mysql   
