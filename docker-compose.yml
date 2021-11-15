@@ -1,5 +1,8 @@
 version: '3.8'
 
+volumes:
+  dbdata:
+
 services:
   nginx:
     image: nginx:latest
@@ -18,6 +21,7 @@ services:
     # This will check if your certificate is up for renewal every 12 hours as recommended by Let’s Encrypt.
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     image: certbot/certbot
+    restart: always
     container_name: certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
@@ -25,45 +29,62 @@ services:
   gateway:
     image: "node:16"
     container_name: gateway
+    restart: always
     user: "node"
     working_dir: /home/node/app
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${GATEWAY_NODE_ENV}
+      - PORT=${GATEWAY_PORT}
+      - LOGS_LEVEL=${GATEWAY_LOGS_LEVEL}
+      - LOGS_DAYS_RETENTION=${GATEWAY_LOGS_DAYS_RETENTION}
     volumes:
       - ./gateway:/home/node/app
     expose:
-      - "3000"
-    command: "npm run dev"
+      - "${GATEWAY_PORT}"
+    command: ${GATEWAY_COMMAND}
     depends_on:
       - nginx  
   filemanager:
     container_name: filemanager
+    restart: always
     build:
       context: filemanager
       dockerfile: Dockerfile
     image: filemanager:latest
     ports:
-      - 3001:8080
+      - ${FILE_MANAGER_LOCAL_PORT}:8080
+    environment:
+      - MUSIC_DIRECTORY=${MUSIC_CONTAINER_DIRECTORY}
+      - MYSQL_HOST=${MYSQL_CONTAINER_NAME}
+      - MYSQL_PORT=${MYSQL_LOCAL_PORT}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD} 
+    volumes:
+      - ${MUSIC_LOCAL_DIRECTORY}:${MUSIC_CONTAINER_DIRECTORY}
     depends_on:
       - nginx
       - mysql
   mysql:
     container_name: mysql
     image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
     restart: always
     volumes:
       - ./data/mysql/conf.d:/etc/mysql/conf.d
-      - ./data/mysql/storage:/var/lib/mysql
+      - ./data/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - dbdata:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD: example
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - 3306:3306    
+      - ${MYSQL_LOCAL_PORT}:3306    
   adminer:
     container_name: adminer
     image: adminer
     restart: always
     ports:
-      - 8080:8080   
+      - ${ADMINER_LOCAL_PORT}:8080   
     depends_on:
       - mysql   

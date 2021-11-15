@@ -7,11 +7,6 @@
 3. Run `sudo ./init-letsencrypt.sh`
 4. Run `docker-compose up --build`
 
-## Questions
-
-1. Are there cases when `restart: always` shouldn't be used?
-2. Do I need to specify `volumes` also outside the `services` block? If so, why?
-
 
 ## Credits
 
