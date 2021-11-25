@@ -1,24 +1,21 @@
+import com.google.inject.Inject;
 import routes.ErrorRoutes;
+import routes.MusicFilesRoutes;
+import services.MusicFileService;
 import utils.EnvVars;
-import utils.JsonTransformer;
 
 import static spark.Spark.*;
 
 public class Microservice {
-    private EnvVars envVars;
-
-    public Microservice loadEnvVars() {
-        this.envVars = new EnvVars();
-        return this;
-    }
+    @Inject private EnvVars envVars;
+    @Inject private MusicFileService musicFileService;
 
     public void start() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             port(envVars.getPort());
-            get("/hello", "application/json", (req, res) -> "Hello World", new JsonTransformer());
-
+            new MusicFilesRoutes(musicFileService).routes();
 
             // Error handler routes
             ErrorRoutes.routes();

@@ -1,4 +1,4 @@
-package models;
+package models.utils;
 
 /**
  * Represent an error object, with a message, a constant boolean error field and an

@@ -1,4 +1,4 @@
-package models;
+package models.files;
 
 import java.sql.Date;
 
@@ -16,6 +16,10 @@ public class MusicFile {
     private String title;
     private byte[] albumImage;
     private String albumImageMimeType;
+
+    public static String tableName() {
+        return "music_files";
+    }
 
     public long getId() {
         return id;

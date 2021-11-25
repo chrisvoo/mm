@@ -1,6 +1,6 @@
 package services;
 
-import models.MusicFile;
+import models.files.MusicFile;
 
 public interface MusicFileService {
     /**

@@ -1,9 +1,14 @@
 package repos;
 
-import models.MusicFile;
+import com.google.inject.Inject;
+import models.files.MusicFile;
 import services.MusicFileService;
+import utils.EnvVars;
 
 public class MusicFileRepo implements MusicFileService {
+    @Inject
+    private EnvVars envVars;
+
     /**
      * Return a file by its primary key
      *
@@ -12,6 +17,7 @@ public class MusicFileRepo implements MusicFileService {
      */
     @Override
     public MusicFile getById(long id) {
+        System.out.println(envVars.getMysqlUser());
         return null;
     }
 

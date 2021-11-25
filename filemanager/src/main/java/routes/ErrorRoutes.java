@@ -1,7 +1,7 @@
 package routes;
 
 import static spark.Spark.*;
-import models.ErrorResponse;
+import models.utils.ErrorResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Route;
 import utils.JsonTransformer;
