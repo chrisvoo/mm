@@ -16,24 +16,13 @@ public class BandRepo implements BandService {
     }
 
     /**
-     * Saves a new band into the database
+     * Upsert of a band into the database
      *
      * @param band The band.
-     * @return The band's primary key on success, an exception otherwise
+     * @return The band
      */
     @Override
-    public long create(Band band) {
-        return 0;
-    }
-
-    /**
-     * Updates a band into the database
-     *
-     * @param band The band.
-     * @return The result of the operation
-     */
-    @Override
-    public boolean update(Band band) {
-        return false;
+    public Band save(Band band) {
+        return null;
     }
 }
