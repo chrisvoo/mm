@@ -1,5 +1,6 @@
 package routes;
 
+import com.google.inject.Inject;
 import services.MusicFileService;
 import spark.Route;
 import utils.JsonTransformer;
@@ -7,9 +8,10 @@ import utils.JsonTransformer;
 import static spark.Spark.get;
 import static spark.Spark.path;
 
-public class MusicFilesRoutes {
+public class MusicFilesRoutes implements Router {
     private final MusicFileService musicFileService;
 
+    @Inject
     public MusicFilesRoutes(MusicFileService musicFileService) {
         this.musicFileService = musicFileService;
     }
