@@ -2,6 +2,7 @@ version: '3.8'
 
 volumes:
   dbdata:
+  dbdata_test:  
 
 services:
   nginx:
@@ -66,22 +67,22 @@ services:
       - nginx
       - mysql
   mysql_test:
-    container_name: mysql
+    container_name: mysql_test
     image: mysql:latest
     restart: always
     volumes:
       - ./data/mysql/conf.d:/etc/mysql/conf.d
       - ./data/mysql/initdb.d:/docker-entrypoint-initdb.d
-      - dbdata:/var/lib/mysql
+      - dbdata_test:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}_test
-      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_USER=${MYSQL_USER}_test
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - ${MYSQL_LOCAL_PORT}:3306    
+      - ${MYSQL_LOCAL_PORT_TEST}:3306    
   mysql:
-    container_name: mysql_test
+    container_name: mysql
     image: mysql:latest
     restart: always
     volumes:

@@ -1,11 +1,13 @@
 package models.band;
 
+import models.Model;
+
 import java.sql.Date;
 import java.util.List;
 
-public class Band {
+public class Band extends Model {
 
-    private long id;
+    private Long id;
 
     private String name;
     /**
@@ -22,7 +24,7 @@ public class Band {
      * Active to
      */
     private Date activeTo;
-    private short totalAlbumsReleased;
+    private Short totalAlbumsReleased;
     private String website;
     private String twitter;
 
@@ -32,15 +34,21 @@ public class Band {
      */
     private List<BandActivity> activities;
 
+    public Band() {
+        this.requiredFields = List.of(
+          "name"
+        );
+    }
+
     public static String tableName() {
         return "bands";
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public Band setId(long id) {
+    public Band setId(Long id) {
         this.id = id;
         return this;
     }

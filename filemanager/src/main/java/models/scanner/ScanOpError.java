@@ -1,10 +1,12 @@
 package models.scanner;
 
+import models.Model;
+
 import java.sql.Timestamp;
 
-public class ScanOpError {
-    private long id;
-    private long scanOpId;
+public class ScanOpError extends Model {
+    private Long id;
+    private Long scanOpId;
     private String message;
     private Timestamp createdAt;
 
@@ -12,20 +14,20 @@ public class ScanOpError {
         return "scan_ops_errors";
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public ScanOpError setId(long id) {
+    public ScanOpError setId(Long id) {
         this.id = id;
         return this;
     }
 
-    public long getScanOpId() {
+    public Long getScanOpId() {
         return scanOpId;
     }
 
-    public ScanOpError setScanOpId(long scanOpId) {
+    public ScanOpError setScanOpId(Long scanOpId) {
         this.scanOpId = scanOpId;
         return this;
     }

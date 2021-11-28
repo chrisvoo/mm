@@ -1,8 +1,11 @@
 package routes;
 
 import static spark.Spark.*;
+
+import exceptions.FileManagerException;
 import models.utils.ErrorResponse;
 import org.eclipse.jetty.http.HttpStatus;
+import spark.ExceptionHandler;
 import spark.Route;
 import utils.JsonTransformer;
 
@@ -28,5 +31,13 @@ public class ErrorRoutes {
     public static void routes() {
         notFound(ErrorRoutes.notFound);
         internalServerError(ErrorRoutes.serverError);
+        exception(FileManagerException.class, (exception, request, response) -> {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            response.body(
+                jsonTransformer.render(
+                    new ErrorResponse(exception.getMessage(), exception.getCode())
+                )
+            );
+        });
     }
 }

@@ -1,31 +1,33 @@
 package models.files;
 
+import models.Model;
+
 import java.sql.Date;
 
-public class MusicFile {
-    private long id;
+public class MusicFile extends Model {
+    private Long id;
     private String absolutePath;
-    private long size;
-    private int bitrate;
+    private Long size;
+    private Integer bitrate;
     private BitRateType bitRateType;
-    private int duration;
+    private Integer duration;
     private String artist;
     private String album;
     private Date year;
     private String genre;
     private String title;
-    private byte[] albumImage;
+    private Byte[] albumImage;
     private String albumImageMimeType;
 
     public static String tableName() {
         return "music_files";
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public MusicFile setId(long id) {
+    public MusicFile setId(Long id) {
         this.id = id;
         return this;
     }
@@ -39,20 +41,20 @@ public class MusicFile {
         return this;
     }
 
-    public long getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public MusicFile setSize(long size) {
+    public MusicFile setSize(Long size) {
         this.size = size;
         return this;
     }
 
-    public int getBitrate() {
+    public Integer getBitrate() {
         return bitrate;
     }
 
-    public MusicFile setBitrate(int bitrate) {
+    public MusicFile setBitrate(Integer bitrate) {
         this.bitrate = bitrate;
         return this;
     }
@@ -66,11 +68,11 @@ public class MusicFile {
         return this;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public MusicFile setDuration(int duration) {
+    public MusicFile setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -120,11 +122,11 @@ public class MusicFile {
         return this;
     }
 
-    public byte[] getAlbumImage() {
+    public Byte[] getAlbumImage() {
         return albumImage;
     }
 
-    public MusicFile setAlbumImage(byte[] albumImage) {
+    public MusicFile setAlbumImage(Byte[] albumImage) {
         this.albumImage = albumImage;
         return this;
     }

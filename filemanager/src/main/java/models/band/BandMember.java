@@ -1,10 +1,12 @@
 package models.band;
 
+import models.Model;
+
 import java.sql.Date;
 
-public class BandMember {
-    private long bandId;
-    private long musicianId;
+public class BandMember extends Model {
+    private Long bandId;
+    private Long musicianId;
     private Date activeFrom;
     private Date activeTo;
 
@@ -12,20 +14,20 @@ public class BandMember {
         return "band_members";
     }
 
-    public long getBandId() {
+    public Long getBandId() {
         return bandId;
     }
 
-    public BandMember setBandId(long bandId) {
+    public BandMember setBandId(Long bandId) {
         this.bandId = bandId;
         return this;
     }
 
-    public long getMusicianId() {
+    public Long getMusicianId() {
         return musicianId;
     }
 
-    public BandMember setMusicianId(long musicianId) {
+    public BandMember setMusicianId(Long musicianId) {
         this.musicianId = musicianId;
         return this;
     }

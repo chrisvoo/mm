@@ -5,6 +5,9 @@ package models.utils;
  * optional code to identify a particular error.
  */
 public class ErrorResponse {
+    public static final int MISSING_RESOURCE = 1000;
+    public static final int INVALID_RESOURCE = 1001;
+
     private String message;
     private final boolean error = true;
     private Integer code = null;

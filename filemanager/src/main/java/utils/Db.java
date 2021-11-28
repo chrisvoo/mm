@@ -2,6 +2,7 @@ package utils;
 
 import exceptions.DbException;
 import exceptions.FileManagerException;
+import models.utils.ConnectionPoolStatus;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -23,6 +24,10 @@ public class Db {
         }
     }
 
+    /**
+     * Creates and sets the connection pool properties
+     * @return BasicDataSource
+     */
     private BasicDataSource getDataSource() {
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(envVars.getConnectionString());
@@ -42,6 +47,14 @@ public class Db {
     }
 
     /**
+     * Returns the status of the connection pool
+     * @return The connection pool's status.
+     */
+    public ConnectionPoolStatus getConnectionPoolStatus() {
+        return new ConnectionPoolStatus(this.getDataSource());
+    }
+
+    /**
      * Returns a new connection
      * @return Connection
      * @throws DbException if the connection fails
@@ -57,6 +70,9 @@ public class Db {
         }
     }
 
+    /**
+     * Closes the connection pool
+     */
     public void close() {
         if (!this.getDataSource().isClosed()) {
             try {

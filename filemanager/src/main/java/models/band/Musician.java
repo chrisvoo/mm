@@ -1,22 +1,24 @@
 package models.band;
 
-public class Musician {
-    private long id;
+import models.Model;
+
+public class Musician extends Model {
+    private Long id;
     private String firstName;
     private String lastName;
     private String instruments;
-    private short age;
-    private boolean died;
+    private Short age;
+    private Boolean died;
 
     public static String tableName() {
         return "musicians";
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public Musician setId(long id) {
+    public Musician setId(Long id) {
         this.id = id;
         return this;
     }
@@ -48,20 +50,20 @@ public class Musician {
         return this;
     }
 
-    public short getAge() {
+    public Short getAge() {
         return age;
     }
 
-    public Musician setAge(short age) {
+    public Musician setAge(Short age) {
         this.age = age;
         return this;
     }
 
-    public boolean isDied() {
+    public Boolean isDied() {
         return died;
     }
 
-    public Musician setDied(boolean died) {
+    public Musician setDied(Boolean died) {
         this.died = died;
         return this;
     }

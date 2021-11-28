@@ -1,7 +1,9 @@
 package models.files;
 
-public class MusicBrainzFile {
-    private long musicFileId;
+import models.Model;
+
+public class MusicBrainzFile extends Model {
+    private Long musicFileId;
     private String albumType;
     private String albumStatus;
 
@@ -54,11 +56,11 @@ public class MusicBrainzFile {
         return "musicbrainz_files";
     }
 
-    public long getMusicFileId() {
+    public Long getMusicFileId() {
         return musicFileId;
     }
 
-    public MusicBrainzFile setMusicFileId(long musicFileId) {
+    public MusicBrainzFile setMusicFileId(Long musicFileId) {
         this.musicFileId = musicFileId;
         return this;
     }

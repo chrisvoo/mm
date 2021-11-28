@@ -7,5 +7,5 @@ public interface Router {
     /**
      * All the routes definition
      */
-    public void routes();
+    void routes();
 }

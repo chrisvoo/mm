@@ -1,21 +1,28 @@
 package models.band;
 
-import java.sql.Date;
+import models.Model;
 
-public class BandActivity {
-    private long bandId;
+import java.sql.Date;
+import java.util.List;
+
+public class BandActivity extends Model {
+    private Long bandId;
     private Date activeFrom;
     private Date activeTo;
+
+    public BandActivity() {
+        this.requiredFields = List.of("bandId");
+    }
 
     public static String tableName() {
         return "bands_activity";
     }
 
-    public long getBandId() {
+    public Long getBandId() {
         return bandId;
     }
 
-    public BandActivity setBandId(long bandId) {
+    public BandActivity setBandId(Long bandId) {
         this.bandId = bandId;
         return this;
     }
