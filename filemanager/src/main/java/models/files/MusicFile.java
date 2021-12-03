@@ -3,6 +3,7 @@ package models.files;
 import models.Model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class MusicFile extends Model {
     private Long id;
@@ -18,6 +19,10 @@ public class MusicFile extends Model {
     private String title;
     private Byte[] albumImage;
     private String albumImageMimeType;
+
+    public MusicFile() {
+        this.requiredFields = List.of("absolutePath");
+    }
 
     public static String tableName() {
         return "music_files";

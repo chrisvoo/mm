@@ -3,12 +3,17 @@ package models.band;
 import models.Model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class BandMember extends Model {
     private Long bandId;
     private Long musicianId;
     private Date activeFrom;
     private Date activeTo;
+
+    public BandMember() {
+        this.requiredFields = List.of("bandId", "musicianId");
+    }
 
     public static String tableName() {
         return "band_members";

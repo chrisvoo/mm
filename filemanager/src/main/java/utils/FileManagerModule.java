@@ -1,7 +1,6 @@
 package utils;
 
 import com.google.inject.AbstractModule;
-import exceptions.EnvException;
 import exceptions.FileManagerException;
 import repos.BandRepo;
 import repos.MusicFileRepo;

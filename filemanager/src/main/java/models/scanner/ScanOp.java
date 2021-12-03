@@ -19,19 +19,19 @@ public class ScanOp extends Model {
     /**
      * Transient property to link the join table.
      */
-    private List<ScanOpError> errors;
+    private List<ScanOpError> scanErrors;
 
     public static String tableName() {
         return "scan_ops";
     }
 
-    public ScanOp setErrors(List<ScanOpError> errors) {
-        this.errors = errors;
+    public ScanOp setScanErrors(List<ScanOpError> errors) {
+        this.scanErrors = errors;
         return this;
     }
 
-    public List<ScanOpError> getErrors() {
-        return this.errors;
+    public List<ScanOpError> getScanErrors() {
+        return this.scanErrors;
     }
 
     public Long getId() {

@@ -3,12 +3,17 @@ package models.scanner;
 import models.Model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class ScanOpError extends Model {
     private Long id;
     private Long scanOpId;
     private String message;
     private Timestamp createdAt;
+
+    public ScanOpError() {
+        this.requiredFields = List.of("scanOpId");
+    }
 
     public static String tableName() {
         return "scan_ops_errors";

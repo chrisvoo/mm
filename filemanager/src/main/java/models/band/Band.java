@@ -40,8 +40,19 @@ public class Band extends Model {
         );
     }
 
-    public static String tableName() {
-        return "bands";
+    public boolean isValid() {
+        if (!super.isValid()) {
+            // error types are already configured in the parent class.
+            return false;
+        }
+
+        this.lengthValidator("name", this.name, 100);
+        this.lengthValidator("countryName", this.countryName, 100);
+        this.lengthValidator("country", this.country, 2);
+        this.lengthValidator("website", this.website, 150);
+        this.lengthValidator("twitter", this.twitter, 150);
+
+        return this.errorCode == null;
     }
 
     public Long getId() {

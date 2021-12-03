@@ -2,6 +2,8 @@ package models.files;
 
 import models.Model;
 
+import java.util.List;
+
 public class MusicBrainzFile extends Model {
     private Long musicFileId;
     private String albumType;
@@ -51,6 +53,10 @@ public class MusicBrainzFile extends Model {
      * This is an UUID saved as binary in MySQL
      */
     private String acoustidId;
+
+    public MusicBrainzFile() {
+        this.requiredFields = List.of("musicFileId");
+    }
 
     public static String tableName() {
         return "musicbrainz_files";
