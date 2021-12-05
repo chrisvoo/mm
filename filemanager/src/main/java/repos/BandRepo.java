@@ -116,4 +116,15 @@ public class BandRepo implements BandService {
             }
         }
     }
+
+    /**
+     * Delete a band.
+     *
+     * @param id The band's id.
+     * @return true if the operation was successful, false otherwise.
+     */
+    @Override
+    public boolean delete(long id) {
+        return false;
+    }
 }

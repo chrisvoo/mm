@@ -19,8 +19,16 @@ public class BandRoutes implements Router {
         return (req, res) -> bandService.getById(5);
     }
 
-    private Route save() {
+    private Route update() {
         return (req, res) -> bandService.save(null);
+    }
+
+    private Route create() {
+        return (req, res) -> bandService.save(null);
+    }
+
+    private Route deleteFile() {
+        return (req, res) -> bandService.delete(2);
     }
 
     public void routes() {
@@ -35,7 +43,21 @@ public class BandRoutes implements Router {
             post(
                 "/band",
                 "application/json",
-                this.save(),
+                this.create(),
+                new JsonTransformer()
+            );
+
+            put(
+                "/band/:id",
+                "application/json",
+                this.update(),
+                new JsonTransformer()
+            );
+
+            delete(
+                "/band/:id",
+                "application/json",
+                this.deleteFile(),
                 new JsonTransformer()
             );
         });

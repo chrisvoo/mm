@@ -2,7 +2,6 @@ package services;
 
 
 import models.band.Band;
-import models.files.MusicFile;
 
 public interface BandService {
     /**
@@ -18,6 +17,13 @@ public interface BandService {
      * @return The band
      */
     public Band save(Band band);
+
+    /**
+     * Delete a band.
+     * @param id The band's id.
+     * @return true if the operation was successful, false otherwise.
+     */
+    public boolean delete(long id);
 
     // TODO: cursor-based pagination
 }
