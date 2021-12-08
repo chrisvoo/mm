@@ -11,9 +11,7 @@ import java.util.logging.Logger;
 public class GlobalSetupTeardownListener implements LauncherSessionListener {
 
     private Fixture fixture;
-    private static final Logger logger = Logger.getLogger(GlobalSetupTeardownListener.class.getName());
     private static Microservice microservice;
-
 
     public void launcherSessionOpened(LauncherSession session) {
         // Avoid setup for test discovery by delaying it until tests are about to be executed
@@ -37,14 +35,12 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
 
     static class Fixture {
         void setUp() {
-            logger.info("setUp");
             Injector injector = Guice.createInjector(new FileManagerModule());
             microservice = injector.getInstance(Microservice.class);
             microservice.start();
         }
 
         void tearDown() {
-            logger.info("tearDown");
             microservice.stop();
         }
     }

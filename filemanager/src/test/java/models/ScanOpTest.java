@@ -8,6 +8,6 @@ public class ScanOpTest {
     @Test
     public void requiredFieldsTest() {
         ScanOp sop = new ScanOp();
-        Assertions.assertTrue(sop.areRequiredFieldsValid());
+        Assertions.assertTrue(sop.isValid());
     }
 }

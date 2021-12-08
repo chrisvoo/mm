@@ -9,9 +9,9 @@ public class MusicFileTest {
     @Test
     public void requiredFieldsTest() {
         MusicFile mf = new MusicFile();
-        Assertions.assertFalse(mf.areRequiredFieldsValid());
+        Assertions.assertFalse(mf.isValid());
 
         mf.setAbsolutePath("a/path");
-        Assertions.assertTrue(mf.areRequiredFieldsValid());
+        Assertions.assertTrue(mf.isValid());
     }
 }

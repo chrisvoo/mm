@@ -1,5 +1,6 @@
 package models.scanner;
 
+import com.google.gson.Gson;
 import models.Model;
 
 import java.sql.Timestamp;
@@ -86,5 +87,9 @@ public class ScanOp extends Model {
     public ScanOp setHasErrors(Boolean hasErrors) {
         this.hasErrors = hasErrors;
         return this;
+    }
+
+    public static ScanOp fromJson(String json) {
+        return new Gson().fromJson(json, ScanOp.class);
     }
 }

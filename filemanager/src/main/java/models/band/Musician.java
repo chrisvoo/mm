@@ -1,5 +1,6 @@
 package models.band;
 
+import com.google.gson.Gson;
 import models.Model;
 
 public class Musician extends Model {
@@ -66,5 +67,9 @@ public class Musician extends Model {
     public Musician setDied(Boolean died) {
         this.died = died;
         return this;
+    }
+
+    public static Musician fromJson(String json) {
+        return new Gson().fromJson(json, Musician.class);
     }
 }

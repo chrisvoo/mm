@@ -11,9 +11,6 @@ public class Main {
 
         /* The JVM runs shutdown hooks only in case of normal terminations. So, when an external force
          * kills the JVM process abruptly, the JVM won't get a chance to execute shutdown hooks. */
-        Thread shutdownHook = new Thread(() -> {
-
-        });
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        Runtime.getRuntime().addShutdownHook(new Thread(microservice::stop));
     }
 }

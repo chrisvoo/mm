@@ -8,9 +8,9 @@ public class MusicBrainzFileTest {
     @Test
     public void requiredFieldsTest() {
         MusicBrainzFile mbf = new MusicBrainzFile();
-        Assertions.assertFalse(mbf.areRequiredFieldsValid());
+        Assertions.assertFalse(mbf.isValid());
 
         mbf.setMusicFileId(5L);
-        Assertions.assertTrue(mbf.areRequiredFieldsValid());
+        Assertions.assertTrue(mbf.isValid());
     }
 }

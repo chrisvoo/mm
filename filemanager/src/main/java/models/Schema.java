@@ -1,9 +1,8 @@
 package models;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -44,6 +43,61 @@ public abstract class Schema<T> {
         );
         logger.fine(sql);
         return sql;
+    }
+
+    protected Short getYear(ResultSet rs, String field) throws SQLException {
+        Date year = rs.getDate(field);
+        if (year != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(year);
+            return (short) cal.get(Calendar.YEAR);
+        }
+
+        return null;
+    }
+
+    protected void setYear(PreparedStatement stmt, Short year, int index) throws SQLException {
+        if (year != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            stmt.setDate(index, (Date) cal.getTime());
+        } else {
+            stmt.setNull(index, Types.DATE);
+        }
+    }
+
+    protected Long getLong(ResultSet rs, String field) throws SQLException {
+        long num = rs.getLong(field);
+        if (num == 0) {
+            return null;
+        }
+
+        return num;
+    }
+
+    protected void setLong(PreparedStatement stmt, Long num, int index) throws SQLException {
+        if (num != null) {
+            stmt.setLong(index, num);
+        } else {
+            stmt.setNull(index, Types.BIGINT);
+        }
+    }
+
+    protected Short getShort(ResultSet rs, String field) throws SQLException {
+        short num = rs.getShort(field);
+        if (num == 0) {
+            return null;
+        }
+
+        return num;
+    }
+
+    protected void setShort(PreparedStatement stmt, Short num, int index) throws SQLException {
+        if (num != null) {
+            stmt.setShort(index, num);
+        } else {
+            stmt.setNull(index, Types.TINYINT);
+        }
     }
 
     public abstract T getModelFromResultSet(ResultSet rs) throws SQLException;

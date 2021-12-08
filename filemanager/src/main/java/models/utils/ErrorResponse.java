@@ -1,5 +1,7 @@
 package models.utils;
 
+import com.google.gson.Gson;
+
 /**
  * Represent an error object, with a message, a constant boolean error field and an
  * optional code to identify a particular error.
@@ -19,5 +21,35 @@ public class ErrorResponse {
     public ErrorResponse(String message, int code) {
         this.message = message;
         this.code = code;
+    }
+
+    public static ErrorResponse fromJson(String json) {
+        return new Gson().fromJson(json, ErrorResponse.class);
+    }
+
+    public String toString() {
+        return new Gson().toJson(this);
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ErrorResponse setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public ErrorResponse setCode(Integer code) {
+        this.code = code;
+        return this;
     }
 }

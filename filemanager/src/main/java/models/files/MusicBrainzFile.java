@@ -1,5 +1,6 @@
 package models.files;
 
+import com.google.gson.Gson;
 import models.Model;
 
 import java.util.List;
@@ -168,5 +169,9 @@ public class MusicBrainzFile extends Model {
     public MusicBrainzFile setAcoustidId(String acoustidId) {
         this.acoustidId = acoustidId;
         return this;
+    }
+
+    public static MusicBrainzFile fromJson(String json) {
+        return new Gson().fromJson(json, MusicBrainzFile.class);
     }
 }

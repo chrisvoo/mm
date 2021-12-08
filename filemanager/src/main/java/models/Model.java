@@ -39,7 +39,11 @@ public abstract class Model {
      * specified inside {@link #requiredFields}
      * @return true if
      */
-    public boolean areRequiredFieldsValid() {
+    private boolean areRequiredFieldsValid() {
+        // every time this method is called, the state must be reset.
+        this.errors.clear();
+        this.errorCode = null;
+
         if (requiredFields == null || requiredFields.isEmpty()) {
             return true;
         }

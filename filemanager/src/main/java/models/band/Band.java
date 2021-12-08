@@ -1,8 +1,8 @@
 package models.band;
 
+import com.google.gson.Gson;
 import models.Model;
 
-import java.sql.Date;
 import java.util.List;
 
 public class Band extends Model {
@@ -19,11 +19,11 @@ public class Band extends Model {
     /**
      * Active from (in general)
      */
-    private Date activeFrom;
+    private Short activeFrom;
     /**
      * Active to
      */
-    private Date activeTo;
+    private Short activeTo;
     private Short totalAlbumsReleased;
     private String website;
     private String twitter;
@@ -91,29 +91,29 @@ public class Band extends Model {
         return this;
     }
 
-    public Date getActiveFrom() {
+    public Short getActiveFrom() {
         return activeFrom;
     }
 
-    public Band setActiveFrom(Date activeFrom) {
+    public Band setActiveFrom(Short activeFrom) {
         this.activeFrom = activeFrom;
         return this;
     }
 
-    public Date getActiveTo() {
+    public Short getActiveTo() {
         return activeTo;
     }
 
-    public Band setActiveTo(Date activeTo) {
+    public Band setActiveTo(Short activeTo) {
         this.activeTo = activeTo;
         return this;
     }
 
-    public short getTotalAlbumsReleased() {
+    public Short getTotalAlbumsReleased() {
         return totalAlbumsReleased;
     }
 
-    public Band setTotalAlbumsReleased(short totalAlbumsReleased) {
+    public Band setTotalAlbumsReleased(Short totalAlbumsReleased) {
         this.totalAlbumsReleased = totalAlbumsReleased;
         return this;
     }
@@ -143,5 +143,9 @@ public class Band extends Model {
     public Band setActivities(List<BandActivity> activities) {
         this.activities = activities;
         return this;
+    }
+
+    public static Band fromJson(String json) {
+        return new Gson().fromJson(json, Band.class);
     }
 }

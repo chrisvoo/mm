@@ -72,7 +72,7 @@ public class BandRepo implements BandService {
 
                 if (affectedRows == 0) {
                     throw new DbException(
-                        "No band found with id " + band.getId(),
+                        String.format("No band with id %d was found", band.getId()),
                         DbException.RESOURCE_NOT_FOUND
                     );
                 }

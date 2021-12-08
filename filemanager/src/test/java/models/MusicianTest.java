@@ -9,6 +9,6 @@ public class MusicianTest {
     @Test
     public void requiredFieldsTest() {
         Musician mu = new Musician();
-        Assertions.assertTrue(mu.areRequiredFieldsValid());
+        Assertions.assertTrue(mu.isValid());
     }
 }

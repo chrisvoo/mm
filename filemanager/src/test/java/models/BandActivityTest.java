@@ -8,6 +8,6 @@ public class BandActivityTest {
     @Test
     public void requiredFieldsTest() {
         BandActivity ba = new BandActivity();
-        Assertions.assertFalse(ba.areRequiredFieldsValid());
+        Assertions.assertFalse(ba.isValid());
     }
 }

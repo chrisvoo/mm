@@ -9,9 +9,9 @@ public class ScanOpErrorTest {
     @Test
     public void requiredFieldsTest() {
         ScanOpError sop = new ScanOpError();
-        Assertions.assertFalse(sop.areRequiredFieldsValid());
+        Assertions.assertFalse(sop.isValid());
 
         sop.setScanOpId(5L);
-        Assertions.assertTrue(sop.areRequiredFieldsValid());
+        Assertions.assertTrue(sop.isValid());
     }
 }

@@ -1,5 +1,6 @@
 package models.utils;
 
+import com.google.gson.Gson;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.sql.DataSource;
@@ -40,5 +41,9 @@ public class ConnectionPoolStatus {
     public ConnectionPoolStatus setNumIdle(int numIdle) {
         this.numIdle = numIdle;
         return this;
+    }
+
+    public static ConnectionPoolStatus fromJson(String json) {
+        return new Gson().fromJson(json, ConnectionPoolStatus.class);
     }
 }

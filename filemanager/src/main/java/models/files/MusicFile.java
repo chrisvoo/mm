@@ -1,5 +1,6 @@
 package models.files;
 
+import com.google.gson.Gson;
 import models.Model;
 
 import java.sql.Date;
@@ -143,5 +144,9 @@ public class MusicFile extends Model {
     public MusicFile setAlbumImageMimeType(String albumImageMimeType) {
         this.albumImageMimeType = albumImageMimeType;
         return this;
+    }
+
+    public static MusicFile fromJson(String json) {
+        return new Gson().fromJson(json, MusicFile.class);
     }
 }

@@ -30,17 +30,18 @@ public class BandSchema extends Schema<Band> {
         return "bands";
     }
 
+
     public Band getModelFromResultSet(ResultSet rs) throws SQLException {
         return new Band()
-                .setId(rs.getLong(BandSchema.ID))
-                .setName(rs.getString(BandSchema.NAME))
-                .setCountry(rs.getString(BandSchema.COUNTRY))
-                .setCountryName(rs.getString(BandSchema.COUNTRY_NAME))
-                .setActiveFrom(rs.getDate(BandSchema.ACTIVE_FROM))
-                .setActiveTo(rs.getDate(BandSchema.ACTIVE_TO))
-                .setTotalAlbumsReleased(rs.getShort(BandSchema.TOTAL_ALBUM_RELEASED))
-                .setWebsite(rs.getString(BandSchema.WEBSITE))
-                .setTwitter(rs.getString(BandSchema.TWITTER));
+            .setId(this.getLong(rs, BandSchema.ID))
+            .setName(rs.getString(BandSchema.NAME))
+            .setCountry(rs.getString(BandSchema.COUNTRY))
+            .setCountryName(rs.getString(BandSchema.COUNTRY_NAME))
+            .setActiveFrom(this.getYear(rs, BandSchema.ACTIVE_FROM))
+            .setActiveTo(this.getYear(rs, BandSchema.ACTIVE_TO))
+            .setTotalAlbumsReleased(this.getShort(rs, BandSchema.TOTAL_ALBUM_RELEASED))
+            .setWebsite(rs.getString(BandSchema.WEBSITE))
+            .setTwitter(rs.getString(BandSchema.TWITTER));
     }
 
     public void setStatementValues(PreparedStatement stmt, Band instance) throws SQLException {
@@ -48,9 +49,11 @@ public class BandSchema extends Schema<Band> {
         stmt.setString(++index, instance.getName());
         stmt.setString(++index, instance.getCountry());
         stmt.setString(++index, instance.getCountryName());
-        stmt.setDate(++index, instance.getActiveFrom());
-        stmt.setDate(++index, instance.getActiveTo());
-        stmt.setShort(++index, instance.getTotalAlbumsReleased());
+
+        this.setYear(stmt, instance.getActiveFrom(), ++index);
+        this.setYear(stmt, instance.getActiveTo(), ++index);
+        this.setShort(stmt, instance.getTotalAlbumsReleased(), ++index);
+
         stmt.setString(++index, instance.getWebsite());
         stmt.setString(++index, instance.getTwitter());
     }
