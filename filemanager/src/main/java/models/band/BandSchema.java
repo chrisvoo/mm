@@ -19,11 +19,12 @@ public class BandSchema extends Schema<Band> {
     public static final String TWITTER = "twitter";
 
     public BandSchema() {
-        this.fieldsWithoutPK = List.of(
+        this.fields = List.of(
             BandSchema.NAME, BandSchema.COUNTRY, BandSchema.COUNTRY_NAME,
             BandSchema.ACTIVE_FROM, BandSchema.ACTIVE_TO, BandSchema.TOTAL_ALBUM_RELEASED,
             BandSchema.WEBSITE, BandSchema.TWITTER
         );
+        this.primaryKeys = List.of(BandSchema.ID);
     }
 
     public String tableName() {
@@ -37,8 +38,8 @@ public class BandSchema extends Schema<Band> {
             .setName(rs.getString(BandSchema.NAME))
             .setCountry(rs.getString(BandSchema.COUNTRY))
             .setCountryName(rs.getString(BandSchema.COUNTRY_NAME))
-            .setActiveFrom(this.getYear(rs, BandSchema.ACTIVE_FROM))
-            .setActiveTo(this.getYear(rs, BandSchema.ACTIVE_TO))
+            .setActiveFrom(this.getShort(rs, BandSchema.ACTIVE_FROM))
+            .setActiveTo(this.getShort(rs, BandSchema.ACTIVE_TO))
             .setTotalAlbumsReleased(this.getShort(rs, BandSchema.TOTAL_ALBUM_RELEASED))
             .setWebsite(rs.getString(BandSchema.WEBSITE))
             .setTwitter(rs.getString(BandSchema.TWITTER));
@@ -50,8 +51,8 @@ public class BandSchema extends Schema<Band> {
         stmt.setString(++index, instance.getCountry());
         stmt.setString(++index, instance.getCountryName());
 
-        this.setYear(stmt, instance.getActiveFrom(), ++index);
-        this.setYear(stmt, instance.getActiveTo(), ++index);
+        this.setShort(stmt, instance.getActiveFrom(), ++index);
+        this.setShort(stmt, instance.getActiveTo(), ++index);
         this.setShort(stmt, instance.getTotalAlbumsReleased(), ++index);
 
         stmt.setString(++index, instance.getWebsite());

@@ -40,4 +40,21 @@ public class BandRoutesTest {
         Assertions.assertEquals("No band with id 5 was found", err.getMessage());
         Assertions.assertEquals(DbException.RESOURCE_NOT_FOUND, err.getCode());
     }
+
+    @Test
+    public void createBandTest() throws URISyntaxException, IOException, InterruptedException {
+        String json = """
+            {
+                "name": "AC/DC",
+                "country": "AU",
+                "countryName": "Australia",
+                "activeFrom": 1973,
+                "totalAlbumsReleased": 18,
+                "website": "",
+                "twitter": ""
+            }       
+        """;
+        HttpResponse<String> response = client.sendPost("/bands/band", json);
+        logger.info(response.body());
+    }
 }
