@@ -1,9 +1,9 @@
 package models.files;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import models.Model;
+import utils.StrictEnumTypeAdapterFactory;
 
-import java.sql.Date;
 import java.util.List;
 
 public class MusicFile extends Model {
@@ -15,7 +15,7 @@ public class MusicFile extends Model {
     private Integer duration;
     private String artist;
     private String album;
-    private Date year;
+    private Short year;
     private String genre;
     private String title;
     private Byte[] albumImage;
@@ -25,8 +25,21 @@ public class MusicFile extends Model {
         this.requiredFields = List.of("absolutePath");
     }
 
-    public static String tableName() {
-        return "music_files";
+    public boolean isValid() {
+        if (!super.isValid()) {
+            // error types are already configured in the parent class.
+            return false;
+        }
+
+        this.lengthValidator("absolutePath", this.absolutePath, 1000);
+        this.lengthValidator("artist", this.artist, 100);
+        this.lengthValidator("album", this.album, 100);
+        this.lengthValidator("albumImageMimeType", this.albumImageMimeType, 20);
+        this.positiveNumberValidator("duration", this.duration);
+        this.positiveNumberValidator("bitrate", this.bitrate);
+        this.positiveNumberValidator("year", this.year);
+
+        return this.errorCode == null;
     }
 
     public Long getId() {
@@ -101,11 +114,11 @@ public class MusicFile extends Model {
         return this;
     }
 
-    public Date getYear() {
+    public Short getYear() {
         return year;
     }
 
-    public MusicFile setYear(Date year) {
+    public MusicFile setYear(Short year) {
         this.year = year;
         return this;
     }
@@ -147,6 +160,8 @@ public class MusicFile extends Model {
     }
 
     public static MusicFile fromJson(String json) {
-        return new Gson().fromJson(json, MusicFile.class);
+        return new GsonBuilder()
+          .registerTypeAdapterFactory(new StrictEnumTypeAdapterFactory())
+          .create().fromJson(json, MusicFile.class);
     }
 }

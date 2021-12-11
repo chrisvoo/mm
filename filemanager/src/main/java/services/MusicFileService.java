@@ -11,18 +11,18 @@ public interface MusicFileService {
     public MusicFile getById(long id);
 
     /**
-     * Saves a new music file into the database
+     * Upsert of a music file into the database
      * @param file The music file.
      * @return The music file's primary key on success, an exception otherwise
      */
-    public long create(MusicFile file);
+    public MusicFile save(MusicFile file);
 
     /**
-     * Updates a music file into the database
-     * @param file The music file.
-     * @return The result of the operation
+     * Delete a music file.
+     * @param id The file's id.
+     * @return true if the operation was successful, false otherwise.
      */
-    public boolean update(MusicFile file);
+    public boolean delete(long id);
 
     // TODO: cursor-based pagination
 }

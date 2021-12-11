@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public abstract class Schema<T> {
@@ -40,6 +41,11 @@ public abstract class Schema<T> {
         return this.primaryKeys;
     }
 
+    /**
+     * Produces the INSERT statement for a model using its defined schema.
+     * @param includePrimaryKeys If the primary key should be included in the generated SQL.
+     * @return The SQL with fields names and placeholders.
+     */
     public String getSqlForInsert(boolean includePrimaryKeys) {
         List<String> finalFields = this.getFields(includePrimaryKeys);
         String names = String.join(",", finalFields);
@@ -56,10 +62,18 @@ public abstract class Schema<T> {
         return sql;
     }
 
+    /**
+     * Produces the INSERT statement for a model using its defined schema.
+     * @return The SQL with fields names and placeholders.
+     */
     public String getSqlForInsert() {
         return this.getSqlForInsert(false);
     }
 
+    /**
+     * Produces the UPDATE statement for a model using its defined schema.
+     * @return The SQL with fields names and placeholders.
+     */
     public String getSqlForUpdate() {
         List<String> fList = new ArrayList<>(Collections.nCopies(this.fields.size(),"%s = ?"));
 
@@ -85,6 +99,13 @@ public abstract class Schema<T> {
         return sql;
     }
 
+    /**
+     * Returns the long value from a resultset
+     * @param rs The resultset
+     * @param field The field name
+     * @return The value
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     protected Long getLong(ResultSet rs, String field) throws SQLException {
         long num = rs.getLong(field);
         if (num == 0) {
@@ -94,6 +115,13 @@ public abstract class Schema<T> {
         return num;
     }
 
+    /**
+     * Sets a placeholder of a prepared statement.
+     * @param stmt The prepared statement-
+     * @param num The long value.
+     * @param index The index
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     protected void setLong(PreparedStatement stmt, Long num, int index) throws SQLException {
         if (num != null) {
             stmt.setLong(index, num);
@@ -102,6 +130,82 @@ public abstract class Schema<T> {
         }
     }
 
+    /**
+     * Returns the int value from a resultset
+     * @param rs The resultset
+     * @param field The field name
+     * @return The value
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    protected Integer getInt(ResultSet rs, String field) throws SQLException {
+        int num = rs.getInt(field);
+        if (num == 0) {
+            return null;
+        }
+
+        return num;
+    }
+
+    /**
+     * Sets a placeholder of a prepared statement.
+     * @param stmt The prepared statement-
+     * @param num The int value.
+     * @param index The index
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    protected void setInt(PreparedStatement stmt, Integer num, int index) throws SQLException {
+        if (num != null) {
+            stmt.setInt(index, num);
+        } else {
+            stmt.setNull(index, Types.INTEGER);
+        }
+    }
+
+    /**
+     * Returns the int value from a resultset
+     * @param rs The resultset
+     * @param field The field name
+     * @return The value
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    protected Byte[] getBytes(ResultSet rs, String field) throws SQLException {
+        byte[] num = rs.getBytes(field);
+        if (num == null) {
+            return null;
+        }
+
+        return IntStream.range(0, num.length)
+              .mapToObj(i -> num[i])
+              .toArray(Byte[]::new);
+    }
+
+    /**
+     * Sets a placeholder of a prepared statement.
+     * @param stmt The prepared statement-
+     * @param num The int value.
+     * @param index The index
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    protected void setBytes(PreparedStatement stmt, Byte[] num, int index) throws SQLException {
+        if (num != null) {
+            byte[] bytes = new byte[num.length];
+            int i=0;
+            for(byte b: bytes)
+                num[i++] = b;
+
+            stmt.setBytes(index, bytes);
+        } else {
+            stmt.setNull(index, Types.BLOB);
+        }
+    }
+
+    /**
+     * Returns the short value from a resultset
+     * @param rs The resultset
+     * @param field The field name
+     * @return The value
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     protected Short getShort(ResultSet rs, String field) throws SQLException {
         short num = rs.getShort(field);
         if (num == 0) {
@@ -111,6 +215,13 @@ public abstract class Schema<T> {
         return num;
     }
 
+    /**
+     * Sets a placeholder of a prepared statement.
+     * @param stmt The prepared statement.
+     * @param num The short value.
+     * @param index The index
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     protected void setShort(PreparedStatement stmt, Short num, int index) throws SQLException {
         if (num != null) {
             stmt.setShort(index, num);
@@ -119,7 +230,19 @@ public abstract class Schema<T> {
         }
     }
 
+    /**
+     * Builds a model from a resultset
+     * @param rs The resultset.
+     * @return The model
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     public abstract T getModelFromResultSet(ResultSet rs) throws SQLException;
 
+    /**
+     * Sets the prepared statement's placeholders.
+     * @param stmt The prepared statement.
+     * @param instance A model to be initialized.
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
     public abstract void setStatementValues(PreparedStatement stmt, T instance) throws SQLException;
 }

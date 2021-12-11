@@ -88,6 +88,7 @@
                         <configurationParameters>
                             junit.platform.output.capture.stdout = true
                             junit.platform.output.capture.stderr = true
+                            junit.jupiter.extensions.autodetection.enabled = true
                         </configurationParameters>
                     </properties>
                 </configuration>

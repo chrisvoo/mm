@@ -68,7 +68,7 @@ public class BandRepo implements BandService {
             ) {
                 schema.setStatementValues(stmt, band);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("Band.save, affected rows: " + affectedRows);
+                logger.info("Band.update, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
@@ -80,7 +80,7 @@ public class BandRepo implements BandService {
                 return band;
             } catch (SQLException e) {
                 logger.severe(e.getMessage());
-                throw new DbException("Cannot get the band", DbException.SQL_EXCEPTION);
+                throw new DbException("Updating the band failed", DbException.SQL_EXCEPTION);
             }
 
         } else { // create
@@ -93,7 +93,7 @@ public class BandRepo implements BandService {
             ) {
                 schema.setStatementValues(stmt, band);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("Band.save, affected rows: " + affectedRows);
+                logger.info("Band.create, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(

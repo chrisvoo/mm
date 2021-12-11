@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 
 public abstract class Model {
     private static final Logger logger = Logger.getLogger(Model.class.getName());
-    protected List<String> requiredFields;
-    protected Map<String, String> errors = new HashMap<>();
-    protected Integer errorCode = null;
+    protected transient List<String> requiredFields;
+    protected transient Map<String, String> errors = new HashMap<>();
+    protected transient Integer errorCode = null;
 
     public boolean isValid() {
         return this.areRequiredFieldsValid();
@@ -25,6 +25,19 @@ public abstract class Model {
 
     public Integer getErrorCode() {
         return this.errorCode;
+    }
+
+    protected void positiveNumberValidator(String fieldName, Short num) {
+        if (num != null) {
+            this.positiveNumberValidator(fieldName, num.intValue());
+        }
+    }
+
+    protected void positiveNumberValidator(String fieldName, Integer num) {
+        if (num != null && num < 0) {
+            this.errorCode = ModelException.INVALID_FIELDS;
+            this.errors.put(fieldName, "Must be greater than or equal to 0");
+        }
     }
 
     protected void lengthValidator(String fieldName, String fieldValue, int length) {
