@@ -56,6 +56,7 @@ public class BandRoutes extends routes.Route implements Router {
             }
 
             Band band = this.getBandFromRequest(req);
+            band.setId(bandId);
             return bandService.save(band);
         };
     }

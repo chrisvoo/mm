@@ -68,7 +68,7 @@ public class MusicFileRepo implements MusicFileService {
             ) {
                 schema.setStatementValues(stmt, file);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("Band.update, affected rows: " + affectedRows);
+                logger.info("MusicFile.update, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
@@ -93,7 +93,7 @@ public class MusicFileRepo implements MusicFileService {
             ) {
                 schema.setStatementValues(stmt, file);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("file.create, affected rows: " + affectedRows);
+                logger.info("MusicFile.create, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(

@@ -56,6 +56,7 @@ public class MusicFilesRoutes extends routes.Route implements Router {
             }
 
             MusicFile file = this.getMusicFileFromRequest(req);
+            file.setId(fileId);
             return musicFileService.save(file);
         };
     }

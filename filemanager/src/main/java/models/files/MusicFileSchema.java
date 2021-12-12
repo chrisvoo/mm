@@ -72,5 +72,9 @@ public class MusicFileSchema extends Schema<MusicFile> {
         stmt.setString(++index, instance.getTitle());
         this.setBytes(stmt, instance.getAlbumImage(), ++index);
         stmt.setString(++index, instance.getAlbumImageMimeType());
+
+        if (instance.getId() != null) {
+            stmt.setLong(++index, instance.getId());
+        }
     }
 }

@@ -41,7 +41,7 @@ public class BandRepo implements BandService {
             }
         } catch (SQLException e) {
             logger.severe(e.getMessage());
-            throw new DbException("Cannot get the band", DbException.SQL_EXCEPTION);
+            throw new DbException("Failed to get the band", DbException.SQL_EXCEPTION);
         }
     }
 
@@ -118,13 +118,35 @@ public class BandRepo implements BandService {
     }
 
     /**
-     * Delete a band.
+     * Deletes a band.
      *
      * @param id The band's id.
      * @return true if the operation was successful, false otherwise.
      */
     @Override
     public boolean delete(long id) {
-        return false;
+        String sql = String.format(
+          "DELETE FROM %s WHERE id = ?", schema.tableName()
+        );
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.setLong(1, id);
+            int affectedRows = stmt.executeUpdate();
+            logger.info("Band.delete, affected rows: " + affectedRows);
+
+            if (affectedRows == 0) {
+                throw new DbException(
+                  String.format("No band with id %d was found", id),
+                  DbException.RESOURCE_NOT_FOUND
+                );
+            }
+
+            return true;
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Cannot get the band", DbException.SQL_EXCEPTION);
+        }
     }
 }

@@ -57,5 +57,9 @@ public class BandSchema extends Schema<Band> {
 
         stmt.setString(++index, instance.getWebsite());
         stmt.setString(++index, instance.getTwitter());
+
+        if (instance.getId() != null) {
+            stmt.setLong(++index, instance.getId());
+        }
     }
 }
