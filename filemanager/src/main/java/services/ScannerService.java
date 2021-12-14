@@ -9,7 +9,7 @@ public interface ScannerService {
      * @param op op The operation
      * @return long The ScanOp primary key
      */
-    public long addOperation(ScanOp op);
+    public ScanOp save(ScanOp op);
 
     /**
      * Add a new error

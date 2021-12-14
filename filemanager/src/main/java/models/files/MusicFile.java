@@ -1,7 +1,10 @@
 package models.files;
 
 import com.google.gson.GsonBuilder;
+import com.mpatric.mp3agic.ID3Wrapper;
+import com.mpatric.mp3agic.Mp3File;
 import models.Model;
+import utils.Conv;
 import utils.StrictEnumTypeAdapterFactory;
 
 import java.util.List;
@@ -23,6 +26,24 @@ public class MusicFile extends Model {
 
     public MusicFile() {
         this.requiredFields = List.of("absolutePath");
+    }
+
+    public MusicFile(Mp3File audioFile) {
+        // Note: the absolute path is set by ScanTask, since Mp3File just return what
+        // Path#toString returns (which may be a relative path).
+        this.setBitRateType(audioFile.isVbr() ? BitRateType.VBR : BitRateType.CBR).
+          setBitrate(audioFile.getBitrate()).
+          setSize(audioFile.getLength()).
+          setDuration((int) audioFile.getLengthInSeconds());
+
+        ID3Wrapper wrapper = new ID3Wrapper(audioFile.getId3v1Tag(), audioFile.getId3v2Tag());
+
+        byte[] albumImage = wrapper.getAlbumImage();
+
+        if (albumImage != null) {
+           setAlbumImageMimeType(wrapper.getAlbumImageMimeType()).
+           setAlbumImage(albumImage);
+        }
     }
 
     public boolean isValid() {
@@ -147,6 +168,11 @@ public class MusicFile extends Model {
 
     public MusicFile setAlbumImage(Byte[] albumImage) {
         this.albumImage = albumImage;
+        return this;
+    }
+
+    public MusicFile setAlbumImage(byte[] albumImage) {
+        this.albumImage = Conv.byteToByte(albumImage);
         return this;
     }
 

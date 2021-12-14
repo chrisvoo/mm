@@ -1,14 +1,12 @@
 package models;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import utils.Conv;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public abstract class Schema<T> {
@@ -100,6 +98,29 @@ public abstract class Schema<T> {
     }
 
     /**
+     * Produces the DELETE statement for a model using its defined schema.
+     * @return The SQL with fields names and placeholders.
+     */
+    public String getSqlForDelete() {
+        List<String> pList = new ArrayList<>(Collections.nCopies(this.primaryKeys.size(), "%s = ?"));
+        for (int i = 0; i < pList.size(); i++) {
+            pList.set(i, String.format(pList.get(i), this.primaryKeys.get(i)));
+        }
+
+        String whereStatement = (pList.size() == 1)
+          ? "WHERE " + pList.get(0)
+          : "WHERE " + String.join(" AND ", pList);
+
+        String sql = String.format(
+          "DELETE FROM %s %s",
+          this.tableName(), whereStatement
+        );
+
+        logger.fine(sql);
+        return sql;
+    }
+
+    /**
      * Returns the long value from a resultset
      * @param rs The resultset
      * @param field The field name
@@ -170,13 +191,7 @@ public abstract class Schema<T> {
      */
     protected Byte[] getBytes(ResultSet rs, String field) throws SQLException {
         byte[] num = rs.getBytes(field);
-        if (num == null) {
-            return null;
-        }
-
-        return IntStream.range(0, num.length)
-              .mapToObj(i -> num[i])
-              .toArray(Byte[]::new);
+        return Conv.byteToByte(num);
     }
 
     /**
@@ -187,15 +202,26 @@ public abstract class Schema<T> {
      * @throws SQLException An exception that provides information on a database access error or other errors.
      */
     protected void setBytes(PreparedStatement stmt, Byte[] num, int index) throws SQLException {
-        if (num != null) {
-            byte[] bytes = new byte[num.length];
-            int i=0;
-            for(byte b: bytes)
-                num[i++] = b;
-
+        byte[] bytes = Conv.ByteTobyte(num);
+        if (bytes != null) {
             stmt.setBytes(index, bytes);
         } else {
             stmt.setNull(index, Types.BLOB);
+        }
+    }
+
+    /**
+     * Sets a placeholder of a prepared statement.
+     * @param stmt The prepared statement.
+     * @param num The short value.
+     * @param index The index
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    protected void setTimestamp(PreparedStatement stmt, Timestamp ts, int index) throws SQLException {
+        if (ts != null) {
+            stmt.setTimestamp(index, ts);
+        } else {
+            stmt.setNull(index, Types.TIMESTAMP);
         }
     }
 
