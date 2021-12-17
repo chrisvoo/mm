@@ -35,6 +35,7 @@ public class Db {
         ds.setPassword(envVars.getMysqlPass());
         ds.setDefaultAutoCommit(true);
         ds.setAutoCommitOnReturn(true);
+        ds.setConnectionProperties("useUnicode=true;characterEncoding=UTF-8;rewriteBatchedStatements=true;");
         ds.setDefaultQueryTimeout(5);
         ds.setInitialSize(0); // The initial number of connections that are created when the pool is started.
         ds.setMaxTotal(20);   // The maximum number of active connections that can be allocated from this pool at the same time, or negative for no limit.

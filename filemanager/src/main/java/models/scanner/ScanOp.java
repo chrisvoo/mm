@@ -24,8 +24,18 @@ public class ScanOp extends Model {
      */
     private List<ScanOpError> scanErrors;
 
-    public static String tableName() {
-        return "scan_ops";
+    public boolean isValid() {
+        if (!super.isValid()) {
+            // error types are already configured in the parent class.
+            return false;
+        }
+
+        this.positiveNumberValidator("totalFilesScanned", this.totalFilesScanned);
+        this.positiveNumberValidator("totalFilesInserted", this.totalFilesInserted);
+        this.positiveNumberValidator("totalElapsedTime", this.totalElapsedTime);
+        this.positiveNumberValidator("totalBytes", this.totalBytes);
+
+        return this.errorCode == null;
     }
 
     public Integer getTotalFilesInserted() {
@@ -122,7 +132,7 @@ public class ScanOp extends Model {
      * @param numFiles Total number of files.
      * @return This instance.
      */
-    public ScanOp joinScannedFiles(long numFiles) {
+    public ScanOp joinScannedFiles(Integer numFiles) {
         totalFilesScanned += numFiles;
         return this;
     }

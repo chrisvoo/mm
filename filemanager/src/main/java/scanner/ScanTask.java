@@ -3,6 +3,7 @@ package scanner;
 import com.mpatric.mp3agic.Mp3File;
 import models.files.MusicFile;
 import models.scanner.ScanOp;
+import utils.Db;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import java.util.concurrent.RecursiveTask;
 
 public class ScanTask extends RecursiveTask<ScanOp> {
   private List<Path> paths;
+  private Db db;
 
-  public ScanTask(List<Path> paths) {
+  public ScanTask(List<Path> paths, Db db) {
     this.paths = paths;
+    this.db = db;
   }
 
   private void parsePath(Path path, List<MusicFile> docs, ScanOp result) {
@@ -24,6 +27,7 @@ public class ScanTask extends RecursiveTask<ScanOp> {
     } catch (Exception e) {
       // insert error in ScanOpError
       audioFile = new MusicFile();
+      audioFile.calculateSize(path);
     }
 
     audioFile.setAbsolutePath(path.normalize().toAbsolutePath().toString());
@@ -32,6 +36,10 @@ public class ScanTask extends RecursiveTask<ScanOp> {
     result
       .joinScannedFiles(1)
       .joinBytes(audioFile.getSize());
+  }
+
+  private void saveIntoDb(List<MusicFile> docs, ScanOp result) {
+
   }
 
   private ScanOp forkJoinComputation(ScanOp result) throws Throwable {
@@ -44,15 +52,15 @@ public class ScanTask extends RecursiveTask<ScanOp> {
       }
 
       if (!docs.isEmpty()) {
-//        saveIntoDb(docs, result);
+        this.saveIntoDb(docs, result);
       }
     } else {
       // otherwise it split the job in two tasks
       List<Path> subset1 = paths.subList(0, paths.size() / 2);
-      ScanTask subTaskOne = new ScanTask(subset1);
+      ScanTask subTaskOne = new ScanTask(subset1, db);
 
       List<Path> subset2 = paths.subList(paths.size() / 2, paths.size());
-      ScanTask subTaskTwo = new ScanTask(subset2);
+      ScanTask subTaskTwo = new ScanTask(subset2, db);
 
       invokeAll(subTaskOne, subTaskTwo);
 

@@ -32,6 +32,22 @@ public abstract class Schema<T> {
     }
 
     /**
+     * Return all fields but the ones specified in the exclusion list
+     * @param exclusionList A list of fields to be excluded.
+     * @return The final desired list.
+     */
+    public List<String> getFields(List<String> exclusionList) {
+        if (exclusionList.isEmpty()) {
+            return this.fields;
+        }
+
+        // do not modify the original list
+        List<String> newList = new ArrayList<>(this.fields);
+        newList.removeAll(exclusionList);
+        return newList;
+    }
+
+    /**
      * List of primary keys
      * @return The primary keys.
      */

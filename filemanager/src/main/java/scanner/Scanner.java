@@ -1,6 +1,8 @@
 package scanner;
 
+import com.google.inject.Inject;
 import models.scanner.ScanOp;
+import utils.Db;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ public class Scanner extends Thread {
   private static final Logger logger = Logger.getLogger(Scanner.class.getName());
   private ArrayList<Path> files = new ArrayList<>();
   private Path targetDirectory;
+  @Inject private Db db;
 
   public Scanner() {
     super("Scanner");
@@ -49,7 +52,7 @@ public class Scanner extends Thread {
     logger.info(String.format("Running scanner with a pool of %d threads\n", nThreads));
     ForkJoinPool pool = new ForkJoinPool(nThreads);
 
-    ScanTask task = new ScanTask(files);
+    ScanTask task = new ScanTask(files, db);
     return pool.invoke(task);
   }
 

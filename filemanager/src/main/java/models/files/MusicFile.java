@@ -1,15 +1,21 @@
 package models.files;
 
 import com.google.gson.GsonBuilder;
-import com.mpatric.mp3agic.ID3Wrapper;
-import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.*;
 import models.Model;
 import utils.Conv;
 import utils.StrictEnumTypeAdapterFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MusicFile extends Model {
+    private static final Logger logger = Logger.getLogger(MusicFile.class.getName());
+
     private Long id;
     private String absolutePath;
     private Long size;
@@ -28,6 +34,10 @@ public class MusicFile extends Model {
         this.requiredFields = List.of("absolutePath");
     }
 
+    /**
+     * This initialize all the class properties parsing the MP3 file metadata
+     * @param audioFile an instance of this class.
+     */
     public MusicFile(Mp3File audioFile) {
         // Note: the absolute path is set by ScanTask, since Mp3File just return what
         // Path#toString returns (which may be a relative path).
@@ -43,6 +53,40 @@ public class MusicFile extends Model {
         if (albumImage != null) {
            setAlbumImageMimeType(wrapper.getAlbumImageMimeType()).
            setAlbumImage(albumImage);
+        }
+
+        setGenre(wrapper.getGenreDescription());
+
+        if (wrapper.getArtist() != null && !wrapper.getArtist().isBlank()) {
+            setArtist(wrapper.getArtist().trim());
+        } else if (wrapper.getAlbumArtist() != null && !wrapper.getAlbumArtist().isBlank()) {
+            setArtist(wrapper.getAlbumArtist().trim());
+        }
+
+        setTitle(wrapper.getTitle()).
+        setAlbum(wrapper.getAlbum());
+
+        String year = wrapper.getYear();
+        try {
+            if (year == null || year.trim().isBlank()) {
+                if (audioFile.hasId3v2Tag()) {
+                    AbstractID3v2Tag tag = ID3v2TagFactory.createTag(
+                      Files.readAllBytes(
+                        Paths.get(audioFile.getFilename())
+                      )
+                    );
+
+                    if (tag instanceof ID3v24Tag theTag) {
+                        year = theTag.getRecordingTime();
+                    }
+                }
+            }
+
+            if (year != null && year.matches("\\d{4}(-\\d{2}-\\d{2}(\\s\\d{2}:\\d{2}:\\d{2})?)?")) {
+                setYear(Short.parseShort(year.substring(0, 4)));
+            }
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
         }
     }
 
@@ -183,6 +227,21 @@ public class MusicFile extends Model {
     public MusicFile setAlbumImageMimeType(String albumImageMimeType) {
         this.albumImageMimeType = albumImageMimeType;
         return this;
+    }
+
+    /**
+     * In case the metadata aren't readable, call this method to get the file's size.
+     * @param p The Path.
+     */
+    public void calculateSize(Path p) {
+        try {
+            this.size = Files.size(p);
+        } catch (IOException e) {
+            logger.severe(
+              "Cannot read file's size for " +
+                p.toFile().getName() + ": " + e.getMessage()
+            );
+        }
     }
 
     public static MusicFile fromJson(String json) {

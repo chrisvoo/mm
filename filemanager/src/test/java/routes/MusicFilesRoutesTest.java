@@ -80,7 +80,7 @@ public class MusicFilesRoutesTest {
     }
 
     @Test @Order(3)
-    public void updateBandTest(TestReporter rep) throws URISyntaxException, IOException, InterruptedException {
+    public void updateFileTest(TestReporter rep) throws URISyntaxException, IOException, InterruptedException {
         String json = """
               {
                 "absolutePath": "/data/file.mp3",

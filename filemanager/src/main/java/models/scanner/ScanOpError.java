@@ -13,11 +13,7 @@ public class ScanOpError extends Model {
     private Timestamp createdAt;
 
     public ScanOpError() {
-        this.requiredFields = List.of("scanOpId");
-    }
-
-    public static String tableName() {
-        return "scan_ops_errors";
+        this.requiredFields = List.of("scanOpId", "message");
     }
 
     public Long getId() {

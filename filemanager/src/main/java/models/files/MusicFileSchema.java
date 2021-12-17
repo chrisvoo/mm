@@ -58,7 +58,7 @@ public class MusicFileSchema extends Schema<MusicFile> {
         return file;
     }
 
-    public void setStatementValues(PreparedStatement stmt, MusicFile instance) throws SQLException {
+    private int setSharedStatementValues(PreparedStatement stmt, MusicFile instance) throws SQLException {
         int index = 0;
         stmt.setString(++index, instance.getAbsolutePath());
         this.setLong(stmt, instance.getSize(), ++index);
@@ -72,9 +72,27 @@ public class MusicFileSchema extends Schema<MusicFile> {
         stmt.setString(++index, instance.getTitle());
         this.setBytes(stmt, instance.getAlbumImage(), ++index);
         stmt.setString(++index, instance.getAlbumImageMimeType());
+        return index;
+    }
+
+    public void setStatementValues(PreparedStatement stmt, MusicFile instance) throws SQLException {
+        int index = this.setSharedStatementValues(stmt, instance);
 
         if (instance.getId() != null) {
             stmt.setLong(++index, instance.getId());
+        }
+    }
+
+    /**
+     * Particular case useful just for this class. Bulk save of music files.
+     * @param stmt The prepared statement.
+     * @param files A list of files to be saved.
+     */
+    public void setStatementValuesForBatch(PreparedStatement stmt, List<MusicFile> files) throws SQLException {
+        for (MusicFile instance: files) {
+           int index = this.setSharedStatementValues(stmt, instance);
+           stmt.setString(++index, instance.getAbsolutePath());
+           stmt.addBatch();
         }
     }
 }

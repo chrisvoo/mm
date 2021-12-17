@@ -2,6 +2,8 @@ package services;
 
 import models.files.MusicFile;
 
+import java.util.List;
+
 public interface MusicFileService {
     /**
      * Return a file by its primary key
@@ -16,6 +18,13 @@ public interface MusicFileService {
      * @return The music file's primary key on success, an exception otherwise
      */
     MusicFile save(MusicFile file);
+
+    /**
+     * Insert multiple files in the database or update the records in case there's a constraint error.
+     * @param files a list of files.
+     * @return an array of update counts
+     */
+    int[] bulkSave(List<MusicFile> files);
 
     /**
      * Delete a music file.

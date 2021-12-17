@@ -1,6 +1,6 @@
 CREATE TABLE music_files (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    absolute_path VARCHAR(1000) NOT NULL,
+    absolute_path VARCHAR(500) NOT NULL,
     size INT UNSIGNED COMMENT 'Bytes', 
     bitrate SMALLINT UNSIGNED DEFAULT NULL,
     bitrate_type ENUM('CBR', 'VBR') DEFAULT NULL,
@@ -13,7 +13,8 @@ CREATE TABLE music_files (
     album_image MEDIUMBLOB,
     album_image_mime_type VARCHAR(20),
     
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    UNIQUE(absolute_path)
 ) ENGINE=InnoDB;
 
 CREATE TABLE musicbrainz_files (
@@ -52,7 +53,7 @@ CREATE TABLE scan_ops (
 CREATE TABLE scan_ops_errors (
     id BIGINT NOT NULL AUTO_INCREMENT,
     scan_op_id BIGINT NOT NULL,
-    message TEXT,
+    message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
 
     PRIMARY KEY (id),

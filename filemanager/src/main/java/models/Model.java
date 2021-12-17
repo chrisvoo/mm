@@ -33,6 +33,12 @@ public abstract class Model {
         }
     }
 
+    protected void positiveNumberValidator(String fieldName, Long num) {
+        if (num != null) {
+            this.positiveNumberValidator(fieldName, num.intValue());
+        }
+    }
+
     protected void positiveNumberValidator(String fieldName, Integer num) {
         if (num != null && num < 0) {
             this.errorCode = ModelException.INVALID_FIELDS;
