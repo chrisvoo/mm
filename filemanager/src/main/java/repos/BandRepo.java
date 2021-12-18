@@ -125,9 +125,8 @@ public class BandRepo implements BandService {
      */
     @Override
     public boolean delete(long id) {
-        String sql = String.format(
-          "DELETE FROM %s WHERE id = ?", schema.tableName()
-        );
+        String sql = schema.getSqlForDelete();
+
         try (
           Connection conn = db.getConnection();
           PreparedStatement stmt = conn.prepareStatement(sql);

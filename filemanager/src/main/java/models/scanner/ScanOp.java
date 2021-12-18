@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import models.Model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,10 +13,10 @@ import java.util.List;
 public class ScanOp extends Model {
     private Long id;
     private Timestamp started;
-    private Integer totalFilesScanned;
-    private Integer totalFilesInserted;
-    private Short totalElapsedTime;
-    private Long totalBytes;
+    private int totalFilesScanned;
+    private int totalFilesInserted;
+    private short totalElapsedTime;
+    private long totalBytes;
     private Timestamp finished;
     private Boolean hasErrors;
 
@@ -38,15 +39,15 @@ public class ScanOp extends Model {
         return this.errorCode == null;
     }
 
-    public Integer getTotalFilesInserted() {
+    public int getTotalFilesInserted() {
         return totalFilesInserted;
     }
 
-    public Short getTotalElapsedTime() {
+    public short getTotalElapsedTime() {
         return totalElapsedTime;
     }
 
-    public ScanOp setTotalElapsedTime(Short totalElapsedTime) {
+    public ScanOp setTotalElapsedTime(short totalElapsedTime) {
         this.totalElapsedTime = totalElapsedTime;
         return this;
     }
@@ -55,7 +56,7 @@ public class ScanOp extends Model {
         return hasErrors;
     }
 
-    public ScanOp setTotalFilesInserted(Integer totalFilesInserted) {
+    public ScanOp setTotalFilesInserted(int totalFilesInserted) {
         this.totalFilesInserted = totalFilesInserted;
         return this;
     }
@@ -87,20 +88,20 @@ public class ScanOp extends Model {
         return this;
     }
 
-    public Integer getTotalFilesScanned() {
+    public int getTotalFilesScanned() {
         return totalFilesScanned;
     }
 
-    public ScanOp setTotalFilesScanned(Integer totalFilesScanned) {
+    public ScanOp setTotalFilesScanned(int totalFilesScanned) {
         this.totalFilesScanned = totalFilesScanned;
         return this;
     }
 
-    public Long getTotalBytes() {
+    public long getTotalBytes() {
         return totalBytes;
     }
 
-    public ScanOp setTotalBytes(Long totalBytes) {
+    public ScanOp setTotalBytes(long totalBytes) {
         this.totalBytes = totalBytes;
         return this;
     }
@@ -132,7 +133,7 @@ public class ScanOp extends Model {
      * @param numFiles Total number of files.
      * @return This instance.
      */
-    public ScanOp joinScannedFiles(Integer numFiles) {
+    public ScanOp joinScannedFiles(int numFiles) {
         totalFilesScanned += numFiles;
         return this;
     }
@@ -168,6 +169,9 @@ public class ScanOp extends Model {
         }
 
         if (!errors.isEmpty()) {
+            if (this.scanErrors == null) {
+                this.scanErrors = new ArrayList<>();
+            }
             this.scanErrors.addAll(errors);
         }
         return this;

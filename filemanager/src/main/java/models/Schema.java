@@ -229,7 +229,7 @@ public abstract class Schema<T> {
     /**
      * Sets a placeholder of a prepared statement.
      * @param stmt The prepared statement.
-     * @param num The short value.
+     * @param ts The timestamp value.
      * @param index The index
      * @throws SQLException An exception that provides information on a database access error or other errors.
      */

@@ -35,10 +35,10 @@ public class ScanOpSchema extends Schema<ScanOp> {
         return new ScanOp()
             .setId(this.getLong(rs, ScanOpSchema.ID))
             .setStarted(rs.getTimestamp(ScanOpSchema.STARTED))
-            .setTotalFilesScanned(this.getInt(rs, ScanOpSchema.TOTAL_FILES_SCANNED))
-            .setTotalFilesInserted(this.getInt(rs, ScanOpSchema.TOTAL_FILES_INSERTED))
-            .setTotalElapsedTime(this.getShort(rs, ScanOpSchema.TOTAL_ELAPSED_TIME))
-            .setTotalBytes(this.getLong(rs, ScanOpSchema.TOTAL_BYTES))
+            .setTotalFilesScanned(rs.getInt(ScanOpSchema.TOTAL_FILES_SCANNED))
+            .setTotalFilesInserted(rs.getInt(ScanOpSchema.TOTAL_FILES_INSERTED))
+            .setTotalElapsedTime(rs.getShort(ScanOpSchema.TOTAL_ELAPSED_TIME))
+            .setTotalBytes(rs.getLong(ScanOpSchema.TOTAL_BYTES))
             .setFinished(rs.getTimestamp(ScanOpSchema.FINISHED))
             .setHasErrors(rs.getBoolean(ScanOpSchema.HAS_ERRORS));
     }
@@ -46,10 +46,10 @@ public class ScanOpSchema extends Schema<ScanOp> {
     public void setStatementValues(PreparedStatement stmt, ScanOp instance) throws SQLException {
         int index = 0;
         this.setTimestamp(stmt, instance.getStarted(), ++index);
-        this.setInt(stmt, instance.getTotalFilesScanned(), ++index);
-        this.setInt(stmt, instance.getTotalFilesInserted(), ++index);
-        this.setShort(stmt, instance.getTotalElapsedTime(), ++index);
-        this.setLong(stmt, instance.getTotalBytes(), ++index);
+        stmt.setInt(++index, instance.getTotalFilesScanned());
+        stmt.setInt(++index, instance.getTotalFilesInserted());
+        stmt.setShort(++index, instance.getTotalElapsedTime());
+        stmt.setLong(++index, instance.getTotalBytes());
         this.setTimestamp(stmt, instance.getFinished(), ++index);
 
         stmt.setBoolean(++index, instance.getHasErrors());

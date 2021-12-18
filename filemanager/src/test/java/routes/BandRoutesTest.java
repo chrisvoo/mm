@@ -100,4 +100,13 @@ public class BandRoutesTest {
         assertNull(band.getTwitter());
         assertEquals("http://website.com", band.getWebsite());
     }
+
+    @Test @Order(4)
+    public void deleteBandTest(TestReporter rep) throws URISyntaxException, IOException, InterruptedException {
+        assertNotNull(this.bandId);
+        HttpResponse<String> response = client.sendDelete("/bands/band/" + this.bandId);
+        String originalBody = response.body();
+        rep.publishEntry(originalBody);
+        assertEquals("true", originalBody);
+    }
 }
