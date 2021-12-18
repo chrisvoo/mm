@@ -158,6 +158,19 @@ public class ScanOp extends Model {
         return this;
     }
 
+    public ScanOp joinError(ScanOpError error) {
+        if (error == null) {
+            return this;
+        }
+
+        if (this.scanErrors == null) {
+            this.scanErrors = new ArrayList<>();
+        }
+
+        this.scanErrors.add(error);
+        return this;
+    }
+
     /**
      * It merges the current errors occurred for this result with the ones of another result.
      * @param errors A map of errors

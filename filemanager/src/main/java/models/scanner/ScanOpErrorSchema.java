@@ -10,6 +10,7 @@ import java.util.List;
 public class ScanOpErrorSchema extends Schema<ScanOpError> {
     public static final String ID = "id";
     public static final String SCAN_OP_ID = "scan_op_id";
+    public static final String ABSOLUTE_PATH = "absolute_path";
     public static final String MESSAGE = "message";
     public static final String CREATED_AT = "created_at";
 
@@ -29,12 +30,14 @@ public class ScanOpErrorSchema extends Schema<ScanOpError> {
             .setId(this.getLong(rs, ScanOpErrorSchema.ID))
             .setScanOpId(rs.getLong(ScanOpErrorSchema.SCAN_OP_ID))
             .setMessage(rs.getString(ScanOpErrorSchema.MESSAGE))
+            .setAbsolutePath(rs.getString(ScanOpErrorSchema.ABSOLUTE_PATH))
             .setCreatedAt(rs.getTimestamp(ScanOpErrorSchema.CREATED_AT));
     }
 
     public void setStatementValues(PreparedStatement stmt, ScanOpError instance) throws SQLException {
         int index = 0;
         stmt.setLong(++index, instance.getScanOpId());
+        stmt.setString(++index, instance.getAbsolutePath());
         stmt.setString(++index, instance.getMessage());
         this.setTimestamp(stmt, instance.getCreatedAt(), ++index);
 

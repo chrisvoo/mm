@@ -31,7 +31,7 @@ public class Scanner extends Thread {
   }
 
   public void run() {
-     this.start(this.targetDirectory);
+     this.scan(this.targetDirectory);
   }
 
   /**
@@ -40,7 +40,7 @@ public class Scanner extends Thread {
    * @return a ScanResult instance containing the total files found, the total
    * size and eventual errors encountered during the process
    */
-  public ScanOp start(Path chosenPath) {
+  public ScanOp scan(Path chosenPath) {
     boolean isListOk = listFiles(chosenPath);
     if (!isListOk) {
       return null;

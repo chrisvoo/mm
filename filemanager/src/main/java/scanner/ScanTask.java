@@ -3,6 +3,7 @@ package scanner;
 import com.mpatric.mp3agic.Mp3File;
 import models.files.MusicFile;
 import models.scanner.ScanOp;
+import models.scanner.ScanOpError;
 import utils.Db;
 
 import java.nio.file.Path;
@@ -21,16 +22,24 @@ public class ScanTask extends RecursiveTask<ScanOp> {
 
   private void parsePath(Path path, List<MusicFile> docs, ScanOp result) {
     MusicFile audioFile;
+    boolean hasErrors = false;
     try {
       // If for some reasons, metadata aren't readable, we just store the file path
       audioFile = new MusicFile(new Mp3File(path));
     } catch (Exception e) {
-      // insert error in ScanOpError
-      audioFile = new MusicFile();
-      audioFile.calculateSize(path);
+      String filePath = path.normalize().toAbsolutePath().toString();
+      audioFile = new MusicFile()
+        .setAbsolutePath(filePath)
+        .calculateSize(path);
+
+      result
+        .joinError(
+            new ScanOpError()
+              .setMessage(e.getMessage())
+              .setAbsolutePath(filePath)
+        );
     }
 
-    audioFile.setAbsolutePath(path.normalize().toAbsolutePath().toString());
     docs.add(audioFile);
 
     result

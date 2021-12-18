@@ -10,8 +10,9 @@ public class ScanOpErrorTest {
         ScanOpError sop = new ScanOpError();
         Assertions.assertFalse(sop.isValid());
 
-        sop.setScanOpId(5L);
-        sop.setMessage("hey");
+        sop.setScanOpId(5L)
+          .setMessage("hey")
+            .setAbsolutePath("path");
         Assertions.assertTrue(sop.isValid());
     }
 }

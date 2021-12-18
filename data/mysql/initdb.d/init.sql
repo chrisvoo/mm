@@ -53,6 +53,7 @@ CREATE TABLE scan_ops (
 CREATE TABLE scan_ops_errors (
     id BIGINT NOT NULL AUTO_INCREMENT,
     scan_op_id BIGINT NOT NULL,
+    absolute_path VARCHAR(500) NOT NULL,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
 

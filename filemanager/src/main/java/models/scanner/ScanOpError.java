@@ -8,12 +8,23 @@ import java.util.List;
 
 public class ScanOpError extends Model {
     private Long id;
+    private String absolutePath;
     private Long scanOpId;
     private String message;
     private Timestamp createdAt;
 
+
     public ScanOpError() {
-        this.requiredFields = List.of("scanOpId", "message");
+        this.requiredFields = List.of("scanOpId", "message", "absolutePath");
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    public ScanOpError setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
+        return this;
     }
 
     public Long getId() {

@@ -44,7 +44,8 @@ public class MusicFile extends Model {
         this.setBitRateType(audioFile.isVbr() ? BitRateType.VBR : BitRateType.CBR).
           setBitrate(audioFile.getBitrate()).
           setSize(audioFile.getLength()).
-          setDuration((int) audioFile.getLengthInSeconds());
+          setDuration((int) audioFile.getLengthInSeconds()).
+          setAbsolutePath(audioFile.getFilename());
 
         ID3Wrapper wrapper = new ID3Wrapper(audioFile.getId3v1Tag(), audioFile.getId3v2Tag());
 
@@ -233,7 +234,7 @@ public class MusicFile extends Model {
      * In case the metadata aren't readable, call this method to get the file's size.
      * @param p The Path.
      */
-    public void calculateSize(Path p) {
+    public MusicFile calculateSize(Path p) {
         try {
             this.size = Files.size(p);
         } catch (IOException e) {
@@ -242,6 +243,7 @@ public class MusicFile extends Model {
                 p.toFile().getName() + ": " + e.getMessage()
             );
         }
+        return this;
     }
 
     public static MusicFile fromJson(String json) {
