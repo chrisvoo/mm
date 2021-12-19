@@ -1,28 +1,31 @@
 package scanner;
 
+import com.google.inject.Inject;
 import com.mpatric.mp3agic.Mp3File;
 import models.files.MusicFile;
 import models.scanner.ScanOp;
 import models.scanner.ScanOpError;
-import utils.Db;
+import services.MusicFileService;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
+import java.util.logging.Logger;
 
 public class ScanTask extends RecursiveTask<ScanOp> {
+  private static final Logger logger = Logger.getLogger(ScanTask.class.getName());
   private List<Path> paths;
-  private Db db;
+  @Inject private MusicFileService musicFileService;
 
-  public ScanTask(List<Path> paths, Db db) {
+  public ScanTask setPaths(List<Path> paths) {
     this.paths = paths;
-    this.db = db;
+    return this;
   }
 
   private void parsePath(Path path, List<MusicFile> docs, ScanOp result) {
     MusicFile audioFile;
-    boolean hasErrors = false;
+
     try {
       // If for some reasons, metadata aren't readable, we just store the file path
       audioFile = new MusicFile(new Mp3File(path));
@@ -48,7 +51,8 @@ public class ScanTask extends RecursiveTask<ScanOp> {
   }
 
   private void saveIntoDb(List<MusicFile> docs, ScanOp result) {
-
+    long upserts= this.musicFileService.bulkSave(docs);
+    result.joinInsertedFiles(upserts);
   }
 
   private ScanOp forkJoinComputation(ScanOp result) throws Throwable {
@@ -66,10 +70,10 @@ public class ScanTask extends RecursiveTask<ScanOp> {
     } else {
       // otherwise it split the job in two tasks
       List<Path> subset1 = paths.subList(0, paths.size() / 2);
-      ScanTask subTaskOne = new ScanTask(subset1, db);
+      ScanTask subTaskOne = new ScanTask().setPaths(subset1);
 
       List<Path> subset2 = paths.subList(paths.size() / 2, paths.size());
-      ScanTask subTaskTwo = new ScanTask(subset2, db);
+      ScanTask subTaskTwo = new ScanTask().setPaths(subset2);
 
       invokeAll(subTaskOne, subTaskTwo);
 

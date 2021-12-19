@@ -143,7 +143,7 @@ public class ScanOp extends Model {
      * @param numFiles Total number of files.
      * @return This instance.
      */
-    public ScanOp joinInsertedFiles(int numFiles) {
+    public ScanOp joinInsertedFiles(long numFiles) {
         totalFilesInserted += numFiles;
         return this;
     }
@@ -205,5 +205,9 @@ public class ScanOp extends Model {
           .joinScannedFiles(result.getTotalFilesScanned())
           .joinInsertedFiles(result.getTotalFilesInserted())
           .joinBytes(result.getTotalBytes());
+    }
+
+    public String toString() {
+        return new Gson().toJson(this);
     }
 }

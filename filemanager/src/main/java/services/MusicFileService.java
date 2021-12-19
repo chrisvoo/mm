@@ -24,7 +24,7 @@ public interface MusicFileService {
      * @param files a list of files.
      * @return an array of update counts
      */
-    int[] bulkSave(List<MusicFile> files);
+    long bulkSave(List<MusicFile> files);
 
     /**
      * Delete a music file.

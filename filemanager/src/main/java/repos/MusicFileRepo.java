@@ -9,6 +9,7 @@ import services.MusicFileService;
 import utils.Db;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -119,15 +120,21 @@ public class MusicFileRepo implements MusicFileService {
     }
 
     @Override
-    public int[] bulkSave(List<MusicFile> files) {
-        String sql = schema.getSqlForInsert() + " ON DUPLICATE KEY UPDATE " +
+    public long bulkSave(List<MusicFile> files) {
+        String sql = schema.getSqlForInsert() + " ON DUPLICATE KEY " +
                      "UPDATE " + MusicFileSchema.ABSOLUTE_PATH  + " = ?";
+        logger.fine(sql);
         try (
           Connection conn = db.getConnection();
           PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             schema.setStatementValuesForBatch(stmt, files);
-            return stmt.executeBatch();
+            // A number greater than or equal to zero -- indicates that the command was processed
+            // successfully and is an update count giving the number of rows in the database that
+            // were affected by the command's execution
+            return Arrays.stream(
+              stmt.executeBatch()
+            ).boxed().filter(r -> r == 1).count();
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);

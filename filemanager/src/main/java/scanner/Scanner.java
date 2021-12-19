@@ -1,8 +1,9 @@
 package scanner;
 
-import com.google.inject.Inject;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import models.scanner.ScanOp;
-import utils.Db;
+import utils.FileManagerModule;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -19,7 +20,6 @@ public class Scanner extends Thread {
   private static final Logger logger = Logger.getLogger(Scanner.class.getName());
   private ArrayList<Path> files = new ArrayList<>();
   private Path targetDirectory;
-  @Inject private Db db;
 
   public Scanner() {
     super("Scanner");
@@ -31,7 +31,7 @@ public class Scanner extends Thread {
   }
 
   public void run() {
-     this.scan(this.targetDirectory);
+     this.scan();
   }
 
   /**
@@ -40,8 +40,8 @@ public class Scanner extends Thread {
    * @return a ScanResult instance containing the total files found, the total
    * size and eventual errors encountered during the process
    */
-  public ScanOp scan(Path chosenPath) {
-    boolean isListOk = listFiles(chosenPath);
+  public ScanOp scan() {
+    boolean isListOk = listFiles(this.targetDirectory);
     if (!isListOk) {
       return null;
     }
@@ -52,8 +52,11 @@ public class Scanner extends Thread {
     logger.info(String.format("Running scanner with a pool of %d threads\n", nThreads));
     ForkJoinPool pool = new ForkJoinPool(nThreads);
 
-    ScanTask task = new ScanTask(files, db);
-    return pool.invoke(task);
+    // this allows to inject all the things we need in ScanTask
+    Injector injector = Guice.createInjector(new FileManagerModule());
+    ScanTask task = injector.getInstance(ScanTask.class);
+
+    return pool.invoke(task.setPaths(this.files));
   }
 
   /**
