@@ -11,6 +11,8 @@ import services.ScannerService;
 import utils.Db;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ScannerRepo implements ScannerService {
@@ -148,6 +150,32 @@ public class ScannerRepo implements ScannerService {
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DbException("Failed to get the scanop", DbException.SQL_EXCEPTION);
+        }
+    }
+
+    @Override
+    public long bulkSave(List<ScanOpError> errors, long scanOpId) {
+        String sql = errorSchema.getSqlForInsert();
+        logger.fine(sql);
+
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            for (ScanOpError error : errors) {
+                errorSchema.setStatementValues(stmt, error.setScanOpId(scanOpId));
+                stmt.addBatch();
+            }
+
+            // A number greater than or equal to zero -- indicates that the command was processed
+            // successfully and is an update count giving the number of rows in the database that
+            // were affected by the command's execution
+            return Arrays.stream(
+              stmt.executeBatch()
+            ).boxed().filter(r -> r == 1).count();
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Updating ScanOpError bulk failed", DbException.SQL_EXCEPTION);
         }
     }
 }

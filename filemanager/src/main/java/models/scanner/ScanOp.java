@@ -18,7 +18,6 @@ public class ScanOp extends Model {
     private short totalElapsedTime;
     private long totalBytes;
     private Timestamp finished;
-    private Boolean hasErrors;
 
     /**
      * Transient property to link the join table.
@@ -52,10 +51,6 @@ public class ScanOp extends Model {
         return this;
     }
 
-    public Boolean getHasErrors() {
-        return hasErrors;
-    }
-
     public ScanOp setTotalFilesInserted(int totalFilesInserted) {
         this.totalFilesInserted = totalFilesInserted;
         return this;
@@ -68,6 +63,10 @@ public class ScanOp extends Model {
 
     public List<ScanOpError> getScanErrors() {
         return this.scanErrors;
+    }
+
+    public boolean hasErrors() {
+        return this.scanErrors != null && !this.scanErrors.isEmpty();
     }
 
     public Long getId() {
@@ -112,15 +111,6 @@ public class ScanOp extends Model {
 
     public ScanOp setFinished(Timestamp finished) {
         this.finished = finished;
-        return this;
-    }
-
-    public Boolean isHasErrors() {
-        return hasErrors;
-    }
-
-    public ScanOp setHasErrors(Boolean hasErrors) {
-        this.hasErrors = hasErrors;
         return this;
     }
 

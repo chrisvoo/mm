@@ -1,14 +1,18 @@
 package scanner;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import models.scanner.ScanOp;
+import services.ScannerService;
 import utils.FileManagerModule;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
@@ -20,6 +24,7 @@ public class Scanner extends Thread {
   private static final Logger logger = Logger.getLogger(Scanner.class.getName());
   private ArrayList<Path> files = new ArrayList<>();
   private Path targetDirectory;
+  @Inject private ScannerService scannerService;
 
   public Scanner() {
     super("Scanner");
@@ -41,6 +46,7 @@ public class Scanner extends Thread {
    * size and eventual errors encountered during the process
    */
   public ScanOp scan() {
+    Instant start = Instant.now();
     boolean isListOk = listFiles(this.targetDirectory);
     if (!isListOk) {
       return null;
@@ -56,7 +62,17 @@ public class Scanner extends Thread {
     Injector injector = Guice.createInjector(new FileManagerModule());
     ScanTask task = injector.getInstance(ScanTask.class);
 
-    return pool.invoke(task.setPaths(this.files));
+    ScanOp result = pool.invoke(task.setPaths(this.files));
+    Instant end = Instant.now();
+    result.setTotalElapsedTime((short)Duration.between(start, end).getSeconds());
+    ScanOp savedResult = scannerService.save(result);
+
+    if (result.hasErrors()) {
+      scannerService.bulkSave(result.getScanErrors(), savedResult.getId());
+    }
+
+    // save result in db
+    return savedResult;
   }
 
   /**

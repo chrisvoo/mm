@@ -113,3 +113,14 @@ CREATE TABLE band_members (
         REFERENCES musicians(id)
         ON UPDATE CASCADE ON DELETE CASCADE            
 ) ENGINE=InnoDB;
+
+CREATE TABLE users (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100),
+    email VARCHAR(100),
+    enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    PRIMARY KEY (id),
+    UNIQUE (username)
+) ENGINE=InnoDB;

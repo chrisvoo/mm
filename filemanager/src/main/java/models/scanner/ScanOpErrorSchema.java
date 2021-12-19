@@ -16,7 +16,8 @@ public class ScanOpErrorSchema extends Schema<ScanOpError> {
 
     public ScanOpErrorSchema() {
         this.fields = List.of(
-            ScanOpErrorSchema.SCAN_OP_ID, ScanOpErrorSchema.MESSAGE, ScanOpErrorSchema.CREATED_AT
+            ScanOpErrorSchema.SCAN_OP_ID, ScanOpErrorSchema.ABSOLUTE_PATH,
+            ScanOpErrorSchema.MESSAGE, ScanOpErrorSchema.CREATED_AT
         );
         this.primaryKeys = List.of(ScanOpErrorSchema.ID);
     }
