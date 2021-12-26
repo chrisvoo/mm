@@ -1,6 +1,8 @@
 package services;
 
 import models.files.MusicFile;
+import routes.utils.PaginatedResponse;
+import routes.utils.Pagination;
 
 import java.util.List;
 
@@ -33,5 +35,10 @@ public interface MusicFileService {
      */
     boolean delete(long id);
 
-    // TODO: cursor-based pagination
+    /**
+     * A pagination-enabled list of music files.
+     * @param pagination How to retrieve the results.
+     * @return The response with pagination info.
+     */
+    PaginatedResponse<MusicFile> getAll(Pagination pagination);
 }

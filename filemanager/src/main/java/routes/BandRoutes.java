@@ -30,7 +30,7 @@ public class BandRoutes extends routes.Route implements Router {
 
     private Route getById() {
         return (req, res) -> {
-            Long bandId = this.getLong("id", req);
+            Long bandId = this.getLongParam("id", req);
             if (bandId == null) {
                 return new ErrorResponse("id must be a number", ModelException.INVALID_FIELDS);
             }
@@ -50,7 +50,7 @@ public class BandRoutes extends routes.Route implements Router {
 
     private Route update() {
         return (req, res) -> {
-            Long bandId = this.getLong("id", req);
+            Long bandId = this.getLongParam("id", req);
             if (bandId == null) {
                 return new ErrorResponse("id must be a number", ModelException.INVALID_FIELDS);
             }
@@ -76,7 +76,7 @@ public class BandRoutes extends routes.Route implements Router {
 
     private Route deleteResource() {
         return (req, res) -> {
-            Long bandId = this.getLong("id", req);
+            Long bandId = this.getLongParam("id", req);
             if (bandId == null) {
                 return new ErrorResponse("'id' must be a number", ModelException.INVALID_FIELDS);
             }

@@ -5,17 +5,19 @@ import exceptions.DbException;
 import exceptions.ModelException;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
+import routes.utils.PaginatedResponse;
+import routes.utils.Pagination;
+import routes.utils.PaginationMetadata;
 import services.MusicFileService;
-import utils.Db;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MusicFileRepo implements MusicFileService {
+public class MusicFileRepo extends Repo implements MusicFileService {
     private static final Logger logger = Logger.getLogger(MusicFileRepo.class.getName());
-    @Inject private Db db;
     @Inject private MusicFileSchema schema;
 
     /**
@@ -150,5 +152,69 @@ public class MusicFileRepo implements MusicFileService {
     @Override
     public boolean delete(long id) {
         return false;
+    }
+
+    /**
+     * A pagination-enabled list of music files.
+     *
+     * @param pagination How to retrieve the results.
+     * @return The response with pagination info.
+     */
+    @Override
+    public PaginatedResponse<MusicFile> getAll(Pagination pagination) {
+        MusicFileSchema schema = new MusicFileSchema();
+
+        String sql = String.format("SELECT * FROM %s", schema.tableName());
+        String countSql = "";
+        String cursor = pagination.getCursor(true);
+        long value = 0;
+        PaginationMetadata meta = new PaginationMetadata();
+
+        if (cursor != null) {
+            value = Long.parseLong(cursor);
+            sql += (pagination.getSortDir().equals("desc"))
+                    ? " WHERE id < ? " : " WHERE id > ? ";
+        } else {
+            countSql = sql;
+        }
+
+        // filters here in the future, copy sql to countSql
+        if (!countSql.isBlank()) {
+            meta.setTotalCount(this.count(countSql));
+        }
+
+        sql += "ORDER BY id " + pagination.getSortDir();
+        sql += " LIMIT " + (pagination.getCount() + 1);
+
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            if (cursor != null) {
+                stmt.setLong(1, value);
+            }
+
+            List<MusicFile> items = new ArrayList<>();
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    items.add(schema.getModelFromResultSet(rs));
+                }
+
+                PaginatedResponse<MusicFile> response = new PaginatedResponse<>();
+                response.setItems(items);
+                meta.setHasMoreData(items.size() == (pagination.getCount() + 1));
+
+                if (meta.isHasMoreData()) {
+                    long id = items.get(10).getId();
+                    meta.setNextCursor(id + "");
+                }
+
+                return response.setMetadata(meta);
+            }
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Cannot get list of files", DbException.SQL_EXCEPTION);
+        }
     }
 }

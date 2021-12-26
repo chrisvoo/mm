@@ -30,7 +30,7 @@ public class MusicFilesRoutes extends routes.Route implements Router {
 
     private Route getById() {
         return (req, res) -> {
-            Long fileId = this.getLong("id", req);
+            Long fileId = this.getLongParam("id", req);
             if (fileId == null) {
                 return new ErrorResponse("id must be a number", ModelException.INVALID_FIELDS);
             }
@@ -48,9 +48,15 @@ public class MusicFilesRoutes extends routes.Route implements Router {
         };
     }
 
+    private Route getAll() {
+        return (req, res) -> {
+            return null;
+        };
+    }
+
     private Route update() {
         return (req, res) -> {
-            Long fileId = this.getLong("id", req);
+            Long fileId = this.getLongParam("id", req);
             if (fileId == null) {
                 return new ErrorResponse("id must be a number", ModelException.INVALID_FIELDS);
             }
@@ -76,7 +82,7 @@ public class MusicFilesRoutes extends routes.Route implements Router {
 
     private Route deleteResource() {
         return (req, res) -> {
-            Long fileId = this.getLong("id", req);
+            Long fileId = this.getLongParam("id", req);
             if (fileId == null) {
                 return new ErrorResponse("'id' must be a number", ModelException.INVALID_FIELDS);
             }
@@ -92,6 +98,13 @@ public class MusicFilesRoutes extends routes.Route implements Router {
                 "application/json",
                 this.getById(),
                 new JsonTransformer()
+            );
+
+            get(
+              "/list",
+              "application/json",
+              this.getAll(),
+              new JsonTransformer()
             );
 
             post(
