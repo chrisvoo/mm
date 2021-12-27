@@ -1,11 +1,10 @@
 package models.files;
 
-import com.google.gson.Gson;
 import models.Model;
 
 import java.util.List;
 
-public class MusicBrainzFile extends Model {
+public class MusicBrainzFile extends Model<MusicBrainzFile> {
     private Long musicFileId;
     private String albumType;
     private String albumStatus;
@@ -16,42 +15,42 @@ public class MusicBrainzFile extends Model {
     private String albumReleaseCountry;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String workId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String albumId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String artistId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String albumArtistId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String releaseGroupId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String releaseTrackId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String recordingId;
 
     /**
-     * This is an UUID saved as binary in MySQL
+     * This is a UUID saved as binary in MySQL
      */
     private String acoustidId;
 
@@ -169,9 +168,5 @@ public class MusicBrainzFile extends Model {
     public MusicBrainzFile setAcoustidId(String acoustidId) {
         this.acoustidId = acoustidId;
         return this;
-    }
-
-    public static MusicBrainzFile fromJson(String json) {
-        return new Gson().fromJson(json, MusicBrainzFile.class);
     }
 }

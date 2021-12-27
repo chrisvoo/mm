@@ -64,7 +64,7 @@ public class Pagination extends QueryStringUtils {
   }
 
   private boolean isSortValid() {
-    return this.sortDir.toLowerCase().equals("desc") || this.sortDir.toLowerCase().equals("asc");
+    return this.sortDir.equalsIgnoreCase("desc") || this.sortDir.equalsIgnoreCase("asc");
   }
 
   public static Pagination fromRequest(Request req) {

@@ -1,13 +1,12 @@
 package routes;
 
-import static spark.Spark.*;
-
 import exceptions.FileManagerException;
 import models.utils.ErrorResponse;
 import org.eclipse.jetty.http.HttpStatus;
-import spark.ExceptionHandler;
 import spark.Route;
 import utils.JsonTransformer;
+
+import static spark.Spark.*;
 
 /**
  * 404/500 handlers

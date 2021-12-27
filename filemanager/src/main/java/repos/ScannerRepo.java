@@ -160,7 +160,7 @@ public class ScannerRepo implements ScannerService {
 
         try (
           Connection conn = db.getConnection();
-          PreparedStatement stmt = conn.prepareStatement(sql);
+          PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
             for (ScanOpError error : errors) {
                 errorSchema.setStatementValues(stmt, error.setScanOpId(scanOpId));

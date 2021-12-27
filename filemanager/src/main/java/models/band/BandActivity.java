@@ -1,12 +1,11 @@
 package models.band;
 
-import com.google.gson.Gson;
 import models.Model;
 
 import java.sql.Date;
 import java.util.List;
 
-public class BandActivity extends Model {
+public class BandActivity extends Model<BandActivity> {
     private Long bandId;
     private Date activeFrom;
     private Date activeTo;
@@ -44,9 +43,5 @@ public class BandActivity extends Model {
     public BandActivity setActiveTo(Date activeTo) {
         this.activeTo = activeTo;
         return this;
-    }
-
-    public static BandActivity fromJson(String json) {
-        return new Gson().fromJson(json, BandActivity.class);
     }
 }

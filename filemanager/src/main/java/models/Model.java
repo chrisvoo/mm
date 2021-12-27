@@ -1,5 +1,6 @@
 package models;
 
+import com.google.gson.GsonBuilder;
 import exceptions.ModelException;
 
 import java.lang.reflect.Field;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public abstract class Model {
+public abstract class Model<T> {
     private static final Logger logger = Logger.getLogger(Model.class.getName());
     protected transient List<String> requiredFields;
     protected transient Map<String, String> errors = new HashMap<>();
@@ -73,7 +74,7 @@ public abstract class Model {
                 try {
                     field.setAccessible(true);
                     Object value = field.get(this);
-                    boolean status = false;
+                    boolean status;
 
                     if (type.getTypeName().equals("java.lang.String")) {
                         status = value != null && value.toString().trim().length() > 0;
@@ -99,5 +100,19 @@ public abstract class Model {
         }
 
         return true;
+    }
+
+    /**
+     * Generic static method usable by all models. Write your own implementation if you need
+     * anything particular (see MusicFile#fromJson method as an example).
+     * @param json The JSON code.
+     * @param classOfT Target.
+     * @param <T> The Model's subclass
+     * @return A subclass instance represented by the JSON code.
+     */
+    public static <T> T fromJson(String json, Class<T> classOfT) {
+        return new GsonBuilder()
+          .create()
+          .fromJson(json, classOfT);
     }
 }

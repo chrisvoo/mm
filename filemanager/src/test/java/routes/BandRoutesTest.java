@@ -1,6 +1,7 @@
 package routes;
 
 import exceptions.DbException;
+import models.Model;
 import models.band.Band;
 import models.band.BandSchema;
 import models.utils.ErrorResponse;
@@ -58,7 +59,7 @@ public class BandRoutesTest {
         String originalBody = response.body();
         rep.publishEntry(originalBody);
 
-        Band band = Band.fromJson(originalBody);
+        Band band = Model.fromJson(originalBody, Band.class);
         assertInstanceOf(Long.class, band.getId());
         assertEquals("AC/DC", band.getName());
         assertEquals("AU", band.getCountry());
@@ -89,7 +90,7 @@ public class BandRoutesTest {
         String originalBody = response.body();
         rep.publishEntry(originalBody);
 
-        Band band = Band.fromJson(response.body());
+        Band band = Model.fromJson(response.body(), Band.class);
         assertInstanceOf(Long.class, band.getId());
         assertEquals("AC/DC", band.getName());
         assertEquals("US", band.getCountry());

@@ -29,7 +29,7 @@ public class DbHelper {
 
         try (
             Connection conn = db.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
             int affectedRows = stmt.executeUpdate();
             logger.fine(String.format("Deleted %d rows from %s", affectedRows, table));

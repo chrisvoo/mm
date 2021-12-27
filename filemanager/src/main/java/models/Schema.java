@@ -57,11 +57,10 @@ public abstract class Schema<T> {
 
     /**
      * Produces the INSERT statement for a model using its defined schema.
-     * @param includePrimaryKeys If the primary key should be included in the generated SQL.
      * @return The SQL with fields names and placeholders.
      */
-    public String getSqlForInsert(boolean includePrimaryKeys) {
-        List<String> finalFields = this.getFields(includePrimaryKeys);
+    public String getSqlForInsert() {
+        List<String> finalFields = this.getFields(false);
         String names = String.join(",", finalFields);
 
         List<String> list = new ArrayList<>(Collections.nCopies(finalFields.size(), "?"));
@@ -76,13 +75,6 @@ public abstract class Schema<T> {
         return sql;
     }
 
-    /**
-     * Produces the INSERT statement for a model using its defined schema.
-     * @return The SQL with fields names and placeholders.
-     */
-    public String getSqlForInsert() {
-        return this.getSqlForInsert(false);
-    }
 
     /**
      * Produces the UPDATE statement for a model using its defined schema.

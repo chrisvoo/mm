@@ -1,11 +1,10 @@
 package models.scanner;
 
-import com.google.gson.Gson;
 import models.Model;
 
 import java.util.List;
 
-public class ScanRequest extends Model {
+public class ScanRequest extends Model<ScanRequest> {
   private String directory;
 
   public ScanRequest() {
@@ -28,9 +27,5 @@ public class ScanRequest extends Model {
   public ScanRequest setDirectory(String directory) {
     this.directory = directory;
     return this;
-  }
-
-  public static ScanRequest fromJson(String json) {
-    return new Gson().fromJson(json, ScanRequest.class);
   }
 }

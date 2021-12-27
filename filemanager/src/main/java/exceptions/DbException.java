@@ -1,7 +1,5 @@
 package exceptions;
 
-import java.sql.SQLException;
-
 /**
  * Custom exception for env errors
  */

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Scanner operation result
  */
-public class ScanOp extends Model {
+public class ScanOp extends Model<ScanOp> {
     private Long id;
     private Timestamp started;
     private int totalFilesScanned;

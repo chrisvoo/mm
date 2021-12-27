@@ -30,9 +30,9 @@ public class BandTest {
                 "totalAlbumsReleased": 18,
                 "website": "",
                 "twitter": ""
-            }       
+            } 
         """;
-        Band band = Band.fromJson(json);
+        Band band = Model.fromJson(json, Band.class);
         assertEquals(5, band.getId());
         assertEquals("AC/DC", band.getName());
         assertEquals("AU", band.getCountry());

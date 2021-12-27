@@ -1,17 +1,28 @@
 package routes;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import exceptions.DbException;
 import models.files.BitRateType;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
 import models.utils.ErrorResponse;
 import org.junit.jupiter.api.*;
+import routes.utils.PaginatedResponse;
+import routes.utils.PaginationMetadata;
+import services.MusicFileService;
 import src.DbHelper;
 import src.FileManagerClient;
+import src.TestUtils;
+import utils.FileManagerModule;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,5 +124,102 @@ public class MusicFilesRoutesTest {
         assertEquals(1993, file.getYear().shortValue());
         assertEquals("grunge", file.getGenre());
         assertEquals("Heart-Shaped Box", file.getTitle());
+    }
+
+    @Test @Order(4)
+    public void testGetAll(TestReporter rep) throws URISyntaxException, IOException, InterruptedException {
+        // clean and pre-fill the database with some data...
+        DbHelper.emptyTable(new MusicFileSchema().tableName());
+        Injector injector = Guice.createInjector(new FileManagerModule());
+
+        List<MusicFile> files = new ArrayList<>();
+
+        for (int i = 1; i < 32; i++) {
+            files.add(
+              new MusicFile()
+                .setTitle("Title " + i)
+                .setAbsolutePath(TestUtils.randomString())
+            );
+        }
+
+        MusicFileService service = injector.getInstance(MusicFileService.class);
+        assertEquals(31, service.bulkSave(files));
+
+        // page 1
+        HttpResponse<String> response = client.sendGet("/files/list", new HashMap<>(Map.of("sort_dir", "asc")));
+
+        PaginatedResponse<MusicFile> pRes = PaginatedResponse.fromJson(response.body(), MusicFile.class);
+        List<MusicFile> items = pRes.getItems();
+        assertNotNull(items);
+        assertEquals(10, items.size());
+        assertEquals("Title 1", items.get(0).getTitle());
+        assertEquals("Title 10", items.get(9).getTitle());
+
+        PaginationMetadata meta = pRes.getMetadata();
+        assertTrue(meta.getNextCursor() != null && !meta.getNextCursor().isBlank());
+        assertTrue(meta.hasMoreData());
+        assertEquals(31, meta.getTotalCount());
+
+        // page 2
+        response = client.sendGet("/files/list", new HashMap<>(
+          Map.of(
+            "sort_dir", "asc",
+            "cursor",
+            meta.getNextCursor())
+          )
+        );
+
+        pRes = PaginatedResponse.fromJson(response.body(), MusicFile.class);
+        items = pRes.getItems();
+        assertNotNull(items);
+        assertEquals(10, items.size());
+        assertEquals("Title 11", items.get(0).getTitle());
+        assertEquals("Title 20", items.get(9).getTitle());
+
+        meta = pRes.getMetadata();
+        assertTrue(meta.getNextCursor() != null && !meta.getNextCursor().isBlank());
+        assertTrue(meta.hasMoreData());
+        assertNull(meta.getTotalCount());
+
+        // page 3
+        response = client.sendGet("/files/list", new HashMap<>(
+            Map.of(
+              "sort_dir", "asc",
+              "cursor",
+              meta.getNextCursor())
+          )
+        );
+
+        pRes = PaginatedResponse.fromJson(response.body(), MusicFile.class);
+        items = pRes.getItems();
+        assertNotNull(items);
+        assertEquals(10, items.size());
+        assertEquals("Title 21", items.get(0).getTitle());
+        assertEquals("Title 30", items.get(9).getTitle());
+
+        meta = pRes.getMetadata();
+        assertTrue(meta.getNextCursor() != null && !meta.getNextCursor().isBlank());
+        assertTrue(meta.hasMoreData());
+        assertNull(meta.getTotalCount());
+
+        // page 4
+        response = client.sendGet("/files/list", new HashMap<>(
+            Map.of(
+              "sort_dir", "asc",
+              "cursor",
+              meta.getNextCursor())
+          )
+        );
+
+        pRes = PaginatedResponse.fromJson(response.body(), MusicFile.class);
+        items = pRes.getItems();
+        assertNotNull(items);
+        assertEquals(1, items.size());
+        assertEquals("Title 31", items.get(0).getTitle());
+
+        meta = pRes.getMetadata();
+        assertNull(meta.getNextCursor());
+        assertFalse(meta.hasMoreData());
+        assertNull(meta.getTotalCount());
     }
 }

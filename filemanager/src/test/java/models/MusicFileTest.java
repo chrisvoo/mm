@@ -34,9 +34,7 @@ public class MusicFileTest {
                 "title": "A tazzulella e cafè"
             }     
         """;
-        assertThrows(ModelException.class, () -> {
-            MusicFile.fromJson(json);
-        });
+        assertThrows(ModelException.class, () -> MusicFile.fromJson(json));
     }
 
     @Test
@@ -55,7 +53,7 @@ public class MusicFileTest {
                 "title": "A tazzulella e cafè"
             }     
         """;
-        MusicFile file = MusicFile.fromJson(json);
+        MusicFile file = Model.fromJson(json, MusicFile.class);
 
         assertTrue(file.isValid());
 

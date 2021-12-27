@@ -1,5 +1,9 @@
 package routes.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class PaginatedResponse<T> {
@@ -22,5 +26,10 @@ public class PaginatedResponse<T> {
   public PaginatedResponse<T> setMetadata(PaginationMetadata metadata) {
     this.metadata = metadata;
     return this;
+  }
+
+  public static <T> PaginatedResponse<T> fromJson(String json, Class<T> classOfT) {
+    Type typeOfT = TypeToken.getParameterized(PaginatedResponse.class, classOfT).getType();
+    return new Gson().fromJson(json, typeOfT);
   }
 }

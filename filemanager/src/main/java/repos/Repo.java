@@ -15,9 +15,10 @@ public class Repo {
   private static final Logger logger = Logger.getLogger(Repo.class.getName());
 
   protected Long count(String sql) {
+    logger.info("COUNT SQL: " + sql);
     try (
       Connection conn = db.getConnection();
-      PreparedStatement stmt = conn.prepareStatement(sql);
+      PreparedStatement stmt = conn.prepareStatement(sql)
     ) {
       try (ResultSet rs = stmt.executeQuery()) {
         if (rs.next()) {

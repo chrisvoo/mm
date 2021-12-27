@@ -1,11 +1,10 @@
 package models.band;
 
-import com.google.gson.Gson;
 import models.Model;
 
 import java.util.List;
 
-public class Band extends Model {
+public class Band extends Model<Band> {
 
     private Long id;
 
@@ -145,9 +144,5 @@ public class Band extends Model {
     public Band setActivities(List<BandActivity> activities) {
         this.activities = activities;
         return this;
-    }
-
-    public static Band fromJson(String json) {
-        return new Gson().fromJson(json, Band.class);
     }
 }

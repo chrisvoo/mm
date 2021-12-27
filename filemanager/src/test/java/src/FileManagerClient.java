@@ -30,7 +30,7 @@ public class FileManagerClient {
     }
 
     /**
-     * Buils the query string from a map of parameters, taking car of the url encoding.
+     * Builds the query string from a map of parameters, taking care of the url encoding.
      * @param parameters The parameters
      * @return an encoded query string.
      */
@@ -62,7 +62,7 @@ public class FileManagerClient {
      */
     private HttpRequest noBodyRequest(String method, String route, HashMap<String, String> parameters) throws URISyntaxException {
         String endpoint = String.format("http://localhost:%d", this.envVars.getPort());
-        URI finalUri = new URI(endpoint + route + this.buildQueryString(parameters));
+        URI finalUri = new URI(endpoint + route + "?" + this.buildQueryString(parameters));
 
         return HttpRequest.newBuilder()
                 .uri(finalUri)

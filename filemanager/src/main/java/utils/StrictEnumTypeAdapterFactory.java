@@ -22,7 +22,7 @@ public class StrictEnumTypeAdapterFactory implements TypeAdapterFactory {
 
   private <T> TypeAdapter<T> newStrictEnumAdapter(
     final TypeAdapter<T> delegateAdapter) {
-    return new TypeAdapter<T>() {
+    return new TypeAdapter<>() {
 
       @Override
       public void write(JsonWriter out, T value) throws IOException {

@@ -5,6 +5,7 @@ import exceptions.DbException;
 import exceptions.ModelException;
 import models.files.MusicFile;
 import models.utils.ErrorResponse;
+import routes.utils.Pagination;
 import services.MusicFileService;
 import spark.Request;
 import spark.Route;
@@ -50,7 +51,8 @@ public class MusicFilesRoutes extends routes.Route implements Router {
 
     private Route getAll() {
         return (req, res) -> {
-            return null;
+            Pagination pagination = Pagination.fromRequest(req);
+            return musicFileService.getAll(pagination);
         };
     }
 

@@ -15,7 +15,7 @@ public class Watcher {
 
   public Watcher(Path dir, boolean recursive) throws IOException {
     this.watcher = FileSystems.getDefault().newWatchService();
-    this.keys = new HashMap<WatchKey,Path>();
+    this.keys = new HashMap<>();
     this.recursive = recursive;
 
     if (recursive) {
@@ -41,11 +41,10 @@ public class Watcher {
    */
   private void registerAll(final Path start) throws IOException {
     // register directory and sub-directories
-    Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(start, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-        throws IOException
-      {
+        throws IOException {
         register(dir);
         return FileVisitResult.CONTINUE;
       }

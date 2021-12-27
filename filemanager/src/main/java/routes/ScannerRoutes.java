@@ -2,6 +2,7 @@ package routes;
 
 import com.google.inject.Inject;
 import exceptions.ModelException;
+import models.Model;
 import models.scanner.ScanRequest;
 import scanner.Scanner;
 import services.ScannerService;
@@ -23,7 +24,7 @@ public class ScannerRoutes extends routes.Route implements Router {
     }
 
     private ScanRequest getScanFromRequest(Request req) {
-        ScanRequest scan = ScanRequest.fromJson(req.body());
+        ScanRequest scan = Model.fromJson(req.body(), ScanRequest.class);
         if (!scan.isValid()) {
             throw new ModelException(scan.getErrors(), scan.getErrorCode());
         }

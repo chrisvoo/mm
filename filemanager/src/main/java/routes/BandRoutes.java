@@ -3,6 +3,7 @@ package routes;
 import com.google.inject.Inject;
 import exceptions.DbException;
 import exceptions.ModelException;
+import models.Model;
 import models.band.Band;
 import models.utils.ErrorResponse;
 import services.BandService;
@@ -21,7 +22,7 @@ public class BandRoutes extends routes.Route implements Router {
     }
 
     private Band getBandFromRequest(Request req) {
-        Band band = Band.fromJson(req.body());
+        Band band = Model.fromJson(req.body(), Band.class);
         if (!band.isValid()) {
             throw new ModelException(band.getErrors(), band.getErrorCode());
         }

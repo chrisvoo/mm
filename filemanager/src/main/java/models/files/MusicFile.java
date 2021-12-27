@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MusicFile extends Model {
+public class MusicFile extends Model<MusicFile> {
     private static final Logger logger = Logger.getLogger(MusicFile.class.getName());
 
     private Long id;
@@ -35,7 +35,7 @@ public class MusicFile extends Model {
     }
 
     /**
-     * This initialize all the class properties parsing the MP3 file metadata
+     * This initializes all the class properties parsing the MP3 file metadata
      * @param audioFile an instance of this class.
      */
     public MusicFile(Mp3File audioFile) {

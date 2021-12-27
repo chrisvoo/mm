@@ -16,7 +16,7 @@ public class EnvVars {
     private String musicDirectory;
 
     /**
-     * MySQL connection string
+     * MySQL's connection string
      */
     private String connectionString;
 

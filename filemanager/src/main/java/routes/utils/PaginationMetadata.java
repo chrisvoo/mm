@@ -7,7 +7,7 @@ public class PaginationMetadata {
   private boolean hasMoreData;
   /**
    * This is calculated only when cursor is null, so for the first request. The frontend
-   * stores the value and it will be recalculated when cursor will be null again (because it
+   * stores the value, and it will be recalculated when cursor will be null again (because it
    * changed the ordering or used a different filter).
    */
   private Long totalCount;
@@ -21,7 +21,7 @@ public class PaginationMetadata {
     return this;
   }
 
-  public boolean isHasMoreData() {
+  public boolean hasMoreData() {
     return hasMoreData;
   }
 

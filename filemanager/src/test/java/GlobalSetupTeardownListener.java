@@ -6,7 +6,6 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import utils.FileManagerModule;
 
-import java.util.logging.Logger;
 
 public class GlobalSetupTeardownListener implements LauncherSessionListener {
 

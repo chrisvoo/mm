@@ -1,12 +1,11 @@
 package models.scanner;
 
-import com.google.gson.Gson;
 import models.Model;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-public class ScanOpError extends Model {
+public class ScanOpError extends Model<ScanOpError> {
     private Long id;
     private String absolutePath;
     private Long scanOpId;
@@ -61,9 +60,5 @@ public class ScanOpError extends Model {
     public ScanOpError setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
         return this;
-    }
-
-    public static ScanOpError fromJson(String json) {
-        return new Gson().fromJson(json, ScanOpError.class);
     }
 }
