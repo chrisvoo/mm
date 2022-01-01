@@ -6,6 +6,8 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import utils.FileManagerModule;
 
+import java.io.IOException;
+
 
 public class GlobalSetupTeardownListener implements LauncherSessionListener {
 
@@ -19,7 +21,11 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
             public void testPlanExecutionStarted(TestPlan testPlan) {
                 if (fixture == null) {
                     fixture = new Fixture();
-                    fixture.setUp();
+                    try {
+                        fixture.setUp();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -33,10 +39,10 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
     }
 
     static class Fixture {
-        void setUp() {
+        void setUp() throws IOException {
             Injector injector = Guice.createInjector(new FileManagerModule());
             microservice = injector.getInstance(Microservice.class);
-            microservice.start();
+            microservice.start(true);
         }
 
         void tearDown() {

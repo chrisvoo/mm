@@ -10,9 +10,12 @@ import services.MusicFileService;
 import services.ScannerService;
 import spark.Spark;
 
+import java.io.IOException;
+
 public class FileManagerModule extends AbstractModule {
     @Override
     protected void configure() {
+        Watcher watcher = null;
         try {
             EnvVars envVars = new EnvVars();
             envVars.loadEnvVars();
@@ -20,12 +23,23 @@ public class FileManagerModule extends AbstractModule {
 
             Db db = new Db(envVars);
             bind(Db.class).toInstance(db);
-        } catch (FileManagerException e) {
+
+            watcher = new Watcher();
+            bind(Watcher.class).toInstance(watcher);
+        } catch (FileManagerException | IOException e) {
             Spark.stop();
             Spark.awaitStop();
 
+            if (watcher != null) {
+                watcher.stop();
+            }
+
             System.err.println(e.getMessage());
-            System.exit(e.getCode());
+            System.exit(
+              e instanceof FileManagerException
+                ? ((FileManagerException) e).getCode()
+                : 500
+            );
         }
 
         bind(MusicFileService.class).to(MusicFileRepo.class);

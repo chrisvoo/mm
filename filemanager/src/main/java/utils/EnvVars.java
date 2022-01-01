@@ -2,6 +2,9 @@ package utils;
 
 import exceptions.EnvException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class EnvVars {
@@ -13,7 +16,7 @@ public class EnvVars {
     /**
      * Main directory containing all your music
      */
-    private String musicDirectory;
+    private Path musicDirectory;
 
     /**
      * MySQL's connection string
@@ -52,7 +55,15 @@ public class EnvVars {
 
     public void loadEnvVars() {
         this.port = this.getIntEnv("FILE_MANAGER_PORT");
-        this.musicDirectory = this.getStringEnv("MUSIC_DIRECTORY");
+        this.musicDirectory = Paths.get(this.getStringEnv("MUSIC_DIRECTORY"));
+
+        if (!Files.isDirectory(this.musicDirectory)) {
+            throw new EnvException("The specified music directory is not a directory!", EnvException.MUSIC_DIR_INVALID);
+        }
+
+        if (!Files.exists(this.musicDirectory)) {
+            throw new EnvException("The specified music directory does not exist!", EnvException.MUSIC_DIR_INVALID);
+        }
 
         String mysqlHost = this.getStringEnv("MYSQL_HOST");
         String mysqlDb = this.getStringEnv("MYSQL_DATABASE");
@@ -80,11 +91,11 @@ public class EnvVars {
         return this;
     }
 
-    public String getMusicDirectory() {
+    public Path getMusicDirectory() {
         return musicDirectory;
     }
 
-    public EnvVars setMusicDirectory(String musicDirectory) {
+    public EnvVars setMusicDirectory(Path musicDirectory) {
         this.musicDirectory = musicDirectory;
         return this;
     }

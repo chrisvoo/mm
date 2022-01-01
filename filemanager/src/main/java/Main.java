@@ -2,8 +2,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import utils.FileManagerModule;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Injector injector = Guice.createInjector(new FileManagerModule());
         Microservice microservice = injector.getInstance(Microservice.class);
         microservice.start();

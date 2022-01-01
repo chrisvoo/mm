@@ -3,9 +3,13 @@
 ## Setup and usage
 
 1. Change the NGINX configuration as needed (`./data/nginx/app.conf`)
-2. Tweaks `domains` and `email` variables inside the bash script `./init-letsencrypt.sh`
+2. Tweak `domains` and `email` variables inside the bash script `./init-letsencrypt.sh`
 3. Run `sudo ./init-letsencrypt.sh`
-4. Run `docker-compose up --build`
+4. Run `docker-compose -f docker-compose-prod.yml up --build -d`
+
+## Useful commands
+
+* `docker-compose -f docker-compose-dev.yml config`: verify your config is correct after having edited the .env file.
 
 
 ## Credits

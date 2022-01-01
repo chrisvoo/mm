@@ -106,6 +106,24 @@ public abstract class Schema<T> {
     }
 
     /**
+     * Produces the INSERT ON DUPLICATE KEY UPDATE statement for a model using its defined schema.
+     * @return The SQL with fields names and placeholders.
+     */
+    public String getSqlForUpsert() {
+        List<String> fList = new ArrayList<>(Collections.nCopies(this.fields.size(),"%s = ?"));
+
+        for (int i = 0; i < fList.size(); i++) {
+            fList.set(i, String.format(fList.get(i), this.fields.get(i)));
+        }
+
+        String sql = this.getSqlForInsert() + " ON DUPLICATE KEY " +
+          "UPDATE " + String.join(",", fList);
+
+        logger.fine(sql);
+        return sql;
+    }
+
+    /**
      * Produces the DELETE statement for a model using its defined schema.
      * @return The SQL with fields names and placeholders.
      */

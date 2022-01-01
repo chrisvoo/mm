@@ -2,10 +2,11 @@ package models.scanner;
 
 import models.Model;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class ScanRequest extends Model<ScanRequest> {
-  private String directory;
+  private Path directory;
 
   public ScanRequest() {
     this.requiredFields = List.of("directory");
@@ -20,11 +21,11 @@ public class ScanRequest extends Model<ScanRequest> {
     return this.errorCode == null;
   }
 
-  public String getDirectory() {
+  public Path getDirectory() {
     return directory;
   }
 
-  public ScanRequest setDirectory(String directory) {
+  public ScanRequest setDirectory(Path directory) {
     this.directory = directory;
     return this;
   }

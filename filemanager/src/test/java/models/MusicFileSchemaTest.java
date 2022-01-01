@@ -31,4 +31,22 @@ public class MusicFileSchemaTest {
       "artist = ?,album = ?,year = ?,genre = ?,title = ?,album_image = ?,album_image_mime_type = ? WHERE id = ?";
     Assertions.assertEquals(sql, schema.getSqlForUpdate());
   }
+
+  @Test
+  public void testUpsertSQLGeneration() {
+    MusicFileSchema schema = new MusicFileSchema();
+
+    List<String> fields = schema.getFields(false);
+    List<String> list = new ArrayList<>(Collections.nCopies(fields.size(), "?"));
+    String placeholders = String.join(",", list);
+
+    String insert = "INSERT INTO music_files (" + String.join(",", fields) + ") VALUES (" + placeholders + ")";
+
+    String update = "UPDATE absolute_path = ?,size = ?,bitrate = ?,bitrate_type = ?,duration = ?," +
+      "artist = ?,album = ?,year = ?,genre = ?,title = ?,album_image = ?,album_image_mime_type = ?";
+
+    String sql = insert + " ON DUPLICATE KEY " + update;
+
+    Assertions.assertEquals(sql, schema.getSqlForUpsert());
+  }
 }

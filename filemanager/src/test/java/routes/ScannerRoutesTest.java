@@ -1,7 +1,9 @@
 package routes;
 
+import models.Model;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
+import models.scanner.ScanRequest;
 import org.junit.jupiter.api.*;
 import routes.utils.PaginatedResponse;
 import src.DbHelper;
@@ -14,8 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -59,7 +60,7 @@ public class ScannerRoutesTest {
         assertTrue(items.size() < 5);
 
         Thread.sleep(1000);
-        
+
         getAllResponse = client.sendGet(
           "/files/list",
           new HashMap<>(
@@ -74,4 +75,12 @@ public class ScannerRoutesTest {
         assertEquals(14, items.size());
     }
 
+    @Test
+    public void testDefaultDir() {
+        ScanRequest scan = Model.fromJson("{}", ScanRequest.class);
+        assertNotNull(scan);
+
+        scan = Model.fromJson("", ScanRequest.class);
+        assertNull(scan);
+    }
 }

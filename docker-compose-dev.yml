@@ -1,0 +1,50 @@
+version: '3.8'
+
+volumes:
+  dbdata:
+
+services:
+  filemanager:
+    container_name: filemanager
+    restart: always
+    build:
+      context: filemanager
+      dockerfile: Dockerfile
+    image: filemanager:latest
+    ports:
+      - ${FILE_MANAGER_PORT}:${FILE_MANAGER_PORT}
+    environment:
+      - FILE_MANAGER_PORT=${FILE_MANAGER_PORT}
+      - MUSIC_DIRECTORY=${MUSIC_CONTAINER_DIRECTORY}
+      - MYSQL_HOST=${MYSQL_CONTAINER_NAME}
+      - MYSQL_PORT=${MYSQL_LOCAL_PORT}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD} 
+    volumes:
+      - ${MUSIC_LOCAL_DIRECTORY}:${MUSIC_CONTAINER_DIRECTORY}
+    depends_on:
+      - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    restart: always
+    volumes:
+      - ./data/mysql/conf.d:/etc/mysql/conf.d
+      - ./data/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - ${MYSQL_LOCAL_PORT}:3306        
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - ${ADMINER_LOCAL_PORT}:8080   
+    depends_on:
+      - mysql   

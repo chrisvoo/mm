@@ -35,6 +35,11 @@ public class Scanner extends Thread {
     return this;
   }
 
+  public Scanner setTargetDir(Path dir) {
+    this.targetDirectory = dir;
+    return this;
+  }
+
   public void run() {
      this.scan();
   }
