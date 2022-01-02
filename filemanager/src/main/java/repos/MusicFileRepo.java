@@ -10,11 +10,12 @@ import routes.utils.Pagination;
 import routes.utils.PaginationMetadata;
 import services.MusicFileService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class MusicFileRepo extends Repo implements MusicFileService {
@@ -122,10 +123,26 @@ public class MusicFileRepo extends Repo implements MusicFileService {
         }
     }
 
+    public void upsert(MusicFile file) {
+        String sql = schema.getSqlForUpsert();
+        logger.fine(sql);
+
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            schema.setStatementValuesForUpsert(stmt, file);
+            int affectedRows = stmt.executeUpdate();
+            logger.info("MusicFile.upsert, affected rows: " + affectedRows);
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
+        }
+    }
+
     @Override
     public long bulkSave(List<MusicFile> files) {
-        String sql = schema.getSqlForInsert() + " ON DUPLICATE KEY " +
-          "UPDATE " + MusicFileSchema.ABSOLUTE_PATH  + " = ?";
+        String sql = schema.getSqlForUpsert();
         logger.fine(sql);
         try (
           Connection conn = db.getConnection();
@@ -152,7 +169,63 @@ public class MusicFileRepo extends Repo implements MusicFileService {
      */
     @Override
     public boolean delete(long id) {
-        return false;
+        return this.delete(new MusicFileSchema(), id);
+    }
+
+    /**
+     * Delete a directory even if it's not empty
+     * @param resource The directory or file to be deleted
+     */
+    private void deleteResource(Path resource) {
+        try {
+            if (Files.exists(resource)) {
+                if (Files.isDirectory(resource)) {
+                    Files.walk(resource)
+                      .sorted(Comparator.reverseOrder())
+                      .map(Path::toFile)
+                      .forEach(File::delete);
+                } else {
+                    Files.delete(resource);
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("Cannot delete " + resource.toString() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes both the physical file and the related database record.
+     *
+     * @param resource The absolute path to the file
+     */
+    @Override
+    public void deleteAll(Path resource) {
+        // 1. Delete the record from the database
+        String sql = String.format(
+          "SELECT id FROM %s WHERE %s = ?",
+          this.schema.tableName(),
+          MusicFileSchema.ABSOLUTE_PATH
+        );
+
+        logger.fine(sql);
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setString(1, resource.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    long id = rs.getLong(1);
+                    this.delete(id);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
+        }
+
+        // 2. Delete the file
+        this.deleteResource(resource);
     }
 
     /**

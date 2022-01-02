@@ -1,8 +1,5 @@
 import com.google.inject.Inject;
-import routes.BandRoutes;
-import routes.ErrorRoutes;
-import routes.MusicFilesRoutes;
-import routes.ScannerRoutes;
+import routes.*;
 import spark.Spark;
 import utils.Db;
 import utils.EnvVars;
@@ -19,6 +16,7 @@ public class Microservice {
     @Inject private Db db;
     @Inject private MusicFilesRoutes musicFilesRoutes;
     @Inject private BandRoutes bandRoutes;
+    @Inject private StatsRoutes statsRoutes;
     @Inject private ScannerRoutes scannerRoutes;
     @Inject private Watcher watcher;
 
@@ -41,6 +39,7 @@ public class Microservice {
         musicFilesRoutes.routes();
         bandRoutes.routes();
         scannerRoutes.routes();
+        statsRoutes.routes();
 
         // Error handler routes, as last definition
         ErrorRoutes.routes();

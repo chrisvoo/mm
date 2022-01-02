@@ -5,9 +5,11 @@ import exceptions.FileManagerException;
 import repos.BandRepo;
 import repos.MusicFileRepo;
 import repos.ScannerRepo;
+import repos.StatsRepo;
 import services.BandService;
 import services.MusicFileService;
 import services.ScannerService;
+import services.StatsService;
 import spark.Spark;
 
 import java.io.IOException;
@@ -45,5 +47,6 @@ public class FileManagerModule extends AbstractModule {
         bind(MusicFileService.class).to(MusicFileRepo.class);
         bind(ScannerService.class).to(ScannerRepo.class);
         bind(BandService.class).to(BandRepo.class);
+        bind(StatsService.class).to(StatsRepo.class);
     }
 }

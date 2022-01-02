@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import models.scanner.ScanOp;
 import services.ScannerService;
 import utils.FileManagerModule;
+import utils.FileUtils;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -93,7 +94,7 @@ public class Scanner extends Thread {
           listFiles(entry);
         }
 
-        if (entry.getFileName().toString().toLowerCase().endsWith(".mp3")) {
+        if (FileUtils.isMp3(entry)) {
           files.add(entry);
         }
       }

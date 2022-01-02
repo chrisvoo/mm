@@ -1,12 +1,13 @@
 package models.utils;
 
 import com.google.gson.Gson;
+import models.Model;
 
 /**
  * Represent an error object, with a message, a constant boolean error field and an
  * optional code to identify a particular error.
  */
-public class ErrorResponse {
+public class ErrorResponse extends Model<ErrorResponse> {
     public static final int MISSING_RESOURCE = 1000;
     public static final int INVALID_RESOURCE = 1001;
 

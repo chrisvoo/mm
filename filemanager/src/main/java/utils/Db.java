@@ -30,12 +30,13 @@ public class Db {
      */
     private BasicDataSource getDataSource() {
         BasicDataSource ds = new BasicDataSource();
+        // ds.setUrl("jdbc:mysql://129.9.100.16:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false");
         ds.setUrl(envVars.getConnectionString());
         ds.setUsername(envVars.getMysqlUser());
         ds.setPassword(envVars.getMysqlPass());
         ds.setDefaultAutoCommit(true);
         ds.setAutoCommitOnReturn(true);
-        ds.setConnectionProperties("useUnicode=true;characterEncoding=UTF-8;rewriteBatchedStatements=true;");
+        ds.setConnectionProperties("useUnicode=true;characterEncoding=utf8;rewriteBatchedStatements=true;");
         ds.setDefaultQueryTimeout(5);
         ds.setInitialSize(0); // The initial number of connections that are created when the pool is started.
         ds.setMaxTotal(20);   // The maximum number of active connections that can be allocated from this pool at the same time, or negative for no limit.
@@ -43,6 +44,8 @@ public class Db {
         ds.setMinIdle(0); // The minimum number of connections that can remain idle in the pool, without extra ones being created, or zero to create none.
         ds.setMaxWaitMillis(-1); // The maximum number of milliseconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception, or -1 to wait indefinitely.
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+        // ds.setConnectionInitSqls(Arrays.asList("set names utf8mb4;", "set names utf8;"));
 
         return ds;
     }

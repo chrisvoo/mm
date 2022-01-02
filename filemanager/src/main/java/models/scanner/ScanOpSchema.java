@@ -24,11 +24,24 @@ public class ScanOpSchema extends Schema<ScanOp> {
         this.primaryKeys = List.of(ScanOpSchema.ID);
     }
 
+    /**
+     * The MySQL table for this model
+     *
+     * @return The table's name.
+     */
+    @Override
     public String tableName() {
         return "scan_ops";
     }
 
-
+    /**
+     * Builds a model from a resultset
+     *
+     * @param rs The resultset.
+     * @return The model
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    @Override
     public ScanOp getModelFromResultSet(ResultSet rs) throws SQLException {
         return new ScanOp()
             .setId(this.getLong(rs, ScanOpSchema.ID))
@@ -40,6 +53,14 @@ public class ScanOpSchema extends Schema<ScanOp> {
             .setFinished(rs.getTimestamp(ScanOpSchema.FINISHED));
     }
 
+    /**
+     * Sets the prepared statement's placeholders.
+     *
+     * @param stmt     The prepared statement.
+     * @param instance A model to be initialized.
+     * @throws SQLException An exception that provides information on a database access error or other errors.
+     */
+    @Override
     public void setStatementValues(PreparedStatement stmt, ScanOp instance) throws SQLException {
         int index = 0;
         this.setTimestamp(stmt, instance.getStarted(), ++index);

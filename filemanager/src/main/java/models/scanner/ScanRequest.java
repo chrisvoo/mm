@@ -3,10 +3,11 @@ package models.scanner;
 import models.Model;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ScanRequest extends Model<ScanRequest> {
-  private Path directory;
+  private String directory;
 
   public ScanRequest() {
     this.requiredFields = List.of("directory");
@@ -22,11 +23,16 @@ public class ScanRequest extends Model<ScanRequest> {
   }
 
   public Path getDirectory() {
-    return directory;
+    return Paths.get(directory);
+  }
+
+  public ScanRequest setDirectory(String directory) {
+    this.directory = directory;
+    return this;
   }
 
   public ScanRequest setDirectory(Path directory) {
-    this.directory = directory;
+    this.directory = directory.toAbsolutePath().toString();
     return this;
   }
 }

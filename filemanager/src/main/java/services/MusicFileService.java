@@ -4,6 +4,7 @@ import models.files.MusicFile;
 import routes.utils.PaginatedResponse;
 import routes.utils.Pagination;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface MusicFileService {
@@ -34,6 +35,14 @@ public interface MusicFileService {
      * @return true if the operation was successful, false otherwise.
      */
     boolean delete(long id);
+
+    void upsert(MusicFile file);
+
+    /**
+     * Deletes both the physical file and the related database record.
+     * @param resource The absolute path to the file
+     */
+    void deleteAll(Path resource);
 
     /**
      * A pagination-enabled list of music files.

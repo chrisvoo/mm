@@ -1,7 +1,9 @@
 package models;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import exceptions.ModelException;
+import models.utils.ErrorResponse;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -111,6 +113,10 @@ public abstract class Model<T> {
      * @return A subclass instance represented by the JSON code.
      */
     public static <T> T fromJson(String json, Class<T> classOfT) {
+        if (json.contains("\"error\":true")) {
+            return (T) new Gson().fromJson(json, ErrorResponse.class);
+        }
+
         return new GsonBuilder()
           .create()
           .fromJson(json, classOfT);

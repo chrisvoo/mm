@@ -1,6 +1,7 @@
 package utils;
 
 import com.google.inject.Inject;
+import models.files.MusicFile;
 import services.MusicFileService;
 
 import java.io.IOException;
@@ -70,8 +71,11 @@ public class Watcher {
   }
 
   /**
-   * Register the given directory, and all its sub-directories, with the
+   * Register the given directory, and all its subdirectories, with the
    * WatchService.
+   * @param start Starting directory
+   * @return the Watcher
+   * @throws IOException if an I/O error is thrown by a visitor method of Files.walkFileTree
    */
   public Watcher registerAll(final Path start) throws IOException {
     logger.info(String.format("Scanning %s ...", start));
@@ -110,7 +114,8 @@ public class Watcher {
   }
 
   /**
-   * Process all events for keys queued to the watcher
+   * Process all events for keys queued to the watcher.
+   * Note: renaming a file produces a ENTRY_DELETE event, followed by a ENTRY_CREATE one.
    */
   public void processEvents() {
     for (;;) {
@@ -120,6 +125,7 @@ public class Watcher {
       try {
         key = watcher.take();
       } catch (InterruptedException x) {
+        logger.severe(x.getMessage());
         return;
       }
 
@@ -143,8 +149,36 @@ public class Watcher {
         // Resolve the filename against the directory.
         Path child = dir.resolve(name);
 
-        // print out event
-        logger.info(String.format("%s: %s\n", event.kind().name(), child));
+        if (FileUtils.isMp3FileName(child)) {
+          // print out event
+          logger.info(String.format("%s: %s\n", event.kind().name(), child));
+
+          switch (event.kind().name()) {
+            case "ENTRY_CREATE", "ENTRY_MODIFY" -> {
+              MusicFile audioFile;
+              try {
+                // If for some reasons, metadata aren't readable, we just store the file path
+                audioFile = new MusicFile(child);
+              } catch (Exception e) {
+                String filePath = child.normalize().toAbsolutePath().toString();
+                audioFile = new MusicFile()
+                  .setAbsolutePath(filePath)
+                  .calculateSize(child);
+              }
+
+              /* TODO: it would be better to find a way to reduce the number of savings into the db, since multiple events of
+               * the same type are triggered for the same files. */
+              musicFileService.upsert(audioFile);
+            }
+            case "ENTRY_DELETE" -> {
+              {
+                musicFileService.deleteAll(child);
+              }
+            }
+          }
+        } else {
+          logger.info(String.format("ELSE -> %s: %s\n", event.kind().name(), child));
+        }
 
         // if directory is created, and watching recursively, then
         // register it and its sub-directories
@@ -152,6 +186,7 @@ public class Watcher {
           try {
             if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
               registerAll(child);
+              saveDirFiles(child);
             }
           } catch (IOException x) {
             logger.severe(x.getMessage());
@@ -171,6 +206,21 @@ public class Watcher {
           break;
         }
       }
+    }
+  }
+
+  /**
+   * We save the first-level MP3 files into the database. FileUtils::isMp3 also checks that the path is a regular file.
+   * @param dir The resource
+   */
+  private void saveDirFiles(Path dir) {
+    try {
+      for (Path path : Files.newDirectoryStream(dir, FileUtils::isMp3)) {
+        path = path.normalize();
+        System.out.println(path.getFileName());
+      }
+    } catch (IOException e) {
+      // Error while reading the directory
     }
   }
 

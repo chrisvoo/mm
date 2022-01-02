@@ -59,7 +59,11 @@ public class MusicFileSchema extends Schema<MusicFile> {
     }
 
     private int setSharedStatementValues(PreparedStatement stmt, MusicFile instance) throws SQLException {
-        int index = 0;
+        return this.setSharedStatementValues(stmt, instance, 0);
+    }
+
+    private int setSharedStatementValues(PreparedStatement stmt, MusicFile instance, int indexNum) throws SQLException {
+        int index = indexNum;
         stmt.setString(++index, instance.getAbsolutePath());
         this.setLong(stmt, instance.getSize(), ++index);
         this.setInt(stmt, instance.getBitrate(), ++index);
@@ -83,6 +87,11 @@ public class MusicFileSchema extends Schema<MusicFile> {
         }
     }
 
+    public void setStatementValuesForUpsert(PreparedStatement stmt, MusicFile instance) throws SQLException {
+        int index = this.setSharedStatementValues(stmt, instance);
+        this.setSharedStatementValues(stmt, instance, index);
+    }
+
     /**
      * Particular case useful just for this class. Bulk save of music files.
      * @param stmt The prepared statement.
@@ -91,7 +100,7 @@ public class MusicFileSchema extends Schema<MusicFile> {
     public void setStatementValuesForBatch(PreparedStatement stmt, List<MusicFile> files) throws SQLException {
         for (MusicFile instance: files) {
            int index = this.setSharedStatementValues(stmt, instance);
-           stmt.setString(++index, instance.getAbsolutePath());
+           this.setSharedStatementValues(stmt, instance, index);
            stmt.addBatch();
         }
     }

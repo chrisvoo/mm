@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.mpatric.mp3agic.*;
 import models.Model;
 import utils.Conv;
-import utils.StrictEnumTypeAdapterFactory;
+import utils.gson.StrictEnumTypeAdapterFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -89,6 +89,10 @@ public class MusicFile extends Model<MusicFile> {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         }
+    }
+
+    public MusicFile(Path resource) throws InvalidDataException, UnsupportedTagException, IOException {
+        this(new Mp3File(resource));
     }
 
     public boolean isValid() {

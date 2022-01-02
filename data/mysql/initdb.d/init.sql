@@ -37,6 +37,15 @@ CREATE TABLE musicbrainz_files (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;    
 
+CREATE TABLE stats (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	total_files MEDIUMINT UNSIGNED COMMENT 'Total files in the collection',
+	total_bytes BIGINT COMMENT 'Total size of all the files',
+	last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	PRIMARY KEY(id)
+) ENGINE=InnoDB;    
+
 CREATE TABLE scan_ops (
     id BIGINT NOT NULL AUTO_INCREMENT,
     started TIMESTAMP DEFAULT NOW(),

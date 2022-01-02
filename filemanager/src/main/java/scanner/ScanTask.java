@@ -1,7 +1,6 @@
 package scanner;
 
 import com.google.inject.Inject;
-import com.mpatric.mp3agic.Mp3File;
 import models.files.MusicFile;
 import models.scanner.ScanOp;
 import models.scanner.ScanOpError;
@@ -28,7 +27,7 @@ public class ScanTask extends RecursiveTask<ScanOp> {
 
     try {
       // If for some reasons, metadata aren't readable, we just store the file path
-      audioFile = new MusicFile(new Mp3File(path));
+      audioFile = new MusicFile(path);
     } catch (Exception e) {
       String filePath = path.normalize().toAbsolutePath().toString();
       audioFile = new MusicFile()

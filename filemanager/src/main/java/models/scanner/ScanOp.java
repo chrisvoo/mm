@@ -196,8 +196,4 @@ public class ScanOp extends Model<ScanOp> {
           .joinInsertedFiles(result.getTotalFilesInserted())
           .joinBytes(result.getTotalBytes());
     }
-
-    public String toString() {
-        return new Gson().toJson(this);
-    }
 }
