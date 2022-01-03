@@ -30,6 +30,21 @@ public class MusicFile extends Model<MusicFile> {
     private Byte[] albumImage;
     private String albumImageMimeType;
 
+    public static MusicFile fromPath(Path resource) {
+        MusicFile audioFile;
+        try {
+            // If for some reasons, metadata aren't readable, we just store the file path
+            audioFile = new MusicFile(resource);
+        } catch (Exception e) {
+            String filePath = resource.normalize().toAbsolutePath().toString();
+            audioFile = new MusicFile()
+              .setAbsolutePath(filePath)
+              .calculateSize(resource);
+        }
+
+        return audioFile;
+    }
+
     public MusicFile() {
         this.requiredFields = List.of("absolutePath");
     }

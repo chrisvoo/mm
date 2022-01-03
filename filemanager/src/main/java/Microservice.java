@@ -3,7 +3,7 @@ import routes.*;
 import spark.Spark;
 import utils.Db;
 import utils.EnvVars;
-import utils.Watcher;
+import watcher.Watcher;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class Microservice {
 
         if (!this.skipWatcher) {
             // 1. watcher service
-            watcher.registerAll(envVars.getMusicDirectory());
+            watcher.registerAll(envVars.getMusicDirectory()).start();
         }
 
         // 2. microservice init
@@ -45,11 +45,6 @@ public class Microservice {
         ErrorRoutes.routes();
 
         awaitInitialization();
-
-        if (!this.skipWatcher) {
-            // 3. watch for events (must be last, it's a blocking method!)
-            watcher.processEvents();
-        }
     }
 
     /**
@@ -58,7 +53,7 @@ public class Microservice {
     public void stop() {
         db.close();
         if (!this.skipWatcher) {
-            watcher.stop();
+            watcher.close();
         }
 
         Spark.stop();

@@ -1,25 +1,29 @@
-package utils;
+package watcher;
 
 import com.google.inject.Inject;
 import models.files.MusicFile;
 import services.MusicFileService;
+import utils.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.*;
 
-public class Watcher {
+public class Watcher extends Thread {
   private static final Logger logger = Logger.getLogger(Watcher.class.getName());
   private final WatchService watcher;
   private final Map<WatchKey,Path> keys;
   private final boolean recursive;
   private boolean trace = false;
+  private boolean closed = false;
   @Inject private MusicFileService musicFileService;
 
   /**
@@ -98,7 +102,7 @@ public class Watcher {
    * Register the given directory with the WatchService
    */
   public Watcher register(Path dir) throws IOException {
-    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
     if (trace) {
       Path prev = keys.get(key);
       if (prev == null) {
@@ -117,7 +121,7 @@ public class Watcher {
    * Process all events for keys queued to the watcher.
    * Note: renaming a file produces a ENTRY_DELETE event, followed by a ENTRY_CREATE one.
    */
-  public void processEvents() {
+  public void run() {
     for (;;) {
 
       // wait for key to be signalled
@@ -126,6 +130,12 @@ public class Watcher {
         key = watcher.take();
       } catch (InterruptedException x) {
         logger.severe(x.getMessage());
+        return;
+      } catch (ClosedWatchServiceException x) {
+        if (!this.closed) {
+          logger.severe("Watcher service has been closed!");
+        }
+        //   service has been closed, no need to log this
         return;
       }
 
@@ -154,30 +164,12 @@ public class Watcher {
           logger.info(String.format("%s: %s\n", event.kind().name(), child));
 
           switch (event.kind().name()) {
-            case "ENTRY_CREATE", "ENTRY_MODIFY" -> {
-              MusicFile audioFile;
-              try {
-                // If for some reasons, metadata aren't readable, we just store the file path
-                audioFile = new MusicFile(child);
-              } catch (Exception e) {
-                String filePath = child.normalize().toAbsolutePath().toString();
-                audioFile = new MusicFile()
-                  .setAbsolutePath(filePath)
-                  .calculateSize(child);
-              }
-
-              /* TODO: it would be better to find a way to reduce the number of savings into the db, since multiple events of
-               * the same type are triggered for the same files. */
+            case "ENTRY_CREATE" -> {
+              MusicFile audioFile = MusicFile.fromPath(child);
               musicFileService.upsert(audioFile);
             }
-            case "ENTRY_DELETE" -> {
-              {
-                musicFileService.deleteAll(child);
-              }
-            }
+            case "ENTRY_DELETE" -> musicFileService.deleteAll(child);
           }
-        } else {
-          logger.info(String.format("ELSE -> %s: %s\n", event.kind().name(), child));
         }
 
         // if directory is created, and watching recursively, then
@@ -215,20 +207,23 @@ public class Watcher {
    */
   private void saveDirFiles(Path dir) {
     try {
+      List<MusicFile> files = new ArrayList<>();
       for (Path path : Files.newDirectoryStream(dir, FileUtils::isMp3)) {
-        path = path.normalize();
-        System.out.println(path.getFileName());
+        files.add(MusicFile.fromPath(path.normalize()));
       }
+
+      musicFileService.bulkSave(files);
     } catch (IOException e) {
-      // Error while reading the directory
+      logger.severe("saveDirFiles: " + e.getMessage());
     }
   }
 
   /**
    * Stops this service
    */
-  public void stop() {
+  public void close() {
     try {
+      this.closed = true;
       this.watcher.close();
     } catch (IOException e) {
       logger.warning("Couldn't stop Watcher service: " + e.getMessage());

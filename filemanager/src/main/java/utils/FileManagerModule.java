@@ -11,6 +11,7 @@ import services.MusicFileService;
 import services.ScannerService;
 import services.StatsService;
 import spark.Spark;
+import watcher.Watcher;
 
 import java.io.IOException;
 
