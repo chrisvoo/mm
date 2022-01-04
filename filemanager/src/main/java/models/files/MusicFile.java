@@ -36,6 +36,7 @@ public class MusicFile extends Model<MusicFile> {
             // If for some reasons, metadata aren't readable, we just store the file path
             audioFile = new MusicFile(resource);
         } catch (Exception e) {
+            logger.warning(e.getMessage());
             String filePath = resource.normalize().toAbsolutePath().toString();
             audioFile = new MusicFile()
               .setAbsolutePath(filePath)

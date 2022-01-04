@@ -28,8 +28,8 @@ public class BandRepo extends Repo implements BandService {
             "SELECT * FROM %s WHERE id = ?", schema.tableName()
         );
         try (
-                Connection conn = db.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
+            Connection conn = db.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -68,7 +68,7 @@ public class BandRepo extends Repo implements BandService {
             ) {
                 schema.setStatementValues(stmt, band);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("Band.update, affected rows: " + affectedRows);
+                logger.fine("Band.update, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
@@ -93,12 +93,12 @@ public class BandRepo extends Repo implements BandService {
             ) {
                 schema.setStatementValues(stmt, band);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("Band.create, affected rows: " + affectedRows);
+                logger.fine("Band.create, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
-                            "Insert new band failed",
-                            DbException.SQL_EXCEPTION
+                        "Insert new band failed",
+                        DbException.SQL_EXCEPTION
                     );
                 }
 

@@ -45,7 +45,7 @@ public class ScannerRepo implements ScannerService {
             ) {
                 schema.setStatementValues(stmt, op);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("ScanOp.update, affected rows: " + affectedRows);
+                logger.fine("ScanOp.update, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
@@ -70,7 +70,7 @@ public class ScannerRepo implements ScannerService {
             ) {
                 schema.setStatementValues(stmt, op);
                 int affectedRows = stmt.executeUpdate();
-                logger.info("ScanOp.create, affected rows: " + affectedRows);
+                logger.fine("ScanOp.create, affected rows: " + affectedRows);
 
                 if (affectedRows == 0) {
                     throw new DbException(
@@ -110,7 +110,7 @@ public class ScannerRepo implements ScannerService {
         ) {
             errorSchema.setStatementValues(stmt, error);
             int affectedRows = stmt.executeUpdate();
-            logger.info("ScanOpError.create, affected rows: " + affectedRows);
+            logger.fine("ScanOpError.create, affected rows: " + affectedRows);
 
             if (affectedRows == 0) {
                 throw new DbException(

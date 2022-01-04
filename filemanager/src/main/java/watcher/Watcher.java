@@ -21,44 +21,23 @@ public class Watcher extends Thread {
   private static final Logger logger = Logger.getLogger(Watcher.class.getName());
   private final WatchService watcher;
   private final Map<WatchKey,Path> keys;
-  private final boolean recursive;
-  private boolean trace = false;
   private boolean closed = false;
   @Inject private MusicFileService musicFileService;
 
   /**
    * Watches recursively or not a provided path.
    * @param dir The path
-   * @param recursive if to watch also sub-folders and files.
-   * @throws IOException thrown by newWatchService or registerAll
-   */
-  public Watcher(Path dir, boolean recursive) throws IOException {
-    this.watcher = FileSystems.getDefault().newWatchService();
-    this.keys = new HashMap<>();
-    this.recursive = recursive;
-
-    if (dir != null) {
-      if (recursive) {
-        logger.info(String.format("Scanning %s ...\n", dir));
-        registerAll(dir);
-        logger.info("Done.");
-      } else {
-        register(dir);
-      }
-    }
-
-
-    // enable trace after initial registration
-    this.trace = true;
-  }
-
-  /**
-   * Watches recursively a provided path.
-   * @param dir The path
    * @throws IOException thrown by newWatchService or registerAll
    */
   public Watcher(Path dir) throws IOException {
-    this(dir, true);
+    this.watcher = FileSystems.getDefault().newWatchService();
+    this.keys = new HashMap<>();
+
+    if (dir != null) {
+        logger.info(String.format("Scanning %s ...\n", dir));
+        registerAll(dir);
+        logger.info("Done.");
+    }
   }
 
   /**
@@ -66,7 +45,7 @@ public class Watcher extends Thread {
    * @throws IOException thrown by newWatchService or registerAll
    */
   public Watcher() throws IOException {
-    this(null, true);
+    this(null);
   }
 
   @SuppressWarnings("unchecked")
@@ -84,7 +63,7 @@ public class Watcher extends Thread {
   public Watcher registerAll(final Path start) throws IOException {
     logger.info(String.format("Scanning %s ...", start));
 
-    // register directory and sub-directories
+    // register directory and subdirectories
     Files.walkFileTree(start, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
@@ -103,16 +82,6 @@ public class Watcher extends Thread {
    */
   public Watcher register(Path dir) throws IOException {
     WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
-    if (trace) {
-      Path prev = keys.get(key);
-      if (prev == null) {
-        logger.fine(String.format("register: %s\n", dir));
-      } else {
-        if (!dir.equals(prev)) {
-          logger.fine(String.format("update: %s -> %s\n", prev, dir));
-        }
-      }
-    }
     keys.put(key, dir);
     return this;
   }
@@ -128,7 +97,7 @@ public class Watcher extends Thread {
       WatchKey key;
       try {
         key = watcher.take();
-      } catch (InterruptedException x) {
+      } catch (InterruptedException  x) {
         logger.severe(x.getMessage());
         return;
       } catch (ClosedWatchServiceException x) {
@@ -159,30 +128,31 @@ public class Watcher extends Thread {
         // Resolve the filename against the directory.
         Path child = dir.resolve(name);
 
-        if (FileUtils.isMp3FileName(child)) {
-          // print out event
-          logger.info(String.format("%s: %s\n", event.kind().name(), child));
-
-          switch (event.kind().name()) {
-            case "ENTRY_CREATE" -> {
-              MusicFile audioFile = MusicFile.fromPath(child);
-              musicFileService.upsert(audioFile);
-            }
-            case "ENTRY_DELETE" -> musicFileService.deleteAll(child);
+        try {
+          // if directory is created, then register it and its subdirectories
+          if ((kind == ENTRY_CREATE)) {
+              if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+                  registerAll(child);
+                  saveDirFiles(child);
+              } else if (FileUtils.isMp3FileName(child)) {
+                  MusicFile audioFile = MusicFile.fromPath(child);
+                  musicFileService.upsert(audioFile);
+                  logger.info("audioFile create: " + child);
+              }
+          } else if ((kind == ENTRY_DELETE)) {
+              logger.info("audioFile delete: " + child);
+              musicFileService.delete(child);
           }
-        }
-
-        // if directory is created, and watching recursively, then
-        // register it and its sub-directories
-        if (recursive && (kind == ENTRY_CREATE)) {
-          try {
-            if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
-              registerAll(child);
-              saveDirFiles(child);
-            }
-          } catch (IOException x) {
-            logger.severe(x.getMessage());
-          }
+        } catch (Exception x) {
+          logger.severe(
+            String.format(
+              "Error for %s event %s, file %s: %s",
+              x.getClass().getName(),
+              kind.name(),
+              child,
+              x.getMessage())
+          );
+          x.printStackTrace();
         }
       }
 
@@ -207,13 +177,16 @@ public class Watcher extends Thread {
    */
   private void saveDirFiles(Path dir) {
     try {
-      List<MusicFile> files = new ArrayList<>();
-      for (Path path : Files.newDirectoryStream(dir, FileUtils::isMp3)) {
-        files.add(MusicFile.fromPath(path.normalize()));
+      List<Path> files = FileUtils.listMP3Files(dir);
+      logger.info("saveDirFiles: " + dir + ": " + files.size());
+
+      List<MusicFile> musicFiles = new ArrayList<>();
+      for (Path path : files) {
+        musicFiles.add(MusicFile.fromPath(path.normalize()));
       }
 
-      musicFileService.bulkSave(files);
-    } catch (IOException e) {
+      musicFileService.bulkSave(musicFiles);
+    } catch (Exception e) {
       logger.severe("saveDirFiles: " + e.getMessage());
     }
   }

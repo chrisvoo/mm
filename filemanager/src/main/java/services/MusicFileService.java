@@ -4,6 +4,7 @@ import models.files.MusicFile;
 import routes.utils.PaginatedResponse;
 import routes.utils.Pagination;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -36,13 +37,23 @@ public interface MusicFileService {
      */
     boolean delete(long id);
 
+    /**
+     * Deletes the entries represented by this path. If it's a file, the WHERE condition will be a strict match, otherwise
+     * if it's a directory, it will be used a LIKE condition.
+     * @param path The resource to be deleted.
+     */
+    void delete(Path path);
+
     void upsert(MusicFile file);
 
     /**
-     * Deletes both the physical file and the related database record.
+     * Deletes both the physical file and the related database record.<br/>
+     * <b>Note: it requires that the resource still exists! Useful if the delete operation starts from
+     * the frontend</b>
+     *
      * @param resource The absolute path to the file
      */
-    void deleteAll(Path resource);
+    void physicalDelete(Path resource) throws IOException;
 
     /**
      * A pagination-enabled list of music files.

@@ -16,7 +16,7 @@ public class Repo {
   private static final Logger logger = Logger.getLogger(Repo.class.getName());
 
   protected Long count(String sql) {
-    logger.info("COUNT SQL: " + sql);
+    logger.fine("COUNT SQL: " + sql);
     try (
       Connection conn = db.getConnection();
       PreparedStatement stmt = conn.prepareStatement(sql)
@@ -49,7 +49,7 @@ public class Repo {
     ) {
       stmt.setLong(1, id);
       int affectedRows = stmt.executeUpdate();
-      logger.info("MusicFile.delete, affected rows: " + affectedRows);
+      logger.fine("MusicFile.delete, affected rows: " + affectedRows);
 
       if (affectedRows == 0) {
         throw new DbException(
