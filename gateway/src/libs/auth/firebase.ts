@@ -2,6 +2,14 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import dotenv from 'dotenv'
+import { validateEnv } from "../envSchema";
+
+const result = dotenv.config()
+const response: boolean = validateEnv(result.parsed)
+if (response !== true) {
+    process.exit(1)
+}
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
