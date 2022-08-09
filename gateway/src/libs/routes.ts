@@ -1,5 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
-import { VERSION } from "./bootstrapServer"
+import { auth } from "./auth/firebase"
+import { Static, Type } from '@sinclair/typebox'
+import { signInWithEmailAndPassword, signOut } from "firebase/auth"
 
 /**
  * Encapsulates the routes
@@ -7,8 +9,12 @@ import { VERSION } from "./bootstrapServer"
  * @param { Object } options plugin options, refer to https://www.fastify.io/docs/latest/Reference/Plugins/#plugin-options
  */
 export async function routes (fastify: FastifyInstance, options: any) {
-    fastify.get('/status', async (request: FastifyRequest, reply: FastifyReply) => {
-        return { version: VERSION }
-    })
+    fastify.get('/signout', async (request: FastifyRequest, reply: FastifyReply) => {
+        return signOut(auth);
+    });
+
+    fastify.get('/logged-in', async (request: FastifyRequest, reply: FastifyReply) => {
+        return { logged_in: auth.currentUser !== null }
+    });
 }
 

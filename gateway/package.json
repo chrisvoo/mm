@@ -17,10 +17,13 @@
     "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "dependencies": {
+    "@sinclair/typebox": "^0.24.27",
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.22.1",
     "firebase": "^9.9.2",
-    "joi": "^17.4.2",
+    "fluent-json-schema": "^3.1.0",
     "pino-pretty": "^8.1.0"
   },
   "devDependencies": {

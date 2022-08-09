@@ -1,5 +1,6 @@
 import fastify from 'fastify'
-import { routes } from './routes';
+import status from '../routes/status';
+import signin from '../routes/signin';
 
 const server = fastify({
     logger: { 
@@ -13,6 +14,9 @@ const server = fastify({
     caseSensitive: true,
 })
 
-server.register(routes);
+server
+  .register(status)
+  .register(signin);
+
 
 export default server;

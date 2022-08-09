@@ -1,15 +1,49 @@
-import Joi from 'joi'
+import { Type }   from '@sinclair/typebox'
+import Ajv, { DefinedError } from 'ajv'
+import { DotenvParseOutput } from 'dotenv';
+
+enum Environments {
+    development = "development", 
+    production = "production",
+    test = "test"
+}
+
+enum LoggerLevels {
+    error = "error", warn = "warn", info = "info", 
+    verbose = "verbose", debug = "debug", silly = "debug"
+}
   
-export const envSchema = Joi.object({
-    NODE_ENV: Joi.string().allow('development', 'production').required(),
-    PORT: Joi.number().min(1025).max(65535).required(),
-    // logging
-    LOGS_LEVEL: Joi.string().allow('error', 'warn', 'info', 'verbose', 'debug', 'silly').default('info'),
-    FIREBASE_API_KEY: Joi.string().required(),
-    FIREBASE_AUTH_DOMAIN: Joi.string().required(),
-    FIREBASE_PROJECT_ID: Joi.string().required(),
-    FIREBASE_STORAGE_BUCKET: Joi.string().required(),
-    FIREBASE_MESSAGING_SENDER_ID: Joi.number().required(),
-    FIREBASE_APP_ID: Joi.string().required(),
-    FIREBASE_MEASUREMENET_ID: Joi.string().required(),
-}).required();
+const envSchema = Type.Required(
+    Type.Object({
+        NODE_ENV: Type.Enum(Environments),
+        PORT: Type.Integer({ maximum: 65535, minimum: 1024 }),
+        // logging
+        LOGS_LEVEL: Type.Enum(LoggerLevels, { default: 'info' }),
+        FIREBASE_API_KEY: Type.String(),
+        FIREBASE_AUTH_DOMAIN: Type.String(),
+        FIREBASE_PROJECT_ID: Type.String(),
+        FIREBASE_STORAGE_BUCKET: Type.String(),
+        FIREBASE_MESSAGING_SENDER_ID: Type.Number(),
+        FIREBASE_APP_ID: Type.String(),
+        FIREBASE_MEASUREMENET_ID: Type.String(),
+    })
+);
+
+export function validateEnv(dotEnv: DotenvParseOutput | undefined): boolean {
+    const validate = new Ajv({
+        allErrors: false,
+        coerceTypes: true,
+    }).compile(envSchema)
+
+    if (!validate(dotEnv)) {
+        for (const err of validate.errors as DefinedError[]) {
+            switch (err.keyword) {
+                case "type":
+                    console.error(`${err.instancePath}: ${err.message}`);
+                    return false;
+            }
+        }
+    }
+
+    return true;
+}
