@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { FastifyInstance } from 'fastify';
+import '../../src/libs/server/environment/loadEnvVars';
 import { bootstrapServer, VERSION } from '../../src/libs/server/bootstrapServer'
 
 let fastifyApp: FastifyInstance|null = null;
