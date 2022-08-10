@@ -1,15 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { initializeApp as initAdmin } from "firebase-admin/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import dotenv from 'dotenv'
-import { validateEnv } from "../envSchema";
-
-const result = dotenv.config()
-const response: boolean = validateEnv(result.parsed)
-if (response !== true) {
-    process.exit(1)
-}
+import '../server/environment/loadEnvVars';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -28,6 +22,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+initAdmin()
 
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);

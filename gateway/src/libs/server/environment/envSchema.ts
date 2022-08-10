@@ -19,6 +19,8 @@ const envSchema = Type.Required(
         PORT: Type.Integer({ maximum: 65535, minimum: 1024 }),
         // logging
         LOGS_LEVEL: Type.Enum(LoggerLevels, { default: 'info' }),
+        // Firebase
+        GOOGLE_APPLICATION_CREDENTIALS: Type.String(),
         FIREBASE_API_KEY: Type.String(),
         FIREBASE_AUTH_DOMAIN: Type.String(),
         FIREBASE_PROJECT_ID: Type.String(),
@@ -29,6 +31,11 @@ const envSchema = Type.Required(
     })
 );
 
+/**
+ * It validates the content of .env file.
+ * @param dotEnv The output derived from dotenv.config()
+ * @returns true if the .env is valid, false otherwise
+ */
 export function validateEnv(dotEnv: DotenvParseOutput | undefined): boolean {
     const validate = new Ajv({
         allErrors: false,
