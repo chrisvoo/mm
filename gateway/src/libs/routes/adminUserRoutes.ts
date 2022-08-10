@@ -34,7 +34,7 @@ export default async function routes (fastify: FastifyTypeBoxed, options: any) {
     })
 
     // user creation
-    fastify.put('/:uid', { schema: { body: UserBodyJsonSchema } }, async (request) => {
+    fastify.put('/', { schema: { body: UserBodyJsonSchema } }, async (request) => {
         const { email, emailVerified = true, password, displayName, photoURL, disabled = false } = request.body
         // Firebase Authentication will generate a random uid for the new user
         const user = await adminAuth().createUser({
