@@ -1,13 +1,13 @@
 import { expect } from 'chai';
-import { FastifyInstance } from 'fastify';
 import '../../src/libs/server/environment/loadEnvVars';
 import { bootstrapServer, VERSION } from '../../src/libs/server/bootstrapServer'
+import { FastifyTypeBoxed } from '../../src/libs/types';
 
-let fastifyApp: FastifyInstance|null = null;
+let fastifyApp: FastifyTypeBoxed|null = null;
 
 describe('/status', function () {
     before(async function () {
-        fastifyApp = await bootstrapServer();
+        fastifyApp = await bootstrapServer({ skipLogging: true });
     });
 
     after(function () {

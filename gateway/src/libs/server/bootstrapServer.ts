@@ -1,14 +1,15 @@
-import { FastifyInstance } from 'fastify';
 import './environment/loadEnvVars';
 import fs, { Stats } from 'fs';
 import util from 'util';
-
-import fastify from './serverSetup'
+import serverSetup from './serverSetup'
+import { FastifyTypeBoxed, ServerSetupOptions } from '../types';
 
 export const VERSION = '0.0.1'
 const stat = util.promisify(fs.stat);
 
-export const bootstrapServer = async (): Promise<FastifyInstance> => {
+export const bootstrapServer = async (opts?: ServerSetupOptions): Promise<FastifyTypeBoxed> => {
+    const fastify = serverSetup(opts)
+
     try {
         let statObj: Stats
         try {
@@ -23,8 +24,9 @@ export const bootstrapServer = async (): Promise<FastifyInstance> => {
             process.exit(1);
         }
 
+        // @TODO: explore other available options
         await fastify.listen({ 
-            port: process.env.PORT as unknown as number 
+            port: process.env.PORT as unknown as number,
         });
 
         return fastify;

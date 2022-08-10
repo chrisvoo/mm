@@ -1,6 +1,7 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
+import { FastifyReply, FastifyRequest } from "fastify"
 import { auth as adminAuth } from "firebase-admin"
 import { FirebaseError } from "firebase/app";
+import { FastifyTypeBoxed } from "../../types";
 
 export interface FastifyUserRequest extends FastifyRequest {
     user: {
@@ -9,7 +10,7 @@ export interface FastifyUserRequest extends FastifyRequest {
     }
 }
 
-export default function injectVerifyBearerHook(fastify: FastifyInstance, options?: { adminCheck: boolean }): void {
+export default function injectVerifyBearerHook(fastify: FastifyTypeBoxed, options?: { adminCheck: boolean }): void {
     fastify.decorateRequest('user', null);
 
     fastify.addHook('onRequest', async (request: FastifyRequest | FastifyUserRequest, reply: FastifyReply) => {

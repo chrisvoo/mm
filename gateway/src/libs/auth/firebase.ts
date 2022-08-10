@@ -1,9 +1,9 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { initializeApp as initAdmin } from "firebase-admin/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-import '../server/environment/loadEnvVars';
+import { initializeApp } from "firebase/app"
+import { initializeApp as initAdmin } from "firebase-admin/app"
+import { getAnalytics } from "firebase/analytics"
+import { getAuth } from "firebase/auth"
+import '../server/environment/loadEnvVars'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,15 +18,15 @@ const firebaseConfig = {
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
   measurementId: process.env.FIREBASE_MEASUREMENET_ID
-};
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig)
 
 initAdmin()
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
-auth.useDeviceLanguage();
+const auth = getAuth(app)
+auth.useDeviceLanguage()
 
-export { auth, getAnalytics };
+export { auth, getAnalytics }
