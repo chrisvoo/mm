@@ -23,7 +23,7 @@ public class ScanRequest extends Model<ScanRequest> {
   }
 
   public Path getDirectory() {
-    return Paths.get(directory);
+    return directory != null ? Paths.get(directory) : null;
   }
 
   public ScanRequest setDirectory(String directory) {

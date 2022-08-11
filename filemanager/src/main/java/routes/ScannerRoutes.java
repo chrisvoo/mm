@@ -33,6 +33,12 @@ public class ScannerRoutes extends routes.Route implements Router {
      */
     private ScanRequest getScanFromRequest(Request req) {
         ScanRequest scan = Model.fromJson(req.body(), ScanRequest.class);
+
+        // no body at all
+        if (scan == null) {
+            scan = new ScanRequest();
+        }
+
         // default directory
         if (scan.getDirectory() == null) {
             scan.setDirectory(envVars.getMusicDirectory());

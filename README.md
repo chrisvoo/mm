@@ -9,8 +9,9 @@
 
 ## Useful commands
 
+* `docker logs -f -n 50 filemanager`: show and follow output logs for filemanager
 * `docker-compose -f docker-compose-dev.yml config`: verify your config is correct after having edited the .env file.
-
+* `docker-compose -f docker-compose-test.yml config`: just run MySQL
 
 ## Credits
 

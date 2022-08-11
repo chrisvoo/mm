@@ -6,6 +6,7 @@ import models.Model;
 import utils.Conv;
 import utils.gson.StrictEnumTypeAdapterFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -270,5 +271,9 @@ public class MusicFile extends Model<MusicFile> {
         return new GsonBuilder()
           .registerTypeAdapterFactory(new StrictEnumTypeAdapterFactory())
           .create().fromJson(json, MusicFile.class);
+    }
+
+    public File toFile() {
+        return new File(this.absolutePath);
     }
 }

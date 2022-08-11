@@ -35,13 +35,19 @@ public class Microservice {
         // 2. microservice init
         port(envVars.getPort());
 
-        // routes
+        // 3. routes
         musicFilesRoutes.routes();
         bandRoutes.routes();
         scannerRoutes.routes();
         statsRoutes.routes();
 
-        // Error handler routes, as last definition
+        // 4. filters
+        after("/*", (request, response) -> response.header(
+          "Content-Type",
+          "application/json; charset=utf-8"
+        ));
+
+        // 5. Error handler routes, as last definition
         ErrorRoutes.routes();
 
         awaitInitialization();
