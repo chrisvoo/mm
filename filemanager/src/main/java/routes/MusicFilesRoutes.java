@@ -4,16 +4,15 @@ import com.google.inject.Inject;
 import exceptions.ModelException;
 import models.files.MusicFile;
 import models.utils.ErrorResponse;
+import org.eclipse.jetty.http.HttpStatus;
 import routes.utils.Pagination;
 import services.MusicFileService;
 import spark.Request;
 import spark.Route;
 import utils.JsonTransformer;
+import utils.MediaStreamUtils;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 
 import static spark.Spark.*;
 
@@ -62,59 +61,13 @@ public class MusicFilesRoutes extends routes.Route implements Router {
 
     private Route streamById() {
         return (req, res) -> {
-            RandomAccessFile raf = null;
-            OutputStream stream = null;
             try {
-                MusicFile mp3 = this.getMusicFileById(req);
-                File file = mp3.toFile();
-                raf = new RandomAccessFile(file, "r");
-
-                int off = 0;
-                int to = (int) file.length();
-                String rangeHeader = req.headers("Range");
-
-                HttpServletResponse response = res.raw();
-
-                if (rangeHeader != null) {
-                    String boundaries = rangeHeader.split("=")[1];
-
-                    String from = String.valueOf(boundaries.charAt(0));
-                    off = Integer.parseInt(from);
-
-                    if (!boundaries.equals("0-")) {
-                        String t = rangeHeader.split("=")[1].split("-")[1];
-                        to = Integer.parseInt(t);
-
-                        response.setHeader("Content-Range:", "bytes " + off + "-" + to + "/" + (to - off));
-                        response.setStatus(206);
-                    }
-                }
-
-                byte[] data = new byte[to - off];
-                raf.readFully(data, off, to - off);
-
-                response.setContentType("audio/mpeg");
-                response.setHeader("Accept-Ranges","bytes");
-                response.setContentLength(data.length);
-                response.setHeader("Cache-Control", "no-cache, private");
-                response.setHeader("Expires", "0");
-                response.setHeader("Content-Transfer-Encoding", "binary");
-                response.setHeader("Transfer-Encoding", "chunked");
-
-                stream = response.getOutputStream();
-                stream.write(data);
-
-                return null;
-            } catch (ModelException e) {
-                return new ErrorResponse(e.getMessage(), e.getCode());
-            } finally {
-                if (raf != null) {
-                    raf.close();
-                }
-
-                if (stream != null) {
-                    stream.close();
-                }
+               File mp3 = this.getMusicFileById(req).toFile();
+               return new MediaStreamUtils(req, res).stream(mp3);
+            } catch (Exception e) {
+                res.type("application/json");
+                res.status(HttpStatus.SERVICE_UNAVAILABLE_503);
+                return new ErrorResponse(e.getMessage()).toString();
             }
         };
     }
