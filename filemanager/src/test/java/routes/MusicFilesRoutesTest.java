@@ -2,7 +2,7 @@ package routes;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import exceptions.DbException;
+import exceptions.ModelException;
 import models.files.BitRateType;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
@@ -50,7 +50,7 @@ public class MusicFilesRoutesTest {
         ErrorResponse err = ErrorResponse.fromJson(response.body());
 
         assertEquals("No file with id 5 was found", err.getMessage());
-        assertEquals(DbException.RESOURCE_NOT_FOUND, err.getCode());
+        assertEquals(ModelException.INVALID_FIELDS, err.getCode());
     }
 
     @Test @Order(2)

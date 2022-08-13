@@ -17,6 +17,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}_test
       - MYSQL_USER=${MYSQL_USER}_test
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - ENV=DEVELOPMENT
     ports:
       - ${MYSQL_LOCAL_PORT_TEST}:3306         
   adminer:

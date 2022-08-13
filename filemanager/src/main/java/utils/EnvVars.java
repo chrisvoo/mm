@@ -33,6 +33,14 @@ public class EnvVars {
      */
     private String mysqlPass;
 
+    private Environments environment;
+
+    public enum Environments {
+        DEVELOPMENT,
+        TEST,
+        PRODUCTION
+    }
+
     private Optional<Integer> tryParseInteger(String string) {
         try {
             return Optional.of(Integer.valueOf(string));
@@ -56,6 +64,7 @@ public class EnvVars {
     public void loadEnvVars() {
         this.port = this.getIntEnv("FILE_MANAGER_PORT");
         this.musicDirectory = Paths.get(this.getStringEnv("MUSIC_DIRECTORY"));
+        this.environment = Environments.valueOf(this.getStringEnv("ENV"));
 
         if (!Files.isDirectory(this.musicDirectory)) {
             throw new EnvException("The specified music directory is not a directory!", EnvException.MUSIC_DIR_INVALID);
@@ -73,13 +82,13 @@ public class EnvVars {
         this.connectionString = String.format("jdbc:mysql://%s:%d/%s", mysqlHost, mysqlPort, mysqlDb);
     }
 
-    public static boolean isJUnitTest() {
-        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-            if (element.getClassName().startsWith("org.junit.")) {
-                return true;
-            }
-        }
-        return false;
+    public Environments getEnvironment() {
+        return environment;
+    }
+
+    public EnvVars setEnvironment(Environments environment) {
+        this.environment = environment;
+        return this;
     }
 
     public int getPort() {

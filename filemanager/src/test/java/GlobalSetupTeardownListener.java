@@ -12,7 +12,6 @@ import java.io.IOException;
 public class GlobalSetupTeardownListener implements LauncherSessionListener {
 
     private Fixture fixture;
-    private static Microservice microservice;
 
     public void launcherSessionOpened(LauncherSession session) {
         // Avoid setup for test discovery by delaying it until tests are about to be executed
@@ -24,7 +23,7 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
                     try {
                         fixture.setUp();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -39,10 +38,12 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
     }
 
     static class Fixture {
+        private Microservice microservice;
+
         void setUp() throws IOException {
             Injector injector = Guice.createInjector(new FileManagerModule());
             microservice = injector.getInstance(Microservice.class);
-            microservice.start(true);
+            microservice.start();
         }
 
         void tearDown() {
