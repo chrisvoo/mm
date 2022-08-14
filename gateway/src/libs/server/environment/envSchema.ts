@@ -16,7 +16,8 @@ enum LoggerLevels {
 const envSchema = Type.Required(
     Type.Object({
         NODE_ENV: Type.Enum(Environments),
-        PORT: Type.Integer({ maximum: 65535, minimum: 1024 }),
+        PORT: Type.Integer({ maximum: 65535, minimum: 1025 }),
+        FILEMANAGER_URL: Type.String(),
         // logging
         LOGS_LEVEL: Type.Enum(LoggerLevels, { default: 'info' }),
         // Firebase

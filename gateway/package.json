@@ -12,11 +12,12 @@
     "tsc": "tsc",
     "build": "run-s clean tsc",
     "watch": "tsc --watch",
-    "dev": "node -r ts-node/register ./src/index.ts",
+    "dev": "node -r ts-node/register --trace-warnings ./src/index.ts",
     "dev:watch": "nodemon",
     "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "dependencies": {
+    "@fastify/http-proxy": "^8.2.1",
     "@fastify/type-provider-typebox": "^2.3.0",
     "@sinclair/typebox": "^0.24.27",
     "ajv": "^8.11.0",

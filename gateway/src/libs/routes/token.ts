@@ -37,7 +37,7 @@ export default async function routes (fastify: FastifyTypeBoxed) {
         } catch (e) {
             const error = e as FirebaseError;
             return {
-                error: 'Cannot sign-in',
+                error: 'Cannot get the access token',
                 message: error.message,
                 code: error.code
             }

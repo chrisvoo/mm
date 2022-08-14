@@ -18,3 +18,7 @@ export type FastifyRequestTypebox<TSchema> = FastifyRequest<
   TSchema,
   TypeBoxTypeProvider
 >;
+
+export type VerifyBearerTokenOptions = {
+  adminCheck: boolean
+}
