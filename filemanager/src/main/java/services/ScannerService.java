@@ -26,7 +26,7 @@ public interface ScannerService {
      */
     ScanOp getById(long id);
 
-    long bulkSave(List<ScanOpError> errors, long scanOpId);
+    long bulkSaveErrors(List<ScanOpError> errors, long scanOpId);
 
     // TODO: cursor-based pagination
 }

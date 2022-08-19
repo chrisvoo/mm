@@ -70,11 +70,17 @@ public class Scanner extends Thread {
 
     ScanOp result = pool.invoke(task.setPaths(this.files));
     Instant end = Instant.now();
-    result.setTotalElapsedTime((short)Duration.between(start, end).getSeconds());
+    result
+      .setTotalElapsedTime((short)Duration.between(start, end).getSeconds())
+      .setStarted(start)
+      .setHasErrors(false)
+      .setFinished(end);
+
     ScanOp savedResult = scannerService.save(result);
 
     if (result.hasErrors()) {
-      scannerService.bulkSave(result.getScanErrors(), savedResult.getId());
+      savedResult.setHasErrors(true);
+      scannerService.bulkSaveErrors(result.getScanErrors(), savedResult.getId());
     }
 
     // save result in db

@@ -22,6 +22,8 @@ public class MusicFileSchema extends Schema<MusicFile> {
     public static final String ALBUM_IMAGE = "album_image";
     public static final String ALBUM_IMAGE_MIME_TYPE = "album_image_mime_type";
 
+    public static final String TABLE_NAME = "music_files";
+
     public MusicFileSchema() {
         this.fields = List.of(
           MusicFileSchema.ABSOLUTE_PATH, MusicFileSchema.SIZE, MusicFileSchema.BITRATE,
@@ -33,7 +35,7 @@ public class MusicFileSchema extends Schema<MusicFile> {
     }
 
     public String tableName() {
-        return "music_files";
+        return TABLE_NAME;
     }
 
     public MusicFile getModelFromResultSet(ResultSet rs) throws SQLException {

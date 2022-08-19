@@ -18,6 +18,8 @@ public class BandSchema extends Schema<Band> {
     public static final String WEBSITE = "website";
     public static final String TWITTER = "twitter";
 
+    public static final String TABLE_NAME = "bands";
+
     public BandSchema() {
         this.fields = List.of(
             BandSchema.NAME, BandSchema.COUNTRY, BandSchema.COUNTRY_NAME,
@@ -28,7 +30,7 @@ public class BandSchema extends Schema<Band> {
     }
 
     public String tableName() {
-        return "bands";
+        return TABLE_NAME;
     }
 
 

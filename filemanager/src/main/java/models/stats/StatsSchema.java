@@ -19,6 +19,8 @@ public class StatsSchema extends Schema<Stats> {
   public static final String TOTAL_BYTES = "total_bytes";
   public static final String LAST_UPDATE = "last_update";
 
+  public static final String TABLE_NAME = "stats";
+
   public StatsSchema() {
     this.fields = List.of(
       StatsSchema.TOTAL_FILES, StatsSchema.TOTAL_BYTES, StatsSchema.LAST_UPDATE
@@ -33,7 +35,7 @@ public class StatsSchema extends Schema<Stats> {
    */
   @Override
   public String tableName() {
-    return "stats";
+    return TABLE_NAME;
   }
 
   /**

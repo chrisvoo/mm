@@ -14,6 +14,8 @@ public class ScanOpErrorSchema extends Schema<ScanOpError> {
     public static final String MESSAGE = "message";
     public static final String CREATED_AT = "created_at";
 
+    public static final String TABLE_NAME = "scan_ops_errors";
+
     public ScanOpErrorSchema() {
         this.fields = List.of(
             ScanOpErrorSchema.SCAN_OP_ID, ScanOpErrorSchema.ABSOLUTE_PATH,
@@ -23,7 +25,7 @@ public class ScanOpErrorSchema extends Schema<ScanOpError> {
     }
 
     public String tableName() {
-        return "scan_ops_errors";
+        return TABLE_NAME;
     }
 
     public ScanOpError getModelFromResultSet(ResultSet rs) throws SQLException {

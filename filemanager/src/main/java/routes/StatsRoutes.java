@@ -33,7 +33,7 @@ public class StatsRoutes extends routes.Route implements Router {
     }
 
     private Route getStats() {
-        return (req, res) -> statsService.getStats();
+        return (req, res) -> statsService.getStats(true);
     }
 
     private Route upsert() {

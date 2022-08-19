@@ -17,14 +17,18 @@ public class StatsRepo extends Repo implements StatsService {
     @Inject private StatsSchema schema;
 
     /**
-     * Return the stats (one record only)
+     * Return the last record from stats or all the history
      * @return Stats
      */
     @Override
-    public Stats getStats() {
-        String sql = String.format(
-            "SELECT * FROM %s", schema.tableName()
-        );
+    public Stats getStats(boolean onlyLast) {
+        String sql = !onlyLast
+                ? String.format(
+                    "SELECT * FROM %s", schema.tableName()
+                 )
+                : String.format(
+                  "SELECT * FROM %s ORDER BY %s LIMIT 1", schema.tableName(), StatsSchema.LAST_UPDATE
+                );
         try (
             Connection conn = db.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)

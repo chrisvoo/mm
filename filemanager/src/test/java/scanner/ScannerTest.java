@@ -2,16 +2,22 @@ package scanner;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import models.band.BandSchema;
+import models.files.MusicFileSchema;
 import models.scanner.ScanOp;
+import models.scanner.ScanOpErrorSchema;
+import models.scanner.ScanOpSchema;
+import models.stats.Stats;
+import models.stats.StatsSchema;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
+import services.StatsService;
 import src.DbHelper;
 import utils.FileManagerModule;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,12 +26,17 @@ public class ScannerTest {
 
   @BeforeAll
   static void initAll() {
-    DbHelper.emptyTable(new BandSchema().tableName());
+    DbHelper.emptyTables(List.of(
+      MusicFileSchema.TABLE_NAME,
+      ScanOpSchema.TABLE_NAME,
+      ScanOpErrorSchema.TABLE_NAME,
+      StatsSchema.TABLE_NAME
+    ));
   }
 
   @AfterAll
   static void tearDown() {
-    DbHelper.emptyTable(new BandSchema().tableName());
+
   }
 
   @Test
@@ -47,5 +58,11 @@ public class ScannerTest {
     assertEquals(42656676, result.getTotalBytes());
     assertNull(result.getScanErrors());
     rep.publishEntry(result.toString());
+
+    StatsService statsService = injector.getInstance(StatsService.class);
+    Stats stats = statsService.getStats(true);
+    assertEquals(14, stats.getTotalFiles());
+    assertEquals(42656676, stats.getTotalBytes());
+    assertNotNull(stats.getLastUpdate());
   }
 }

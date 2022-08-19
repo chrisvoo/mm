@@ -2,8 +2,10 @@ package models.scanner;
 
 import com.google.gson.Gson;
 import models.Model;
+import models.stats.Stats;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class ScanOp extends Model<ScanOp> {
     private short totalElapsedTime;
     private long totalBytes;
     private Timestamp finished;
+    private boolean hasErrors;
 
     /**
      * Transient property to link the join table.
@@ -36,6 +39,17 @@ public class ScanOp extends Model<ScanOp> {
         this.positiveNumberValidator("totalBytes", this.totalBytes);
 
         return this.errorCode == null;
+    }
+
+    /**
+     * It creates a new Stats instance from the current results
+     * @return The Stats instance
+     */
+    public Stats getStats() {
+        return new Stats()
+          .setLastUpdate(Timestamp.from(Instant.now()))
+          .setTotalBytes(this.getTotalBytes())
+          .setTotalFiles(this.getTotalFilesInserted());
     }
 
     public int getTotalFilesInserted() {
@@ -66,7 +80,12 @@ public class ScanOp extends Model<ScanOp> {
     }
 
     public boolean hasErrors() {
-        return this.scanErrors != null && !this.scanErrors.isEmpty();
+        return (this.scanErrors != null && !this.scanErrors.isEmpty()) || this.hasErrors;
+    }
+
+    public ScanOp setHasErrors(boolean hasErrors) {
+        this.hasErrors = hasErrors;
+        return this;
     }
 
     public Long getId() {
@@ -80,6 +99,11 @@ public class ScanOp extends Model<ScanOp> {
 
     public Timestamp getStarted() {
         return started;
+    }
+
+    public ScanOp setStarted(Instant started) {
+        this.started = Timestamp.from(started);
+        return this;
     }
 
     public ScanOp setStarted(Timestamp started) {
@@ -107,6 +131,11 @@ public class ScanOp extends Model<ScanOp> {
 
     public Timestamp getFinished() {
         return finished;
+    }
+
+    public ScanOp setFinished(Instant finished) {
+        this.finished = Timestamp.from(finished);
+        return this;
     }
 
     public ScanOp setFinished(Timestamp finished) {

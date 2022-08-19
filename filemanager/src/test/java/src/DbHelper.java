@@ -9,6 +9,7 @@ import utils.FileManagerModule;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class DbHelper {
@@ -39,6 +40,16 @@ public class DbHelper {
                 String.format("Cannot empty table %s", table),
                 DbException.SQL_EXCEPTION
             );
+        }
+    }
+
+    /**
+     * Removes all records from the specified list of tables.
+     * @param tList List of tables to be emptied.
+     */
+    public static void emptyTables(List<String> tList) {
+        for (String table :  tList) {
+            DbHelper.emptyTable(table);
         }
     }
 }

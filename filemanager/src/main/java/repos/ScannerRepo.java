@@ -7,6 +7,7 @@ import models.scanner.ScanOp;
 import models.scanner.ScanOpError;
 import models.scanner.ScanOpErrorSchema;
 import models.scanner.ScanOpSchema;
+import models.stats.StatsSchema;
 import services.ScannerService;
 import utils.Db;
 
@@ -19,6 +20,7 @@ public class ScannerRepo implements ScannerService {
     private static final Logger logger = Logger.getLogger(ScannerRepo.class.getName());
     @Inject private Db db;
     @Inject private ScanOpSchema schema;
+    @Inject private StatsSchema statsSchema;
     @Inject private ScanOpErrorSchema errorSchema;
 
 
@@ -53,8 +55,6 @@ public class ScannerRepo implements ScannerService {
                       DbException.RESOURCE_NOT_FOUND
                     );
                 }
-
-                return op;
             } catch (SQLException e) {
                 logger.severe(e.getMessage());
                 throw new DbException("Updating the scanop failed", DbException.SQL_EXCEPTION);
@@ -82,7 +82,6 @@ public class ScannerRepo implements ScannerService {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         op.setId(generatedKeys.getLong(1));
-                        return op;
                     } else {
                         throw new SQLException("Creating scanop failed, no ID obtained.");
                     }
@@ -91,6 +90,35 @@ public class ScannerRepo implements ScannerService {
                 logger.severe(e.getMessage());
                 throw new DbException("Cannot get the scanop", DbException.SQL_EXCEPTION);
             }
+        }
+
+        this.saveStats(op);
+        return op;
+    }
+
+    /**
+     * Saves the stats of the last scan
+     * @param result The result of the scan
+     */
+    private void saveStats(ScanOp result) {
+        String sql = statsSchema.getSqlForInsert();
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            statsSchema.setStatementValues(stmt, result.getStats());
+            int affectedRows = stmt.executeUpdate();
+            logger.fine("statsSchema.create, affected rows: " + affectedRows);
+
+            if (affectedRows == 0) {
+                throw new DbException(
+                  "Insert new stats failed",
+                  DbException.SQL_EXCEPTION
+                );
+            }
+        } catch (SQLException e) {
+            logger.severe(e.getMessage());
+            throw new DbException("Cannot insert the stats", DbException.SQL_EXCEPTION);
         }
     }
 
@@ -154,7 +182,7 @@ public class ScannerRepo implements ScannerService {
     }
 
     @Override
-    public long bulkSave(List<ScanOpError> errors, long scanOpId) {
+    public long bulkSaveErrors(List<ScanOpError> errors, long scanOpId) {
         String sql = errorSchema.getSqlForInsert();
         logger.fine(sql);
 
