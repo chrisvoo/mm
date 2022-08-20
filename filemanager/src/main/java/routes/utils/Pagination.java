@@ -1,17 +1,21 @@
 package routes.utils;
 
+import com.google.inject.Inject;
 import exceptions.ModelException;
 import spark.Request;
+import utils.logging.LoggerInterface;
 
 import java.util.Base64;
-import java.util.logging.Logger;
 
 public class Pagination extends QueryStringUtils {
   private String cursor;
   private int count;
   private String sortDir;
 
-  private static final Logger logger = Logger.getLogger(Pagination.class.getName());
+  private String sortBy;
+
+  @Inject
+  private LoggerInterface logger;
 
   public String getCursor() {
     return this.getCursor(false);
@@ -63,8 +67,18 @@ public class Pagination extends QueryStringUtils {
     return this;
   }
 
+  public String getSortBy() {
+    return sortBy;
+  }
+
+  public Pagination setSortBy(String sortBy) {
+    this.sortBy = sortBy;
+    return this;
+  }
+
   private boolean isSortValid() {
-    return this.sortDir.equalsIgnoreCase("desc") || this.sortDir.equalsIgnoreCase("asc");
+    return this.sortDir.equalsIgnoreCase("desc") || this.sortDir.equalsIgnoreCase("asc") ||
+      this.count <= 0;
   }
 
   public static Pagination fromRequest(Request req) {
@@ -72,10 +86,11 @@ public class Pagination extends QueryStringUtils {
     page
       .setCursor(page.getQsString(req,"cursor"))
       .setCount(page.getQsInt(req, "count", 10))
+      .setSortBy(page.getQsString(req, "sort_by"))
       .setSortDir(page.getQsString(req, "sort_dir", "desc"));
 
     if (!page.isSortValid()) {
-      throw new ModelException("sort_dir", ModelException.INVALID_FIELDS);
+      throw new ModelException("Invalid pagination params", ModelException.INVALID_FIELDS);
     }
 
     return page;

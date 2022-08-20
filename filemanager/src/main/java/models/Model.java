@@ -2,18 +2,19 @@ package models;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
 import exceptions.ModelException;
 import models.utils.ErrorResponse;
+import utils.logging.LoggerInterface;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public abstract class Model<T> {
-    private static final Logger logger = Logger.getLogger(Model.class.getName());
+    @Inject private LoggerInterface logger;
     protected transient List<String> requiredFields;
     protected transient Map<String, String> errors = new HashMap<>();
     protected transient Integer errorCode = null;

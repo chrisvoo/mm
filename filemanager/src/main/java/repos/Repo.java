@@ -4,16 +4,16 @@ import com.google.inject.Inject;
 import exceptions.DbException;
 import models.Schema;
 import utils.Db;
+import utils.logging.LoggerInterface;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 public class Repo {
   @Inject protected Db db;
-  private static final Logger logger = Logger.getLogger(Repo.class.getName());
+  @Inject private LoggerInterface logger;
 
   protected Long count(String sql) {
     logger.fine("COUNT SQL: " + sql);

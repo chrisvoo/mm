@@ -32,6 +32,9 @@ public class MusicFileSchema extends Schema<MusicFile> {
           MusicFileSchema.TITLE, MusicFileSchema.ALBUM_IMAGE, MusicFileSchema.ALBUM_IMAGE_MIME_TYPE
         );
         this.primaryKeys = List.of(MusicFileSchema.ID);
+        this.sortableFields = List.of(
+          MusicFileSchema.ARTIST, MusicFileSchema.TITLE, MusicFileSchema.ABSOLUTE_PATH, MusicFileSchema.ID
+        );
     }
 
     public String tableName() {

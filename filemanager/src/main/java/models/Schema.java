@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 public abstract class Schema<T> {
     protected List<String> fields;
     protected List<String> primaryKeys;
+    protected List<String> sortableFields;
+    // using classic logger, cannot @Inject abstract class
     private static final Logger logger = Logger.getLogger(Schema.class.getName());
 
     /**
@@ -19,6 +21,10 @@ public abstract class Schema<T> {
      * @return The table's name.
      */
     public abstract String tableName();
+
+    public List<String> getSortableFields() {
+        return this.sortableFields;
+    }
 
     /**
      * Return the fields with or without primary keys. This is done on purpose since

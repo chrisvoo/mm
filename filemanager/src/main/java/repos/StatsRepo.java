@@ -7,12 +7,12 @@ import models.stats.Stats;
 import models.stats.StatsSchema;
 import services.StatsService;
 import utils.Db;
+import utils.logging.LoggerInterface;
 
 import java.sql.*;
-import java.util.logging.Logger;
 
 public class StatsRepo extends Repo implements StatsService {
-    private static final Logger logger = Logger.getLogger(StatsRepo.class.getName());
+    @Inject private LoggerInterface logger;
     @Inject private Db db;
     @Inject private StatsSchema schema;
 

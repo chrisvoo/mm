@@ -1,10 +1,10 @@
 package utils;
 
+import com.google.inject.Inject;
 import org.eclipse.jetty.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
+import utils.logging.LoggerInterface;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -22,7 +22,8 @@ import java.util.Set;
  */
 public class MediaStreamUtils {
   public static final Set<String> NON_STREAMING_BROWSERS = new HashSet<>(Arrays.asList("Firefox", "Android"));
-  static final Logger log = LoggerFactory.getLogger(MediaStreamUtils.class);
+  @Inject
+  private LoggerInterface log;
   private final Request req;
   private final Response res;
   private boolean nonStreamingBrowser = false;
@@ -95,7 +96,7 @@ public class MediaStreamUtils {
       res.header("Date", new Date(basicFileAttributes.lastModifiedTime().toMillis()).toString());
       res.header("Last-Modified", new Date(basicFileAttributes.lastModifiedTime().toMillis()).toString());
 
-      log.debug("writing random access file instead");
+      log.fine("writing random access file instead");
       final RandomAccessFile raf = new RandomAccessFile(mp3, "r");
       raf.seek(fromTo[0]);
       writeAudioToOS(length, raf, bos);
@@ -116,7 +117,7 @@ public class MediaStreamUtils {
     for (String browser : NON_STREAMING_BROWSERS) {
       if (userAgent.contains(browser.toLowerCase())) {
         this.nonStreamingBrowser = true;
-        log.debug("Its a non-streaming browser.");
+        log.fine("Its a non-streaming browser.");
         break;
       }
     }
@@ -133,7 +134,7 @@ public class MediaStreamUtils {
 
     String[] ranges = range.split("=")[1].split("-");
     log.info(range);
-    log.debug("ranges[] = " + Arrays.toString(ranges));
+    log.fine("ranges[] = " + Arrays.toString(ranges));
 
     Integer chunkSize = 512;
     Integer from = Integer.parseInt(ranges[0]);

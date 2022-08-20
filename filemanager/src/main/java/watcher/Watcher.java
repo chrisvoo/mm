@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import models.files.MusicFile;
 import services.MusicFileService;
 import utils.FileUtils;
+import utils.logging.LoggerInterface;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -12,13 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class Watcher extends Thread {
-  private static final Logger logger = Logger.getLogger(Watcher.class.getName());
+  @Inject private LoggerInterface logger;
   private final WatchService watcher;
   private final Map<WatchKey,Path> keys;
   private boolean closed = false;
@@ -34,7 +34,7 @@ public class Watcher extends Thread {
     this.keys = new HashMap<>();
 
     if (dir != null) {
-        logger.info(String.format("Scanning %s ...\n", dir));
+        logger.info(String.format("Scanning %s...\n", dir));
         registerAll(dir);
         logger.info("Done.");
     }
@@ -44,6 +44,7 @@ public class Watcher extends Thread {
    * It doesn't start registering files as the other constructors.
    * @throws IOException thrown by newWatchService or registerAll
    */
+  @Inject
   public Watcher() throws IOException {
     this(null);
   }
@@ -61,7 +62,7 @@ public class Watcher extends Thread {
    * @throws IOException if an I/O error is thrown by a visitor method of Files.walkFileTree
    */
   public Watcher registerAll(final Path start) throws IOException {
-    logger.info(String.format("Scanning %s ...", start));
+    logger.fine(String.format("Scanning %s ...", start));
 
     // register directory and subdirectories
     Files.walkFileTree(start, new SimpleFileVisitor<>() {

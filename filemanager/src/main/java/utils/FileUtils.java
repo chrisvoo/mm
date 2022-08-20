@@ -1,5 +1,8 @@
 package utils;
 
+import com.google.inject.Inject;
+import utils.logging.LoggerInterface;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -8,10 +11,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class FileUtils {
-  private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
+  @Inject
+  private static LoggerInterface logger;
 
   /**
    * It tests that the specified file is an MP3 file (it must exist).

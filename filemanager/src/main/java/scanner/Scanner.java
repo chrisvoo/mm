@@ -7,6 +7,7 @@ import models.scanner.ScanOp;
 import services.ScannerService;
 import utils.FileManagerModule;
 import utils.FileUtils;
+import utils.logging.LoggerInterface;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -16,13 +17,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
-import java.util.logging.Logger;
 
 /**
  * Scan a directory for MP3 and store its metadata and paths inside the db
  */
 public class Scanner extends Thread {
-  private static final Logger logger = Logger.getLogger(Scanner.class.getName());
+  @Inject private LoggerInterface logger;
   private ArrayList<Path> files = new ArrayList<>();
   private Path targetDirectory;
   @Inject private ScannerService scannerService;

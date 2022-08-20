@@ -2,6 +2,7 @@ package utils;
 
 import com.google.inject.AbstractModule;
 import exceptions.FileManagerException;
+import models.files.MusicFile;
 import repos.BandRepo;
 import repos.MusicFileRepo;
 import repos.ScannerRepo;
@@ -11,20 +12,31 @@ import services.MusicFileService;
 import services.ScannerService;
 import services.StatsService;
 import spark.Spark;
+import utils.logging.LoggerFactory;
+import utils.logging.LoggerInterface;
 import watcher.Watcher;
 
 import java.io.IOException;
 
 public class FileManagerModule extends AbstractModule {
+    private EnvVars envVars;
+
     @Override
     protected void configure() {
         Watcher watcher = null;
+        LoggerFactory loggerFactory = null;
         try {
-            EnvVars envVars = new EnvVars();
-            envVars.loadEnvVars();
-            bind(EnvVars.class).toInstance(envVars);
+            this.envVars = new EnvVars();
+            this.envVars.loadEnvVars();
 
-            Db db = new Db(envVars);
+            // used by Jetty
+            System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "WARN");
+
+            bind(EnvVars.class).toInstance(this.envVars);
+
+            loggerFactory = new LoggerFactory(envVars);
+
+            Db db = new Db(this.envVars);
             bind(Db.class).toInstance(db);
 
             watcher = new Watcher();
@@ -34,7 +46,7 @@ public class FileManagerModule extends AbstractModule {
             Spark.awaitStop();
 
             if (watcher != null) {
-                watcher.stop();
+                watcher.close();
             }
 
             System.err.println(e.getMessage());
@@ -44,6 +56,10 @@ public class FileManagerModule extends AbstractModule {
                 : 500
             );
         }
+
+        bind(LoggerInterface.class).toInstance(loggerFactory);
+        // classes using logger inside static methods need to be added here
+        requestStaticInjection(MusicFile.class, FileUtils.class);
 
         bind(MusicFileService.class).to(MusicFileRepo.class);
         bind(ScannerService.class).to(ScannerRepo.class);

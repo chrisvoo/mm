@@ -3,6 +3,7 @@ package routes;
 import com.google.inject.Inject;
 import exceptions.ModelException;
 import models.files.MusicFile;
+import models.files.MusicFileSchema;
 import models.utils.ErrorResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import routes.utils.Pagination;
@@ -75,6 +76,11 @@ public class MusicFilesRoutes extends routes.Route implements Router {
     private Route getAll() {
         return (req, res) -> {
             Pagination pagination = Pagination.fromRequest(req);
+            if (pagination.getSortBy() == null || pagination.getSortBy().isBlank()) {
+                pagination.setSortBy(MusicFileSchema.ID);
+            } else if(!new MusicFileSchema().getSortableFields().contains(pagination.getSortBy())) {
+                return new ErrorResponse("You cannot sort by %s".formatted(pagination.getSortBy()));
+            }
             return musicFileService.getAll(pagination);
         };
     }

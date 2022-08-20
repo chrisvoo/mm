@@ -10,6 +10,7 @@ import routes.utils.Pagination;
 import routes.utils.PaginationMetadata;
 import services.MusicFileService;
 import utils.FileUtils;
+import utils.logging.LoggerInterface;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,11 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class MusicFileRepo extends Repo implements MusicFileService {
-    private static final Logger logger = Logger.getLogger(MusicFileRepo.class.getName());
+    @Inject private LoggerInterface logger;
     @Inject private MusicFileSchema schema;
 
     /**
@@ -280,27 +280,22 @@ public class MusicFileRepo extends Repo implements MusicFileService {
         StringJoiner joiner = new StringJoiner(" ");
         joiner.add(String.format("SELECT * FROM %s", schema.tableName()));
 
-        String countSql = "";
         String cursor = pagination.getCursor(true);
         long value = 0;
         PaginationMetadata meta = new PaginationMetadata();
 
         if (cursor != null) {
             value = Long.parseLong(cursor);
-            joiner.add(
-              (pagination.getSortDir().equals("desc"))
-                ? "WHERE id <= ?" : "WHERE id >= ?" // include the record the cursor is referring to
-            );
-        } else {
-            countSql = String.format("SELECT COUNT(*) FROM %s", schema.tableName());
+            String condition = (pagination.getSortDir().equals("desc")
+                                ? "WHERE %s <= ?"
+                                : "WHERE %s >= ?").formatted(pagination.getSortBy());
+            joiner.add(condition);
         }
 
-        // filters here in the future, copy sql to countSql
-        if (!countSql.isBlank()) {
-            meta.setTotalCount(this.count(countSql));
-        }
+        joiner.add("ORDER BY %s %s".formatted(pagination.getSortBy(), pagination.getSortDir()));
 
-        joiner.add("ORDER BY id " + pagination.getSortDir());
+        meta.setTotalCount(this.count(joiner.toString().replace("*", "COUNT(*)")));
+
         // plus 1 just to know if there are more data
         joiner.add("LIMIT " + (pagination.getCount() + 1));
         logger.fine("GET ALL SQL: " + joiner);

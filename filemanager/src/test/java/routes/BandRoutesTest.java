@@ -29,7 +29,7 @@ public class BandRoutesTest {
 
     @AfterAll
     static void tearDown() {
-        DbHelper.emptyTable(new BandSchema().tableName());
+
     }
 
     @Test @Order(1)

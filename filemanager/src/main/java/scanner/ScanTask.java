@@ -5,15 +5,15 @@ import models.files.MusicFile;
 import models.scanner.ScanOp;
 import models.scanner.ScanOpError;
 import services.MusicFileService;
+import utils.logging.LoggerInterface;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
-import java.util.logging.Logger;
 
 public class ScanTask extends RecursiveTask<ScanOp> {
-  private static final Logger logger = Logger.getLogger(ScanTask.class.getName());
+  @Inject private LoggerInterface logger;
   private List<Path> paths;
   @Inject private MusicFileService musicFileService;
 

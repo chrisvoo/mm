@@ -1,10 +1,12 @@
 package models.files;
 
 import com.google.gson.GsonBuilder;
+import com.google.inject.Inject;
 import com.mpatric.mp3agic.*;
 import models.Model;
 import utils.Conv;
 import utils.gson.StrictEnumTypeAdapterFactory;
+import utils.logging.LoggerInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class MusicFile extends Model<MusicFile> {
-    private static final Logger logger = Logger.getLogger(MusicFile.class.getName());
+    @Inject private static LoggerInterface logger;
 
     private Long id;
     private String absolutePath;

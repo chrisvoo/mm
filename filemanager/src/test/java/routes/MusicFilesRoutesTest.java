@@ -40,7 +40,7 @@ public class MusicFilesRoutesTest {
 
     @AfterAll
     static void tearDown() {
-        DbHelper.emptyTable(new MusicFileSchema().tableName());
+
     }
 
     @Test @Order(1)
@@ -129,7 +129,7 @@ public class MusicFilesRoutesTest {
     @Test @Order(4)
     public void testGetAll(TestReporter rep) throws URISyntaxException, IOException, InterruptedException {
         // clean and pre-fill the database with some data...
-        DbHelper.emptyTable(new MusicFileSchema().tableName());
+        DbHelper.emptyTable(MusicFileSchema.TABLE_NAME);
         Injector injector = Guice.createInjector(new FileManagerModule());
 
         List<MusicFile> files = new ArrayList<>();
@@ -159,14 +159,15 @@ public class MusicFilesRoutesTest {
         assertTrue(meta.getNextCursor() != null && !meta.getNextCursor().isBlank());
         assertTrue(meta.hasMoreData());
         assertEquals(31, meta.getTotalCount());
+        assertNotNull(meta.getNextCursor());
 
         // page 2
         response = client.sendGet("/files/list", new HashMap<>(
           Map.of(
             "sort_dir", "asc",
             "cursor",
-            meta.getNextCursor())
-          )
+            meta.getNextCursor()
+          ))
         );
 
         pRes = PaginatedResponse.fromJson(response.body(), MusicFile.class);

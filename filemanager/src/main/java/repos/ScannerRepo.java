@@ -10,14 +10,14 @@ import models.scanner.ScanOpSchema;
 import models.stats.StatsSchema;
 import services.ScannerService;
 import utils.Db;
+import utils.logging.LoggerInterface;
 
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ScannerRepo implements ScannerService {
-    private static final Logger logger = Logger.getLogger(ScannerRepo.class.getName());
+    @Inject private LoggerInterface logger;
     @Inject private Db db;
     @Inject private ScanOpSchema schema;
     @Inject private StatsSchema statsSchema;

@@ -24,6 +24,10 @@ inotify limits, for Debian, RedHat, or another similar Linux distribution, run t
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
+## TODO
+- [ ] MusicBrainz info not used so far, let's see if we can retrieve valid info during scan time.
+- [ ] Guice @Inject fails with abstract classes
+
 ## Resources
 
 The music files used for tests are freely downloadable from [Open Music Archive](http://www.openmusicarchive.org/) 

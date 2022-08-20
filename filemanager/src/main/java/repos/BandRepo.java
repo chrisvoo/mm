@@ -7,12 +7,12 @@ import models.band.Band;
 import models.band.BandSchema;
 import services.BandService;
 import utils.Db;
+import utils.logging.LoggerInterface;
 
 import java.sql.*;
-import java.util.logging.Logger;
 
 public class BandRepo extends Repo implements BandService {
-    private static final Logger logger = Logger.getLogger(BandRepo.class.getName());
+    @Inject private LoggerInterface logger;
     @Inject private Db db;
     @Inject private BandSchema schema;
 

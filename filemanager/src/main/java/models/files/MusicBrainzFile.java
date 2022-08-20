@@ -1,10 +1,11 @@
 package models.files;
 
-import models.Model;
-
-import java.util.List;
-
-public class MusicBrainzFile extends Model<MusicBrainzFile> {
+/**
+ * This is part of MusicFiles table. Once it were a table on its own, but it has been downgraded to a simple field, since
+ * I'm not sure it's going to be used: it's difficult to retrieve a unique result from MusicBrainz without manually
+ * verifying the data.
+ */
+public class MusicBrainzFile {
     private Long musicFileId;
     private String albumType;
     private String albumStatus;
@@ -54,21 +55,8 @@ public class MusicBrainzFile extends Model<MusicBrainzFile> {
      */
     private String acoustidId;
 
-    public MusicBrainzFile() {
-        this.requiredFields = List.of("musicFileId");
-    }
-
-    public static String tableName() {
-        return "musicbrainz_files";
-    }
-
     public Long getMusicFileId() {
         return musicFileId;
-    }
-
-    public MusicBrainzFile setMusicFileId(Long musicFileId) {
-        this.musicFileId = musicFileId;
-        return this;
     }
 
     public String getAlbumType() {
