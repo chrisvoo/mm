@@ -1,5 +1,6 @@
 package routes;
 
+import com.google.inject.Inject;
 import models.Model;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
@@ -22,16 +23,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ScannerRoutesTest {
     private static FileManagerClient client;
+    @Inject
+    private static MusicFileSchema schema;
 
     @BeforeAll
     static void initAll() {
         client = new FileManagerClient();
-        DbHelper.emptyTable(new MusicFileSchema().tableName());
+        DbHelper.emptyTable(schema.tableName());
     }
 
     @AfterAll
     static void tearDown() {
-        DbHelper.emptyTable(new MusicFileSchema().tableName());
+
     }
 
     @Test @Order(1)

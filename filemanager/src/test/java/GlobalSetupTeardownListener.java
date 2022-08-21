@@ -4,7 +4,7 @@ import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.LauncherSessionListener;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
-import utils.FileManagerModule;
+import src.TestModule;
 
 import java.io.IOException;
 
@@ -41,7 +41,7 @@ public class GlobalSetupTeardownListener implements LauncherSessionListener {
         private Microservice microservice;
 
         void setUp() throws IOException {
-            Injector injector = Guice.createInjector(new FileManagerModule());
+            Injector injector = Guice.createInjector(new TestModule());
             microservice = injector.getInstance(Microservice.class);
             microservice.start();
         }

@@ -1,6 +1,8 @@
 package models.files;
 
+import com.google.inject.Inject;
 import models.Schema;
+import utils.logging.LoggerInterface;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +26,7 @@ public class MusicFileSchema extends Schema<MusicFile> {
 
     public static final String TABLE_NAME = "music_files";
 
-    public MusicFileSchema() {
+    @Inject public MusicFileSchema(LoggerInterface logger) {
         this.fields = List.of(
           MusicFileSchema.ABSOLUTE_PATH, MusicFileSchema.SIZE, MusicFileSchema.BITRATE,
           MusicFileSchema.BITRATE_TYPE, MusicFileSchema.DURATION, MusicFileSchema.ARTIST,

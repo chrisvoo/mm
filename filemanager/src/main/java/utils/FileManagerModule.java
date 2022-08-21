@@ -19,7 +19,7 @@ import watcher.Watcher;
 import java.io.IOException;
 
 public class FileManagerModule extends AbstractModule {
-    private EnvVars envVars;
+    protected EnvVars envVars;
 
     @Override
     protected void configure() {

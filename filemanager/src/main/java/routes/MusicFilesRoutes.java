@@ -19,6 +19,7 @@ import static spark.Spark.*;
 
 public class MusicFilesRoutes extends routes.Route implements Router {
     private final MusicFileService musicFileService;
+    @Inject private MusicFileSchema musicFileSchema;
 
     @Inject
     public MusicFilesRoutes(MusicFileService musicFileService) {
@@ -78,7 +79,7 @@ public class MusicFilesRoutes extends routes.Route implements Router {
             Pagination pagination = Pagination.fromRequest(req);
             if (pagination.getSortBy() == null || pagination.getSortBy().isBlank()) {
                 pagination.setSortBy(MusicFileSchema.ID);
-            } else if(!new MusicFileSchema().getSortableFields().contains(pagination.getSortBy())) {
+            } else if(!musicFileSchema.getSortableFields().contains(pagination.getSortBy())) {
                 return new ErrorResponse("You cannot sort by %s".formatted(pagination.getSortBy()));
             }
             return musicFileService.getAll(pagination);

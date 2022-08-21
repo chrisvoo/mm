@@ -33,7 +33,7 @@ public class LoggerFactory implements LoggerInterface {
         return String.format(
           format,
           new Date(lr.getMillis()),
-          Thread.currentThread().getStackTrace()[9].getClassName(),
+          Thread.currentThread().getStackTrace()[9].getClassName(), // the class effectively using the logger
           lr.getLevel().getLocalizedName(),
           lr.getMessage()
         );

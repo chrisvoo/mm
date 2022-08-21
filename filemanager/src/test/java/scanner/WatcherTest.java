@@ -1,6 +1,7 @@
 package scanner;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
@@ -30,9 +31,13 @@ public class WatcherTest {
   private static File destDir;
   private static MusicFileService musicFileService;
 
+  @Inject
+  private static MusicFileSchema schema;
+
+
   @BeforeAll
   static void initAll() throws URISyntaxException, IOException {
-    DbHelper.emptyTable(new MusicFileSchema().tableName());
+    DbHelper.emptyTable(schema.tableName());
 
     Injector injector = Guice.createInjector(new FileManagerModule());
     watcher = injector.getInstance(Watcher.class);
@@ -48,16 +53,14 @@ public class WatcherTest {
 
   @AfterAll
   static void tearDown() {
-    DbHelper.emptyTable(new MusicFileSchema().tableName());
     watcher.close();
     utils.FileUtils.deleteResource(Paths.get(targetDir.toFile() + "/copy"));
   }
 
   @Test
-  public void watcherTest() throws InterruptedException, URISyntaxException, IOException {
+  public void watcherTest() throws InterruptedException, IOException {
     Thread.sleep(400);
 
-    File destDir = new File(targetDir.toFile() + "/copy");
     FileUtils.copyDirectory(targetDir.toFile(), destDir);
 
     Thread.sleep(400);

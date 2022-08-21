@@ -1,12 +1,13 @@
 package models;
 
+import com.google.inject.Inject;
 import utils.Conv;
+import utils.logging.LoggerInterface;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public abstract class Schema<T> {
@@ -14,7 +15,7 @@ public abstract class Schema<T> {
     protected List<String> primaryKeys;
     protected List<String> sortableFields;
     // using classic logger, cannot @Inject abstract class
-    private static final Logger logger = Logger.getLogger(Schema.class.getName());
+    @Inject protected LoggerInterface logger;
 
     /**
      * The MySQL table for this model

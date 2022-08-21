@@ -1,6 +1,8 @@
 package models.band;
 
+import com.google.inject.Inject;
 import models.Schema;
+import utils.logging.LoggerInterface;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +22,8 @@ public class BandSchema extends Schema<Band> {
 
     public static final String TABLE_NAME = "bands";
 
-    public BandSchema() {
+    @Inject
+    public BandSchema(LoggerInterface logger) {
         this.fields = List.of(
             BandSchema.NAME, BandSchema.COUNTRY, BandSchema.COUNTRY_NAME,
             BandSchema.ACTIVE_FROM, BandSchema.ACTIVE_TO, BandSchema.TOTAL_ALBUM_RELEASED,

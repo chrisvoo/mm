@@ -1,5 +1,7 @@
 package src;
 
+import com.google.inject.Guice;
+
 import java.util.Random;
 
 public class TestUtils {
@@ -14,5 +16,9 @@ public class TestUtils {
       .limit(targetStringLength)
       .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
       .toString();
+  }
+
+  public static <T> T inject(Class<T> theClass) {
+    return Guice.createInjector(new TestModule()).getInstance(theClass);
   }
 }

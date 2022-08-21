@@ -125,6 +125,6 @@ public class BandRepo extends Repo implements BandService {
      */
     @Override
     public boolean delete(long id) {
-        return this.delete(new BandSchema(), id);
+        return this.delete(schema, id);
     }
 }

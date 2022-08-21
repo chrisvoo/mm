@@ -173,7 +173,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
      */
     @Override
     public boolean delete(long id) {
-        return this.delete(new MusicFileSchema(), id);
+        return this.delete(schema, id);
     }
 
     /**
@@ -275,8 +275,6 @@ public class MusicFileRepo extends Repo implements MusicFileService {
      */
     @Override
     public PaginatedResponse<MusicFile> getAll(Pagination pagination) {
-        MusicFileSchema schema = new MusicFileSchema();
-
         StringJoiner joiner = new StringJoiner(" ");
         joiner.add(String.format("SELECT * FROM %s", schema.tableName()));
 
@@ -284,17 +282,25 @@ public class MusicFileRepo extends Repo implements MusicFileService {
         long value = 0;
         PaginationMetadata meta = new PaginationMetadata();
 
+        /* Filters should be placed here */
+
+        /* end filters */
+
+        String countSql = joiner.toString().replace("*", "COUNT(*)");
+
         if (cursor != null) {
             value = Long.parseLong(cursor);
             String condition = (pagination.getSortDir().equals("desc")
                                 ? "WHERE %s <= ?"
                                 : "WHERE %s >= ?").formatted(pagination.getSortBy());
             joiner.add(condition);
+        } else {
+            // let's limit the count to the first page, the frontend will retain the value and we avoid useless
+            // queries for the next pages
+            meta.setTotalCount(this.count(countSql));
         }
 
         joiner.add("ORDER BY %s %s".formatted(pagination.getSortBy(), pagination.getSortDir()));
-
-        meta.setTotalCount(this.count(joiner.toString().replace("*", "COUNT(*)")));
 
         // plus 1 just to know if there are more data
         joiner.add("LIMIT " + (pagination.getCount() + 1));

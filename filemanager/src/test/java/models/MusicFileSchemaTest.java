@@ -1,5 +1,6 @@
 package models;
 
+import com.google.inject.Inject;
 import models.files.MusicFileSchema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static src.TestUtils.inject;
+
 public class MusicFileSchemaTest {
+
+  @Inject private MusicFileSchema schema = inject(MusicFileSchema.class);
 
   @Test
   public void testInsertSQLGeneration() {
-    MusicFileSchema schema = new MusicFileSchema();
-
     List<String> fields = schema.getFields(false);
     List<String> list = new ArrayList<>(Collections.nCopies(fields.size(), "?"));
     String placeholders = String.join(",", list);
@@ -26,7 +29,6 @@ public class MusicFileSchemaTest {
 
   @Test
   public void testUpdateSQLGeneration() {
-    MusicFileSchema schema = new MusicFileSchema();
     String sql = "UPDATE music_files SET absolute_path = ?,size = ?,bitrate = ?,bitrate_type = ?,duration = ?," +
       "artist = ?,album = ?,year = ?,genre = ?,title = ?,album_image = ?,album_image_mime_type = ? WHERE id = ?";
     Assertions.assertEquals(sql, schema.getSqlForUpdate());
@@ -34,8 +36,6 @@ public class MusicFileSchemaTest {
 
   @Test
   public void testUpsertSQLGeneration() {
-    MusicFileSchema schema = new MusicFileSchema();
-
     List<String> fields = schema.getFields(false);
     List<String> list = new ArrayList<>(Collections.nCopies(fields.size(), "?"));
     String placeholders = String.join(",", list);

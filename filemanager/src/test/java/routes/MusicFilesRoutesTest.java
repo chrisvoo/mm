@@ -1,6 +1,7 @@
 package routes;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import exceptions.ModelException;
 import models.files.BitRateType;
@@ -32,10 +33,12 @@ public class MusicFilesRoutesTest {
     private static FileManagerClient client;
     private Long fileId;
 
+    @Inject private static MusicFileSchema schema;
+
     @BeforeAll
     static void initAll() {
         client = new FileManagerClient();
-        DbHelper.emptyTable(new MusicFileSchema().tableName());
+        DbHelper.emptyTable(schema.tableName());
     }
 
     @AfterAll

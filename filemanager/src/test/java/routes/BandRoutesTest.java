@@ -1,5 +1,6 @@
 package routes;
 
+import com.google.inject.Inject;
 import exceptions.DbException;
 import models.Model;
 import models.band.Band;
@@ -21,10 +22,12 @@ public class BandRoutesTest {
     private static FileManagerClient client;
     private Long bandId;
 
+    @Inject private static BandSchema schema;
+
     @BeforeAll
     static void initAll() {
         client = new FileManagerClient();
-        DbHelper.emptyTable(new BandSchema().tableName());
+        DbHelper.emptyTable(schema.tableName());
     }
 
     @AfterAll
