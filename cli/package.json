@@ -1,0 +1,36 @@
+{
+  "name": "cli",
+  "version": "0.0.1",
+  "description": "CLI for MyMusic project",
+  "exports": "bin/index.js",
+  "type": "module",
+  "bin": {
+    "mm": "bin/index.js"
+  },
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mysql": "^2.15.21",
+    "@types/node": "^18.11.9",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "chalk": "^5.1.2",
+    "commander": "^9.4.1",
+    "discography": "^1.0.3",
+    "dotenv": "^16.0.3",
+    "moment": "^2.29.4",
+    "mysql2": "^2.3.3",
+    "ora": "^6.1.2",
+    "terminal-link": "^3.0.0"
+  }
+}
