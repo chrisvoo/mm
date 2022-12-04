@@ -34,9 +34,7 @@ public class Watcher extends Thread {
     this.keys = new HashMap<>();
 
     if (dir != null) {
-        logger.info(String.format("Scanning %s...\n", dir));
         registerAll(dir);
-        logger.info("Done.");
     }
   }
 
@@ -62,8 +60,7 @@ public class Watcher extends Thread {
    * @throws IOException if an I/O error is thrown by a visitor method of Files.walkFileTree
    */
   public Watcher registerAll(final Path start) throws IOException {
-    logger.fine(String.format("Scanning %s ...", start));
-
+    logger.info(String.format("Scanning %s...\n", start));
     // register directory and subdirectories
     Files.walkFileTree(start, new SimpleFileVisitor<>() {
       @Override
@@ -75,6 +72,7 @@ public class Watcher extends Thread {
     });
 
     logger.info("Done.");
+
     return this;
   }
 
@@ -82,7 +80,7 @@ public class Watcher extends Thread {
    * Register the given directory with the WatchService
    */
   public Watcher register(Path dir) throws IOException {
-    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
+    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
     keys.put(key, dir);
     return this;
   }
@@ -131,7 +129,7 @@ public class Watcher extends Thread {
 
         try {
           // if directory is created, then register it and its subdirectories
-          if ((kind == ENTRY_CREATE)) {
+          if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
               if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
                   registerAll(child);
                   saveDirFiles(child);
@@ -143,6 +141,8 @@ public class Watcher extends Thread {
           } else if ((kind == ENTRY_DELETE)) {
               logger.info("audioFile delete: " + child);
               musicFileService.delete(child);
+          } else {
+            logger.info("audioFile: " + kind.toString());
           }
         } catch (Exception x) {
           logger.severe(

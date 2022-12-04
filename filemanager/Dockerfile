@@ -8,7 +8,8 @@ COPY src ./src
 RUN mvn clean -e -B package
 
 
-FROM openjdk:17-oracle
+FROM amazoncorretto:19-alpine
+RUN apk update && apk add inotify-tools
 WORKDIR /app
 COPY --from=builder /app/target/filemanager.jar .
 CMD ["java", "-jar", "./filemanager.jar"]

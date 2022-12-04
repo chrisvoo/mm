@@ -73,13 +73,10 @@ public abstract class Schema<T> {
         List<String> list = new ArrayList<>(Collections.nCopies(finalFields.size(), "?"));
         String placeholders = String.join(",", list);
 
-        String sql = String.format(
+        return String.format(
           "INSERT INTO %s (:fields) VALUES (%s)",
           this.tableName(), placeholders
         ).replace(":fields", names);
-
-        logger.fine(sql);
-        return sql;
     }
 
 
@@ -103,13 +100,10 @@ public abstract class Schema<T> {
           ? "WHERE " + pList.get(0)
           : "WHERE " + String.join(" AND ", pList);
 
-        String sql = String.format(
+        return String.format(
             "UPDATE %s SET %s %s",
             this.tableName(), String.join(",", fList), whereStatement
         );
-
-        logger.fine(sql);
-        return sql;
     }
 
     /**
@@ -123,11 +117,8 @@ public abstract class Schema<T> {
             fList.set(i, String.format(fList.get(i), this.fields.get(i)));
         }
 
-        String sql = this.getSqlForInsert() + " ON DUPLICATE KEY " +
+        return this.getSqlForInsert() + " ON DUPLICATE KEY " +
           "UPDATE " + String.join(",", fList);
-
-        logger.fine(sql);
-        return sql;
     }
 
     /**
@@ -144,13 +135,10 @@ public abstract class Schema<T> {
           ? "WHERE " + pList.get(0)
           : "WHERE " + String.join(" AND ", pList);
 
-        String sql = String.format(
+        return String.format(
           "DELETE FROM %s %s",
           this.tableName(), whereStatement
         );
-
-        logger.fine(sql);
-        return sql;
     }
 
     /**

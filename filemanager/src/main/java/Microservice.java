@@ -18,6 +18,7 @@ public class Microservice {
     @Inject private BandRoutes bandRoutes;
     @Inject private StatsRoutes statsRoutes;
     @Inject private ScannerRoutes scannerRoutes;
+
     @Inject private Watcher watcher;
 
     public void start() throws IOException {

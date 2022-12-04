@@ -24,7 +24,13 @@ inotify limits, for Debian, RedHat, or another similar Linux distribution, run t
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
+### Issues
+* The watching utility does not work for DELETE events,
+
+
 ## TODO
+- [ ] A route for filemanager version
+- [ ] DB Schema has been updated, reflect the changes in the models/tests
 - [ ] MusicBrainz info not used so far, let's see if we can retrieve valid info during scan time.
 - [ ] Guice @Inject fails with abstract classes
 
