@@ -10,6 +10,7 @@ import { PlaylistEditComponent } from './playlist/playlist-edit/playlist-edit.co
 import { PlaylistItemComponent } from './playlist/playlist-item/playlist-item.component';
 import { HomeComponent } from './home/home.component';
 import { LikesComponent } from './likes/likes.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { LikesComponent } from './likes/likes.component';
     PlaylistEditComponent,
     PlaylistItemComponent,
     HomeComponent,
-    LikesComponent
+    LikesComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
