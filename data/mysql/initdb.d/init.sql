@@ -12,6 +12,7 @@ CREATE TABLE music_files (
     title VARCHAR(100) DEFAULT NULL COMMENT 'Title metadata',
     album_image MEDIUMBLOB,
     album_image_mime_type VARCHAR(20),
+    musicbrainz_info JSON DEFAULT NULL COMMENT 'Info retrieved through MusicBrainz API',
     
     PRIMARY KEY(id),
     UNIQUE(absolute_path)
@@ -72,6 +73,32 @@ CREATE TABLE scan_ops_errors (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE playlist (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(150) NOT NULL,
+	image MEDIUMBLOB,
+	rating TINYINT UNSIGNED,
+	tags JSON DEFAULT ('[]'),
+	created_at TIMESTAMP DEFAULT NOW(),
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	
+	PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE playlist_tracks (
+	playlist_id BIGINT NOT NULL,
+	track_id BIGINT NOT NULL,
+	created_at TIMESTAMP DEFAULT NOW(),
+	
+	UNIQUE (playlist_id, track_id),
+	FOREIGN KEY (playlist_id)
+        REFERENCES playlist(id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (track_id)
+        REFERENCES music_files(id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE bands (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -82,39 +109,29 @@ CREATE TABLE bands (
     total_albums_released TINYINT UNSIGNED DEFAULT NULL,
     website VARCHAR(150),
     twitter VARCHAR(150),
+    youtube VARCHAR(150),
+    musicbrainz_url VARCHAR(150),
 
     PRIMARY KEY(id)
-) ENGINE=InnoDB;
-
-CREATE TABLE bands_activity (
-    band_id BIGINT NOT NULL,
-    active_from YEAR,
-    active_to YEAR,
-
-    PRIMARY KEY (band_id, active_from, active_to),
-    FOREIGN KEY (band_id)
-        REFERENCES bands(id)
-        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE musicians (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    real_name VARCHAR(50),
+    artistic_name VARCHAR(50),
     instruments VARCHAR(150),
-    age TINYINT UNSIGNED,
-    died BOOLEAN DEFAULT FALSE,
+    birthday DATE,
+    died DATE,
+    musicbrainz_url VARCHAR(150),
 
     PRIMARY KEY(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE band_members (
+CREATE TABLE band_musicians (
     band_id BIGINT NOT NULL,
     musician_id BIGINT NOT NULL,
-    active_from YEAR,
-    active_to YEAR,
 
-    PRIMARY KEY (band_id, musician_id, active_from, active_to),
+    PRIMARY KEY (band_id, musician_id),
     FOREIGN KEY (band_id)
         REFERENCES bands(id)
         ON UPDATE CASCADE ON DELETE CASCADE,
@@ -123,13 +140,38 @@ CREATE TABLE band_members (
         ON UPDATE CASCADE ON DELETE CASCADE            
 ) ENGINE=InnoDB;
 
-CREATE TABLE users (
+CREATE TABLE albums (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    username VARCHAR(100),
-    email VARCHAR(100),
-    enabled BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT NOW(),
+    title VARCHAR(100) NOT NULL,
+    band_id BIGINT NOT NULL,
+    released_on DATE,
 
     PRIMARY KEY (id),
-    UNIQUE (username)
+    FOREIGN KEY (band_id)
+        REFERENCES bands(id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE albums_musicians (
+    album_id BIGINT NOT NULL,
+    musician_id BIGINT NOT NULL,
+
+    PRIMARY KEY (album_id, musician_id),
+    FOREIGN KEY (musician_id)
+        REFERENCES musicians(id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (album_id)
+        REFERENCES albums(id)
+        ON UPDATE CASCADE ON DELETE CASCADE 
+) ENGINE=InnoDB;
+
+CREATE TABLE songs (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    album_id BIGINT NOT NULL,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (album_id)
+        REFERENCES albums(id)
+        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
