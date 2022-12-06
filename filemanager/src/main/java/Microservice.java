@@ -19,6 +19,8 @@ public class Microservice {
     @Inject private StatsRoutes statsRoutes;
     @Inject private ScannerRoutes scannerRoutes;
 
+    @Inject private InfoRoutes infoRoutes;
+
     @Inject private Watcher watcher;
 
     public void start() throws IOException {
@@ -41,6 +43,7 @@ public class Microservice {
         bandRoutes.routes();
         scannerRoutes.routes();
         statsRoutes.routes();
+        infoRoutes.routes();
 
         // 4. filters
         after("/*", (request, response) -> response.header(

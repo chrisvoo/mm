@@ -15,10 +15,10 @@ import java.util.List;
 public class ScanOp extends Model<ScanOp> {
     private Long id;
     private Timestamp started;
-    private int totalFilesScanned;
-    private int totalFilesInserted;
-    private short totalElapsedTime;
-    private long totalBytes;
+    private int totalFilesScanned = 0;
+    private int totalFilesInserted = 0;
+    private short totalElapsedTime = 0;
+    private long totalBytes = 0;
     private Timestamp finished;
     private boolean hasErrors;
 

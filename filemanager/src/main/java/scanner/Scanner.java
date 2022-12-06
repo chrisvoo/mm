@@ -1,12 +1,10 @@
 package scanner;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import models.scanner.ScanOp;
 import services.ScannerService;
-import utils.FileManagerModule;
 import utils.FileUtils;
+import utils.di.GuiceUtils;
 import utils.logging.LoggerInterface;
 
 import java.nio.file.DirectoryStream;
@@ -65,8 +63,7 @@ public class Scanner extends Thread {
     ForkJoinPool pool = new ForkJoinPool(nThreads);
 
     // this allows to inject all the things we need in ScanTask
-    Injector injector = Guice.createInjector(new FileManagerModule());
-    ScanTask task = injector.getInstance(ScanTask.class);
+    ScanTask task = GuiceUtils.getInstance(ScanTask.class);
 
     ScanOp result = pool.invoke(task.setPaths(this.files));
     Instant end = Instant.now();

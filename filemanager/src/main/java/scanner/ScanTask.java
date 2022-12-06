@@ -5,6 +5,7 @@ import models.files.MusicFile;
 import models.scanner.ScanOp;
 import models.scanner.ScanOpError;
 import services.MusicFileService;
+import utils.di.GuiceUtils;
 import utils.logging.LoggerInterface;
 
 import java.nio.file.Path;
@@ -69,10 +70,10 @@ public class ScanTask extends RecursiveTask<ScanOp> {
     } else {
       // otherwise it split the job in two tasks
       List<Path> subset1 = paths.subList(0, paths.size() / 2);
-      ScanTask subTaskOne = new ScanTask().setPaths(subset1);
+      ScanTask subTaskOne = GuiceUtils.getInstance(ScanTask.class).setPaths(subset1);
 
       List<Path> subset2 = paths.subList(paths.size() / 2, paths.size());
-      ScanTask subTaskTwo = new ScanTask().setPaths(subset2);
+      ScanTask subTaskTwo = GuiceUtils.getInstance(ScanTask.class).setPaths(subset2);
 
       invokeAll(subTaskOne, subTaskTwo);
 

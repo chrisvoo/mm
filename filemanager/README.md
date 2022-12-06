@@ -29,10 +29,16 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 
 ## TODO
-- [ ] A route for filemanager version
+- [X] A route for filemanager version
+- [ ] Set logging level as env variable
 - [ ] DB Schema has been updated, reflect the changes in the models/tests
-- [ ] MusicBrainz info not used so far, let's see if we can retrieve valid info during scan time.
-- [ ] Guice @Inject fails with abstract classes
+
+### Scanner
+- [ ] avoid Data truncation errors on upserts
+- [ ] avoid out of range error on upserts
+- [ ] scan_op_error table empty. Consider writing partial results after a scantask is done
+- [ ] Increase SQL client timeout to avoid "Statement cancelled due to timeout or client request"
+- [ ] positiveNumberValidator: include number in the error message
 
 ## Resources
 
