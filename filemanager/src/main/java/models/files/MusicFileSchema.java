@@ -75,12 +75,24 @@ public class MusicFileSchema extends Schema<MusicFile> {
         this.setLong(stmt, instance.getSize(), ++index);
         this.setInt(stmt, instance.getBitrate(), ++index);
         stmt.setString(++index, instance.getBitRateType() != null ? instance.getBitRateType().name() : null);
-        this.setInt(stmt, instance.getDuration(), ++index);
-        stmt.setString(++index, instance.getArtist());
-        stmt.setString(++index, instance.getAlbum());
+
+        // extra check on the length. For some reason, some corrupted mp3 may result in an over-range duration
+        this.setInt(stmt, instance.getDuration() > (3600 * 2) ? 0 : instance.getDuration(), ++index);
+        stmt.setString(++index, instance.getArtist().length() > 100
+                                ? instance.getArtist().substring(0, 99)
+                                : instance.getArtist());
+        stmt.setString(++index, instance.getAlbum().length() > 100
+                                ? instance.getAlbum().substring(0, 99)
+                                : instance.getAlbum());
+
         this.setShort(stmt, instance.getYear(), ++index);
         stmt.setString(++index, instance.getGenre());
-        stmt.setString(++index, instance.getTitle());
+
+        // extra check on the length
+        stmt.setString(++index, instance.getTitle().length() > 100
+                                ? instance.getTitle().substring(0, 99)
+                                : instance.getTitle());
+
         this.setBytes(stmt, instance.getAlbumImage(), ++index);
         stmt.setString(++index, instance.getAlbumImageMimeType());
         return index;

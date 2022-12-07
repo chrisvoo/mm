@@ -46,7 +46,7 @@ public abstract class Model<T> {
     protected void positiveNumberValidator(String fieldName, Integer num) {
         if (num != null && num < 0) {
             this.errorCode = ModelException.INVALID_FIELDS;
-            this.errors.put(fieldName, "Must be greater than or equal to 0");
+            this.errors.put(fieldName, "Must be greater than or equal to 0. Passed: " + num);
         }
     }
 

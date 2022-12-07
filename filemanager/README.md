@@ -30,15 +30,15 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 ## TODO
 - [X] A route for filemanager version
-- [ ] Set logging level as env variable
+- [x] Set logging level as env variable
 - [ ] DB Schema has been updated, reflect the changes in the models/tests
 
 ### Scanner
-- [ ] avoid Data truncation errors on upserts
-- [ ] avoid out of range error on upserts
+- [x] avoid Data truncation errors on upserts
+- [x] avoid out of range error on upserts
 - [ ] scan_op_error table empty. Consider writing partial results after a scantask is done
-- [ ] Increase SQL client timeout to avoid "Statement cancelled due to timeout or client request"
-- [ ] positiveNumberValidator: include number in the error message
+- [x] Increase SQL client timeout to avoid "Statement cancelled due to timeout or client request"
+- [x] positiveNumberValidator: include number in the error message
 
 ## Resources
 

@@ -37,9 +37,9 @@ public class Db {
         ds.setDefaultAutoCommit(true);
         ds.setAutoCommitOnReturn(true);
         ds.setConnectionProperties("useUnicode=true;characterEncoding=utf8;rewriteBatchedStatements=true;");
-        ds.setDefaultQueryTimeout(5);
+        ds.setDefaultQueryTimeout(30);
         ds.setInitialSize(0); // The initial number of connections that are created when the pool is started.
-        ds.setMaxTotal(20);   // The maximum number of active connections that can be allocated from this pool at the same time, or negative for no limit.
+        ds.setMaxTotal(50);   // The maximum number of active connections that can be allocated from this pool at the same time, or negative for no limit.
         ds.setMaxIdle(20); // The maximum number of connections that can remain idle in the pool, without extra ones being released, or negative for no limit.
         ds.setMinIdle(0); // The minimum number of connections that can remain idle in the pool, without extra ones being created, or zero to create none.
         ds.setMaxWaitMillis(-1); // The maximum number of milliseconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception, or -1 to wait indefinitely.

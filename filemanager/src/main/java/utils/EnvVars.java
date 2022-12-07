@@ -5,13 +5,17 @@ import exceptions.EnvException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 public class EnvVars {
     /**
      * Spark port
      */
     private int port;
+
+    private Level logLevel;
 
     /**
      * Main directory containing all your music
@@ -34,6 +38,10 @@ public class EnvVars {
     private String mysqlPass;
 
     private Environments environment;
+
+    private static final List<String> standardLevels = List.of(
+      "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE", "FINER", "FINEST", "ALL"
+    );
 
     public enum Environments {
         DEVELOPMENT,
@@ -80,6 +88,15 @@ public class EnvVars {
         this.mysqlPass = this.getStringEnv("MYSQL_PASSWORD");
         int mysqlPort = this.getIntEnv("MYSQL_PORT");
         this.connectionString = String.format("jdbc:mysql://%s:%d/%s", mysqlHost, mysqlPort, mysqlDb);
+
+        // logging
+        String logLevel = this.getStringEnv("LOGS_LEVEL");
+        if (EnvVars.standardLevels.contains(logLevel)) {
+            this.logLevel = Level.parse(logLevel);
+        } else {
+            throw new EnvException("The specified log level is wrong. Accepted valus: " +
+              String.join(",", EnvVars.standardLevels), EnvException.ENV_ERROR);
+        }
     }
 
     public Environments getEnvironment() {
@@ -102,6 +119,15 @@ public class EnvVars {
 
     public Path getMusicDirectory() {
         return musicDirectory;
+    }
+
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
+    public EnvVars setLogLevel(Level logLevel) {
+        this.logLevel = logLevel;
+        return this;
     }
 
     public EnvVars setMusicDirectory(Path musicDirectory) {

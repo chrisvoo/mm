@@ -19,9 +19,9 @@ public class LoggerFactory implements LoggerInterface {
   public LoggerFactory(EnvVars envVars) {
     this.envVars = envVars;
 
-    Level logLevel = isTestOrDevEnv() ? Level.FINE : Level.INFO;
+    Level logLevel = this.envVars.getLogLevel();
     this.logger = Logger.getAnonymousLogger();
-    logger.setLevel(logLevel);
+    logger.setLevel(this.envVars.getLogLevel());
 
     ConsoleHandler handler = new ConsoleHandler();
     handler.setLevel(logLevel);
