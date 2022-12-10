@@ -1,5 +1,6 @@
 package repos;
 
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 import exceptions.DbException;
 import exceptions.ModelException;
@@ -160,7 +161,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
               stmt.executeBatch()
             ).boxed().filter(r -> r == 1).count();
         } catch (SQLException e) {
-            logger.severe(e.getMessage());
+            logger.severe(e.getMessage() + ", files: " + new Gson().toJson(files));
             throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
         }
     }
@@ -213,7 +214,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
             logger.info("MusicFile.deleteAll, affected rows: " + affectedRows);
         } catch (SQLException e) {
             String msg = String.format(
-              "Failure for deleteAll, path: %s, message: %s", path, e.getMessage()
+              "Failure for deleteAll, path: %s, message: %s, SQL: %s", path, e.getMessage(), sql
             );
             logger.severe(msg);
             throw new DbException("Deleting the file failed", DbException.SQL_EXCEPTION);
@@ -257,7 +258,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
             logger.info("MusicFile.deleteAll, affected rows: " + affectedRows);
         } catch (SQLException e) {
             String msg = String.format(
-              "Failure for deleteAll, paths size: %d, message: %s", paths.size(), e.getMessage()
+              "Failure for deleteAll, paths size: %d, message: %s, SQL: %s", paths.size(), e.getMessage(), sql
             );
             logger.severe(msg);
             throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
@@ -333,7 +334,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
                 return response.setMetadata(meta);
             }
         } catch (SQLException e) {
-            logger.severe(e.getMessage());
+            logger.severe(e.getMessage() + ", SQL: " + joiner);
             throw new DbException("Cannot get list of files", DbException.SQL_EXCEPTION);
         }
     }

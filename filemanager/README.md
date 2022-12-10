@@ -6,7 +6,9 @@ run it. It exposes a REST API to allow the classic CRUD operations on your music
 Since this is a Maven project, you can obtain a fat executable jar just by typing `mvn clean package` in the root of the
 project, so that the build process will create a file `target/filemanager.jar`.  
 Please remember to check the dependencies updates before deploying it, it's recommended to do it with 
-`mvn versions:display-dependency-updates`.
+`mvn versions:display-dependency-updates`.  
+Avoid running the scanner inside Docker for a very large collection of files, unless you've plenty of RAM to
+assign to Docker.
 
 ## Scanner
 

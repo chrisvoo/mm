@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Model<T> {
-    @Inject private LoggerInterface logger;
+    @Inject protected LoggerInterface logger;
     protected transient List<String> requiredFields;
     protected transient Map<String, String> errors = new HashMap<>();
     protected transient Integer errorCode = null;

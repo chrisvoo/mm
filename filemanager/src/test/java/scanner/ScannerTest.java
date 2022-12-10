@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
 import services.StatsService;
 import src.DbHelper;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 
 import java.net.URISyntaxException;
 import java.util.List;

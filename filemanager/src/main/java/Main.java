@@ -1,6 +1,6 @@
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 
 import java.io.IOException;
 

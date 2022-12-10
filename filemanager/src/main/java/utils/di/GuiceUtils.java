@@ -2,7 +2,6 @@ package utils.di;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import utils.FileManagerModule;
 
 public class GuiceUtils {
 

@@ -1,3 +1,4 @@
 /.idea/
 scan_outputs
 /target/
+src/main/resources/env.*.properties

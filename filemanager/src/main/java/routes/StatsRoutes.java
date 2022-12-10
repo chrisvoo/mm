@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import exceptions.ModelException;
 import models.Model;
 import models.stats.Stats;
+import routes.utils.JsonTransformer;
 import services.StatsService;
 import spark.Request;
 import spark.Route;
-import utils.JsonTransformer;
 
 import java.sql.Timestamp;
 import java.time.Instant;

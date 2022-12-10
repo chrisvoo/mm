@@ -173,7 +173,11 @@ public class ScanOp extends Model<ScanOp> {
      * @return This instance.
      */
     public ScanOp joinBytes(long bytes) {
-        totalBytes += bytes;
+        if (bytes > 0) {
+            totalBytes += bytes;
+        } else {
+            logger.warning("Passing negative amount of bytes: " + bytes);
+        }
         return this;
     }
 

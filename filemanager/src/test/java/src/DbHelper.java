@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import exceptions.DbException;
 import utils.Db;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -11,9 +11,6 @@ import static spark.Spark.get;
 import static spark.Spark.path;
 
 public class InfoRoutes extends routes.Route implements Router {
-  /**
-
-   */
 
   private String getProjectVersion() {
     final Properties properties = new Properties();

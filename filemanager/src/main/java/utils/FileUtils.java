@@ -14,13 +14,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FileUtils {
-  private static long BYTE = 1L;
-  private static long KiB = BYTE << 10;
-  private static long MiB = KiB << 10;
-  private static long GiB = MiB << 10;
-  private static long TiB = GiB << 10;
-  private static long PiB = TiB << 10;
-  private static long EiB = PiB << 10;
+  private static final long BYTE = 1L;
+  private static final long KiB = BYTE << 10;
+  private static final long MiB = KiB << 10;
+  private static final long GiB = MiB << 10;
+  private static final long TiB = GiB << 10;
+  private static final long PiB = TiB << 10;
+  private static final long EiB = PiB << 10;
 
   private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
 
@@ -62,7 +62,6 @@ public class FileUtils {
    * Collects all mp3 files recursively found inside a directory (scanning also the subdirs)
    * @param path The directory or the file.
    * @return A list of Path representing MP3 files
-   * @throws IOException
    */
   public static List<Path> listMP3Files(Path path, List<Path> files) throws IOException {
     if (files == null) {

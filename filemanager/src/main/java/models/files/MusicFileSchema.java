@@ -69,6 +69,12 @@ public class MusicFileSchema extends Schema<MusicFile> {
         return this.setSharedStatementValues(stmt, instance, 0);
     }
 
+    private String safeText(String text, int length) {
+        return text != null && text.length() > length
+               ? text.substring(0, length - 1)
+               : text;
+    }
+
     private int setSharedStatementValues(PreparedStatement stmt, MusicFile instance, int indexNum) throws SQLException {
         int index = indexNum;
         stmt.setString(++index, instance.getAbsolutePath());
@@ -77,21 +83,17 @@ public class MusicFileSchema extends Schema<MusicFile> {
         stmt.setString(++index, instance.getBitRateType() != null ? instance.getBitRateType().name() : null);
 
         // extra check on the length. For some reason, some corrupted mp3 may result in an over-range duration
-        this.setInt(stmt, instance.getDuration() > (3600 * 2) ? 0 : instance.getDuration(), ++index);
-        stmt.setString(++index, instance.getArtist().length() > 100
-                                ? instance.getArtist().substring(0, 99)
-                                : instance.getArtist());
-        stmt.setString(++index, instance.getAlbum().length() > 100
-                                ? instance.getAlbum().substring(0, 99)
-                                : instance.getAlbum());
+        this.setInt(stmt, instance.getDuration() != null
+          ? (instance.getDuration() > (3600 * 2)
+          ? 0 : instance.getDuration()) : 0, ++index);
+        stmt.setString(++index, this.safeText(instance.getArtist(), 100));
+        stmt.setString(++index, this.safeText(instance.getAlbum(), 100));
 
         this.setShort(stmt, instance.getYear(), ++index);
         stmt.setString(++index, instance.getGenre());
 
         // extra check on the length
-        stmt.setString(++index, instance.getTitle().length() > 100
-                                ? instance.getTitle().substring(0, 99)
-                                : instance.getTitle());
+        stmt.setString(++index, this.safeText(instance.getTitle(), 100));
 
         this.setBytes(stmt, instance.getAlbumImage(), ++index);
         stmt.setString(++index, instance.getAlbumImageMimeType());

@@ -5,7 +5,7 @@ import routes.BandRoutesTest;
 import routes.MusicFilesRoutesTest;
 import routes.ScannerRoutesTest;
 import scanner.WatcherTest;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 
 /**
  * Inherits everything defined in FileManagerModule, but also defines the injections rules for tests.

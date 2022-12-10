@@ -3,8 +3,8 @@ package routes;
 import exceptions.FileManagerException;
 import models.utils.ErrorResponse;
 import org.eclipse.jetty.http.HttpStatus;
+import routes.utils.JsonTransformer;
 import spark.Route;
-import utils.JsonTransformer;
 
 import static spark.Spark.*;
 

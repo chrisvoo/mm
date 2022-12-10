@@ -6,10 +6,10 @@ import exceptions.ModelException;
 import models.Model;
 import models.band.Band;
 import models.utils.ErrorResponse;
+import routes.utils.JsonTransformer;
 import services.BandService;
 import spark.Request;
 import spark.Route;
-import utils.JsonTransformer;
 
 import static spark.Spark.*;
 

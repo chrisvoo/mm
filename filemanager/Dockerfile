@@ -12,4 +12,4 @@ FROM amazoncorretto:19-alpine
 RUN apk update && apk add inotify-tools
 WORKDIR /app
 COPY --from=builder /app/target/filemanager.jar .
-CMD ["java", "-Xms100m", "-Xmx2g", "-jar", "./filemanager.jar"]
+CMD ["java", "-Xms100m", "-Xmx1g", "-jar", "./filemanager.jar"]

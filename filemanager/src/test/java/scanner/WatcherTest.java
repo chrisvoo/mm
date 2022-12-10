@@ -13,7 +13,7 @@ import routes.utils.PaginatedResponse;
 import routes.utils.Pagination;
 import services.MusicFileService;
 import src.DbHelper;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 import watcher.Watcher;
 
 import java.io.File;

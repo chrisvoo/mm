@@ -264,6 +264,7 @@ public class MusicFile extends Model<MusicFile> {
               "Cannot read file's size for " +
                 p.toFile().getName() + ": " + e.getMessage()
             );
+            this.size = 0L;
         }
         return this;
     }

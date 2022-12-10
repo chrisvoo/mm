@@ -15,7 +15,7 @@ import services.MusicFileService;
 import src.DbHelper;
 import src.FileManagerClient;
 import src.TestUtils;
-import utils.FileManagerModule;
+import utils.di.FileManagerModule;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

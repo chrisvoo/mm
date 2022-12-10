@@ -4,12 +4,12 @@ import com.google.inject.Inject;
 import exceptions.ModelException;
 import models.Model;
 import models.scanner.ScanRequest;
+import routes.utils.JsonTransformer;
 import scanner.Scanner;
 import services.ScannerService;
 import spark.Request;
 import spark.Route;
 import utils.EnvVars;
-import utils.JsonTransformer;
 
 import static spark.Spark.path;
 import static spark.Spark.post;

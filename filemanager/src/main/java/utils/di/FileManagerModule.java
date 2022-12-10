@@ -1,4 +1,4 @@
-package utils;
+package utils.di;
 
 import com.google.inject.AbstractModule;
 import exceptions.FileManagerException;
@@ -12,6 +12,9 @@ import services.MusicFileService;
 import services.ScannerService;
 import services.StatsService;
 import spark.Spark;
+import utils.Db;
+import utils.EnvVars;
+import utils.FileUtils;
 import utils.logging.LoggerFactory;
 import utils.logging.LoggerInterface;
 import watcher.Watcher;
