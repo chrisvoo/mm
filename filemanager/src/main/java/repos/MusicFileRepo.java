@@ -1,6 +1,5 @@
 package repos;
 
-import com.google.gson.Gson;
 import com.google.inject.Inject;
 import exceptions.DbException;
 import exceptions.ModelException;
@@ -161,7 +160,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
               stmt.executeBatch()
             ).boxed().filter(r -> r == 1).count();
         } catch (SQLException e) {
-            logger.severe(e.getMessage() + ", files: " + new Gson().toJson(files));
+            logger.severe(e.getMessage());
             throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
         }
     }

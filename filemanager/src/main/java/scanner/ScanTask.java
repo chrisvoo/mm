@@ -51,8 +51,16 @@ public class ScanTask extends RecursiveTask<ScanOp> {
   }
 
   private void saveIntoDb(List<MusicFile> docs, ScanOp result) {
-    long upserts= this.musicFileService.bulkSave(docs);
-    result.joinInsertedFiles(upserts);
+    try {
+      long upserts = this.musicFileService.bulkSave(docs);
+      result.joinInsertedFiles(upserts);
+    } catch (Exception e) {
+      result
+        .joinError(
+          new ScanOpError()
+            .setMessage(e.getMessage())
+        );
+    }
   }
 
   private ScanOp forkJoinComputation(ScanOp result) throws Throwable {

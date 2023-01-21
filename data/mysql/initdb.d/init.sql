@@ -53,7 +53,7 @@ CREATE TABLE scan_ops (
     total_files_scanned MEDIUMINT UNSIGNED COMMENT 'Total files found during this scanning',
     total_files_inserted MEDIUMINT UNSIGNED COMMENT 'Total files inserted in the DB',
     total_elapsed_time SMALLINT UNSIGNED COMMENT 'Total duration in seconds',
-    total_bytes BIGINT COMMENT 'Total size of all the files found',
+    total_bytes BIGINT UNSIGNED COMMENT 'Total size of all the files found',
     finished TIMESTAMP,
     has_errors BOOLEAN,
 

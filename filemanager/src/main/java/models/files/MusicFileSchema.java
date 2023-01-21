@@ -120,9 +120,13 @@ public class MusicFileSchema extends Schema<MusicFile> {
      */
     public void setStatementValuesForBatch(PreparedStatement stmt, List<MusicFile> files) throws SQLException {
         for (MusicFile instance: files) {
-           int index = this.setSharedStatementValues(stmt, instance);
-           this.setSharedStatementValues(stmt, instance, index);
-           stmt.addBatch();
+           try {
+               int index = this.setSharedStatementValues(stmt, instance);
+               this.setSharedStatementValues(stmt, instance, index);
+               stmt.addBatch();
+           } catch (Exception e) {
+               logger.severe("Error setting values for batch. File: " + instance.getAbsolutePath());
+           }
         }
     }
 }

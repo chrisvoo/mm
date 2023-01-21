@@ -80,7 +80,7 @@ public class Watcher extends Thread {
    * Register the given directory with the WatchService
    */
   public Watcher register(Path dir) throws IOException {
-    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+    WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
     keys.put(key, dir);
     return this;
   }
@@ -129,7 +129,7 @@ public class Watcher extends Thread {
 
         try {
           // if directory is created, then register it and its subdirectories
-          if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
+          if (kind == ENTRY_CREATE) {
               if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
                   registerAll(child);
                   saveDirFiles(child);
@@ -141,8 +141,6 @@ public class Watcher extends Thread {
           } else if ((kind == ENTRY_DELETE)) {
               logger.info("audioFile delete: " + child);
               musicFileService.delete(child);
-          } else {
-            logger.info("audioFile: " + kind.toString());
           }
         } catch (Exception x) {
           logger.severe(
