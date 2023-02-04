@@ -1,51 +1,26 @@
 CREATE TABLE music_files (
     id BIGINT NOT NULL AUTO_INCREMENT,
     absolute_path VARCHAR(500) NOT NULL,
-    size INT UNSIGNED COMMENT 'Bytes', 
-    bitrate SMALLINT UNSIGNED DEFAULT NULL,
-    bitrate_type ENUM('CBR', 'VBR') DEFAULT NULL,
+    size INT UNSIGNED COMMENT 'Bytes',
     duration SMALLINT UNSIGNED DEFAULT NULL COMMENT 'In seconds',
     artist VARCHAR(100) DEFAULT NULL COMMENT 'Metadata first, if empty fallback to filename',
     album VARCHAR(100) DEFAULT NULL,
     year YEAR DEFAULT NULL COMMENT 'Album year release',
     genre VARCHAR(100) DEFAULT NULL COMMENT 'Genre metadata',
     title VARCHAR(100) DEFAULT NULL COMMENT 'Title metadata',
-    album_image MEDIUMBLOB,
-    album_image_mime_type VARCHAR(20),
-    musicbrainz_info JSON DEFAULT NULL COMMENT 'Info retrieved through MusicBrainz API',
-    
+
     PRIMARY KEY(id),
     UNIQUE(absolute_path)
 ) ENGINE=InnoDB;
-
-CREATE TABLE musicbrainz_files (
-    music_file_id BIGINT NOT NULL,
-    album_type VARCHAR(50),
-    album_status VARCHAR(50),
-    album_release_country CHAR(2),
-    work_id BINARY(16),
-    album_id BINARY(16),
-    artist_id BINARY(16),
-    album_artist_id BINARY(16),
-    release_group_id BINARY(16),
-    release_track_id BINARY(16),
-    recording_id BINARY(16),
-    acoustid_id BINARY(16),
-
-    UNIQUE (music_file_id),
-    FOREIGN KEY (music_file_id)
-        REFERENCES music_files(id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB;    
 
 CREATE TABLE stats (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	total_files MEDIUMINT UNSIGNED COMMENT 'Total files in the collection',
 	total_bytes BIGINT COMMENT 'Total size of all the files',
 	last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	
+
 	PRIMARY KEY(id)
-) ENGINE=InnoDB;    
+) ENGINE=InnoDB;
 
 CREATE TABLE scan_ops (
     id BIGINT NOT NULL AUTO_INCREMENT,
@@ -60,19 +35,6 @@ CREATE TABLE scan_ops (
     PRIMARY KEY(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE scan_ops_errors (
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    scan_op_id BIGINT NOT NULL,
-    absolute_path VARCHAR(500) NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-
-    PRIMARY KEY (id),
-    FOREIGN KEY (scan_op_id)
-        REFERENCES scan_ops(id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB;
-
 CREATE TABLE playlist (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(150) NOT NULL,
@@ -81,7 +43,7 @@ CREATE TABLE playlist (
 	tags JSON DEFAULT ('[]'),
 	created_at TIMESTAMP DEFAULT NOW(),
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	
+
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
@@ -89,7 +51,7 @@ CREATE TABLE playlist_tracks (
 	playlist_id BIGINT NOT NULL,
 	track_id BIGINT NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW(),
-	
+
 	UNIQUE (playlist_id, track_id),
 	FOREIGN KEY (playlist_id)
         REFERENCES playlist(id)
@@ -137,7 +99,7 @@ CREATE TABLE band_musicians (
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (musician_id)
         REFERENCES musicians(id)
-        ON UPDATE CASCADE ON DELETE CASCADE            
+        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE albums (
@@ -162,7 +124,7 @@ CREATE TABLE albums_musicians (
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (album_id)
         REFERENCES albums(id)
-        ON UPDATE CASCADE ON DELETE CASCADE 
+        ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE songs (

@@ -15,6 +15,7 @@ import spark.Spark;
 import utils.Db;
 import utils.EnvVars;
 import utils.FileUtils;
+import utils.eyeD3.EyeD3;
 import utils.logging.LoggerFactory;
 import utils.logging.LoggerInterface;
 import watcher.Watcher;
@@ -42,9 +43,6 @@ public class FileManagerModule extends AbstractModule {
             loggerFactory = new LoggerFactory(envVars);
             bind(LoggerInterface.class).toInstance(loggerFactory);
 
-            Db db = new Db(this.envVars);
-            bind(Db.class).toInstance(db);
-
             watcher = new Watcher();
             bind(Watcher.class).toInstance(watcher);
         } catch (FileManagerException | IOException e) {
@@ -64,7 +62,7 @@ public class FileManagerModule extends AbstractModule {
         }
 
         // classes using logger inside static methods need to be added here
-        requestStaticInjection(MusicFile.class, FileUtils.class);
+        requestStaticInjection(MusicFile.class, FileUtils.class, Db.class, EyeD3.class);
 
         bind(MusicFileService.class).to(MusicFileRepo.class);
         bind(ScannerService.class).to(ScannerRepo.class);

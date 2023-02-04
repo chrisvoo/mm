@@ -3,29 +3,24 @@ package models.scanner;
 import com.google.gson.Gson;
 import models.Model;
 import models.stats.Stats;
+import utils.logging.LoggerInterface;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Scanner operation result
  */
 public class ScanOp extends Model<ScanOp> {
+    private LoggerInterface logger;
+
     private Long id;
     private Timestamp started;
     private int totalFilesScanned = 0;
     private int totalFilesInserted = 0;
     private short totalElapsedTime = 0;
-    private long totalBytes = 0;
+    private long totalBytes = 0L;
     private Timestamp finished;
-    private boolean hasErrors;
-
-    /**
-     * Transient property to link the join table.
-     */
-    private List<ScanOpError> scanErrors;
 
     public boolean isValid() {
         if (!super.isValid()) {
@@ -67,24 +62,6 @@ public class ScanOp extends Model<ScanOp> {
 
     public ScanOp setTotalFilesInserted(int totalFilesInserted) {
         this.totalFilesInserted = totalFilesInserted;
-        return this;
-    }
-
-    public ScanOp setScanErrors(List<ScanOpError> errors) {
-        this.scanErrors = errors;
-        return this;
-    }
-
-    public List<ScanOpError> getScanErrors() {
-        return this.scanErrors;
-    }
-
-    public boolean hasErrors() {
-        return (this.scanErrors != null && !this.scanErrors.isEmpty()) || this.hasErrors;
-    }
-
-    public ScanOp setHasErrors(boolean hasErrors) {
-        this.hasErrors = hasErrors;
         return this;
     }
 
@@ -178,38 +155,11 @@ public class ScanOp extends Model<ScanOp> {
         } else {
             logger.warning("Passing negative amount of bytes: " + bytes);
         }
-        return this;
-    }
 
-    public ScanOp joinError(ScanOpError error) {
-        if (error == null) {
-            return this;
+        if (totalBytes <= 0) {
+            logger.warning("joinBytes negative amount of bytes: " + totalBytes + ", passed: " + bytes);
         }
-
-        if (this.scanErrors == null) {
-            this.scanErrors = new ArrayList<>();
-        }
-
-        this.scanErrors.add(error);
-        return this;
-    }
-
-    /**
-     * It merges the current errors occurred for this result with the ones of another result.
-     * @param errors A map of errors
-     * @return This instance.
-     */
-    public ScanOp joinErrors(List<ScanOpError> errors) {
-        if (errors == null) {
-            return this;
-        }
-
-        if (!errors.isEmpty()) {
-            if (this.scanErrors == null) {
-                this.scanErrors = new ArrayList<>();
-            }
-            this.scanErrors.addAll(errors);
-        }
+        logger.info("bytes: " + bytes + ", total bytes: " + totalBytes);
         return this;
     }
 
@@ -224,9 +174,13 @@ public class ScanOp extends Model<ScanOp> {
         }
 
         // we do not consider the total time elapsed, we just use that field in the Main class
-        return this.joinErrors(result.getScanErrors())
+        return this
           .joinScannedFiles(result.getTotalFilesScanned())
           .joinInsertedFiles(result.getTotalFilesInserted())
           .joinBytes(result.getTotalBytes());
+    }
+
+    public void setLogger(LoggerInterface logger) {
+        this.logger = logger;
     }
 }

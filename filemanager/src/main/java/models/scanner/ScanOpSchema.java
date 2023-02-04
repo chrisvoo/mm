@@ -54,8 +54,7 @@ public class ScanOpSchema extends Schema<ScanOp> {
             .setTotalFilesInserted(rs.getInt(ScanOpSchema.TOTAL_FILES_INSERTED))
             .setTotalElapsedTime(rs.getShort(ScanOpSchema.TOTAL_ELAPSED_TIME))
             .setTotalBytes(rs.getLong(ScanOpSchema.TOTAL_BYTES))
-            .setFinished(rs.getTimestamp(ScanOpSchema.FINISHED))
-            .setHasErrors(rs.getBoolean(ScanOpSchema.HAS_ERRORS));
+            .setFinished(rs.getTimestamp(ScanOpSchema.FINISHED));
     }
 
     /**
@@ -74,7 +73,6 @@ public class ScanOpSchema extends Schema<ScanOp> {
         stmt.setShort(++index, instance.getTotalElapsedTime());
         stmt.setLong(++index, instance.getTotalBytes());
         this.setTimestamp(stmt, instance.getFinished(), ++index);
-        stmt.setBoolean(++index, instance.hasErrors());
 
         if (instance.getId() != null) {
             stmt.setLong(++index, instance.getId());

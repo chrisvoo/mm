@@ -1,7 +1,6 @@
 package models;
 
 import exceptions.ModelException;
-import models.files.BitRateType;
 import models.files.MusicFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
@@ -57,11 +56,6 @@ public class MusicFileTest {
 
         assertTrue(file.isValid());
 
-        file.setBitRateType(null);
-        assertTrue(file.isValid());
-
-        file.setBitRateType(BitRateType.CBR);
-
         file.setDuration(-15);
         assertFalse(file.isValid());
         assertEquals(1, file.getErrors().size());
@@ -73,9 +67,7 @@ public class MusicFileTest {
 
         assertEquals(5, file.getId());
         assertEquals("/a/path/file.mp3", file.getAbsolutePath());
-        assertEquals(320, file.getBitrate().shortValue());
         assertEquals(1986, file.getYear().shortValue());
-        assertEquals("CBR", file.getBitRateType().name());
         assertEquals("Lucio", file.getArtist());
         assertEquals("Album di Lucio", file.getAlbum());
         assertEquals("A tazzulella e cafè", file.getTitle());

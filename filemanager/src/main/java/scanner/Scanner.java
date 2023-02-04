@@ -1,7 +1,9 @@
 package scanner;
 
 import com.google.inject.Inject;
+import models.files.MusicFile;
 import models.scanner.ScanOp;
+import services.MusicFileService;
 import services.ScannerService;
 import utils.FileUtils;
 import utils.di.GuiceUtils;
@@ -14,6 +16,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -24,6 +27,7 @@ public class Scanner extends Thread {
   private ArrayList<Path> files = new ArrayList<>();
   private Path targetDirectory;
   @Inject private ScannerService scannerService;
+  @Inject private MusicFileService musicFileService;
 
   public Scanner() {
     super("Scanner");
@@ -50,6 +54,10 @@ public class Scanner extends Thread {
    * size and eventual errors encountered during the process
    */
   public ScanOp scan() {
+    return scan(true);
+  }
+
+  private ScanOp scan(boolean withForkJoin) {
     Instant start = Instant.now();
     boolean isListOk = listFiles(this.targetDirectory);
     if (!isListOk) {
@@ -57,31 +65,72 @@ public class Scanner extends Thread {
     }
 
     logger.info("Collected " + files.size() + " paths");
-    int nThreads = Runtime.getRuntime().availableProcessors();
 
-    logger.info(String.format("Running scanner with a pool of %d threads\n", nThreads));
-    ForkJoinPool pool = new ForkJoinPool(nThreads);
+    if (withForkJoin) {
+      int nThreads = Runtime.getRuntime().availableProcessors();
 
-    // this allows to inject all the things we need in ScanTask
-    ScanTask task = GuiceUtils.getInstance(ScanTask.class);
+      logger.info(String.format("Running scanner with a pool of %d threads\n", nThreads));
+      ForkJoinPool pool = new ForkJoinPool(nThreads);
 
-    ScanOp result = pool.invoke(task.setPaths(this.files));
-    Instant end = Instant.now();
-    result
-      .setTotalElapsedTime((short)Duration.between(start, end).getSeconds())
-      .setStarted(start)
-      .setHasErrors(false)
-      .setFinished(end);
+      // this allows to inject all the things we need in ScanTask
+      ScanTask task = GuiceUtils.getInstance(ScanTask.class);
 
-    ScanOp savedResult = scannerService.save(result);
+      ScanOp result = pool.invoke(task.setPaths(this.files));
+      pool.shutdown();
 
-    if (result.hasErrors()) {
-      savedResult.setHasErrors(true);
-      scannerService.bulkSaveErrors(result.getScanErrors(), savedResult.getId());
+      Instant end = Instant.now();
+      result
+        .setTotalElapsedTime((short) Duration.between(start, end).getSeconds())
+        .setStarted(start)
+        .setFinished(end);
+
+      return scannerService.save(result);
+    } else {
+      ScanOp result = new ScanOp();
+
+      List<MusicFile> chunksList = new ArrayList<>();
+
+      for (Path path: this.files) {
+        MusicFile audioFile;
+
+        try {
+          // If for some reasons, metadata aren't readable, we just store the file path
+          audioFile = new MusicFile(path);
+        } catch (Exception e) {
+          String filePath = path.normalize().toAbsolutePath().toString();
+          audioFile = new MusicFile()
+            .setAbsolutePath(filePath)
+            .calculateSize(path);
+
+          logger.severe(String.format("Error for %s: %s", path, e.getMessage()));
+        }
+
+        result
+          .joinScannedFiles(1)
+          .joinBytes(audioFile.getSize());
+
+        chunksList.add(audioFile);
+
+        try {
+          if (chunksList.size() == 100) {
+            this.musicFileService.bulkSave(chunksList);
+            chunksList.clear();
+          }
+        } catch (Exception e) {
+          logger.severe("Can't save list: " + e.getMessage());
+        }
+      }
+
+      if (chunksList.size() > 0) {
+        try {
+          this.musicFileService.bulkSave(chunksList);
+        } catch (Exception e) {
+          logger.severe("Can't save list: " + e.getMessage());
+        }
+      }
+
+      return result;
     }
-
-    // save result in db
-    return savedResult;
   }
 
   /**

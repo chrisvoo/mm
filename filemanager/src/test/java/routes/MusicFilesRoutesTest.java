@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import exceptions.ModelException;
-import models.files.BitRateType;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
 import models.utils.ErrorResponse;
@@ -83,9 +82,6 @@ public class MusicFilesRoutesTest {
         assertEquals("Nirvana", file.getArtist());
         assertEquals("In Utero", file.getAlbum());
         assertEquals(258, file.getDuration());
-        assertEquals(BitRateType.CBR, file.getBitRateType());
-        assertEquals(320, file.getBitrate());
-        assertNull(file.getAlbumImage());
         assertEquals(1993, file.getYear().shortValue());
         assertEquals("grunge", file.getGenre());
         assertEquals("Serve the servant", file.getTitle());
@@ -121,9 +117,6 @@ public class MusicFilesRoutesTest {
         assertEquals("Nirvana", file.getArtist());
         assertEquals("In Utero", file.getAlbum());
         assertEquals(281, file.getDuration());
-        assertEquals(BitRateType.VBR, file.getBitRateType());
-        assertEquals(256, file.getBitrate());
-        assertNull(file.getAlbumImage());
         assertEquals(1993, file.getYear().shortValue());
         assertEquals("grunge", file.getGenre());
         assertEquals("Heart-Shaped Box", file.getTitle());

@@ -3,9 +3,9 @@ package scanner;
 import com.google.inject.Inject;
 import models.files.MusicFile;
 import models.scanner.ScanOp;
-import models.scanner.ScanOpError;
 import services.MusicFileService;
 import utils.di.GuiceUtils;
+import utils.eyeD3.EyeD3;
 import utils.logging.LoggerInterface;
 
 import java.nio.file.Path;
@@ -23,24 +23,27 @@ public class ScanTask extends RecursiveTask<ScanOp> {
     return this;
   }
 
+  private MusicFile parseFailback(Path path) {
+    String filePath = path.normalize().toAbsolutePath().toString();
+    return new MusicFile()
+      .setAbsolutePath(filePath)
+      .calculateSize(path);
+  }
+
   private void parsePath(Path path, List<MusicFile> docs, ScanOp result) {
     MusicFile audioFile;
 
     try {
       // If for some reasons, metadata aren't readable, we just store the file path
-      audioFile = new MusicFile(path);
+      audioFile = EyeD3.parse(path); // new MusicFile(path);
+      if (audioFile == null) {
+        audioFile = parseFailback(path);
+      }
     } catch (Exception e) {
       String filePath = path.normalize().toAbsolutePath().toString();
-      audioFile = new MusicFile()
-        .setAbsolutePath(filePath)
-        .calculateSize(path);
+      audioFile = parseFailback(path);
 
-      result
-        .joinError(
-            new ScanOpError()
-              .setMessage(e.getMessage())
-              .setAbsolutePath(filePath)
-        );
+      logger.severe(String.format("Error for %s: %s", filePath, e.getMessage()));
     }
 
     docs.add(audioFile);
@@ -50,22 +53,18 @@ public class ScanTask extends RecursiveTask<ScanOp> {
       .joinBytes(audioFile.getSize());
   }
 
-  private void saveIntoDb(List<MusicFile> docs, ScanOp result) {
+  synchronized private void saveIntoDb(List<MusicFile> docs, ScanOp result) {
     try {
       long upserts = this.musicFileService.bulkSave(docs);
       result.joinInsertedFiles(upserts);
     } catch (Exception e) {
-      result
-        .joinError(
-          new ScanOpError()
-            .setMessage(e.getMessage())
-        );
+      logger.severe(String.format("Error for saveIntoDb: %s", e.getMessage()));
     }
   }
 
   private ScanOp forkJoinComputation(ScanOp result) throws Throwable {
     // it directly parse the list...
-    if (paths.size() < 500) {
+    if (paths.size() <= 100) {
       List<MusicFile> docs = new ArrayList<>();
 
       for (Path path : paths) {
@@ -100,6 +99,7 @@ public class ScanTask extends RecursiveTask<ScanOp> {
   @Override
   protected ScanOp compute() {
     ScanOp scanOp = new ScanOp();
+    scanOp.setLogger(logger);
     try {
       return forkJoinComputation(scanOp);
     } catch (Throwable throwable) {

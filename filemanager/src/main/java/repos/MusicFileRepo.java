@@ -89,7 +89,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
 
                 return file;
             } catch (SQLException e) {
-                logger.severe(e.getMessage());
+                logger.severe(e.getMessage() + ", file: " + file.getAbsolutePath());
                 throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);
             }
 
@@ -121,7 +121,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
                     }
                 }
             } catch (SQLException e) {
-                logger.severe(e.getMessage());
+                logger.severe(e.getMessage() + ", file: " + file.getAbsolutePath());
                 throw new DbException("Cannot get the file", DbException.SQL_EXCEPTION);
             }
         }

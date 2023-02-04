@@ -13,25 +13,21 @@ public class MusicFileSchema extends Schema<MusicFile> {
     public static final String ID = "id";
     public static final String ABSOLUTE_PATH = "absolute_path";
     public static final String SIZE = "size";
-    public static final String BITRATE = "bitrate";
-    public static final String BITRATE_TYPE = "bitrate_type";
     public static final String DURATION = "duration";
     public static final String ARTIST = "artist";
     public static final String ALBUM = "album";
     public static final String YEAR = "year";
     public static final String GENRE = "genre";
     public static final String TITLE = "title";
-    public static final String ALBUM_IMAGE = "album_image";
-    public static final String ALBUM_IMAGE_MIME_TYPE = "album_image_mime_type";
 
     public static final String TABLE_NAME = "music_files";
 
     @Inject public MusicFileSchema(LoggerInterface logger) {
         this.fields = List.of(
-          MusicFileSchema.ABSOLUTE_PATH, MusicFileSchema.SIZE, MusicFileSchema.BITRATE,
-          MusicFileSchema.BITRATE_TYPE, MusicFileSchema.DURATION, MusicFileSchema.ARTIST,
+          MusicFileSchema.ABSOLUTE_PATH, MusicFileSchema.SIZE,
+          MusicFileSchema.DURATION, MusicFileSchema.ARTIST,
           MusicFileSchema.ALBUM, MusicFileSchema.YEAR, MusicFileSchema.GENRE,
-          MusicFileSchema.TITLE, MusicFileSchema.ALBUM_IMAGE, MusicFileSchema.ALBUM_IMAGE_MIME_TYPE
+          MusicFileSchema.TITLE
         );
         this.primaryKeys = List.of(MusicFileSchema.ID);
         this.sortableFields = List.of(
@@ -44,25 +40,16 @@ public class MusicFileSchema extends Schema<MusicFile> {
     }
 
     public MusicFile getModelFromResultSet(ResultSet rs) throws SQLException {
-        MusicFile file = new MusicFile()
+        return new MusicFile()
             .setId(this.getLong(rs, MusicFileSchema.ID))
             .setAbsolutePath(rs.getString(MusicFileSchema.ABSOLUTE_PATH))
             .setSize(this.getLong(rs, MusicFileSchema.SIZE))
-            .setBitrate(this.getInt(rs, MusicFileSchema.BITRATE));
-
-            String bitrateType = rs.getString(MusicFileSchema.BITRATE_TYPE);
-            file.setBitRateType(bitrateType != null ? BitRateType.valueOf(bitrateType) : null);
-
-            file.setDuration(this.getInt(rs, MusicFileSchema.DURATION))
+            .setDuration(this.getInt(rs, MusicFileSchema.DURATION))
             .setArtist(rs.getString(MusicFileSchema.ARTIST))
             .setAlbum(rs.getString(MusicFileSchema.ALBUM))
             .setYear(this.getShort(rs, MusicFileSchema.YEAR))
             .setGenre(rs.getString(MusicFileSchema.GENRE))
-            .setTitle(rs.getString(MusicFileSchema.TITLE))
-            .setAlbumImage(this.getBytes(rs, MusicFileSchema.ALBUM_IMAGE))
-            .setAlbumImageMimeType(rs.getString(MusicFileSchema.ALBUM_IMAGE_MIME_TYPE));
-
-        return file;
+            .setTitle(rs.getString(MusicFileSchema.TITLE));
     }
 
     private int setSharedStatementValues(PreparedStatement stmt, MusicFile instance) throws SQLException {
@@ -79,8 +66,6 @@ public class MusicFileSchema extends Schema<MusicFile> {
         int index = indexNum;
         stmt.setString(++index, instance.getAbsolutePath());
         this.setLong(stmt, instance.getSize(), ++index);
-        this.setInt(stmt, instance.getBitrate(), ++index);
-        stmt.setString(++index, instance.getBitRateType() != null ? instance.getBitRateType().name() : null);
 
         // extra check on the length. For some reason, some corrupted mp3 may result in an over-range duration
         this.setInt(stmt, instance.getDuration() != null
@@ -95,8 +80,6 @@ public class MusicFileSchema extends Schema<MusicFile> {
         // extra check on the length
         stmt.setString(++index, this.safeText(instance.getTitle(), 100));
 
-        this.setBytes(stmt, instance.getAlbumImage(), ++index);
-        stmt.setString(++index, instance.getAlbumImageMimeType());
         return index;
     }
 

@@ -27,12 +27,14 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 ```
 
 ### Issues
-* Docker context: the watching utility does not work for DELETE events,
-
+* Docker context: the watching utility does not work for DELETE events.
 
 ## TODO
 
 - [ ] DB Schema has been updated, reflect the changes in the models/tests
+- [ ] {album=Length superior to 100}. Take the last part of the absolute part if the metadata are empty. If they're 
+not empty, truncate the string to 100.
+- [ ] duration sometimes is invalid. Evaluating a java eyeD3 mapper
 
 ## Resources
 

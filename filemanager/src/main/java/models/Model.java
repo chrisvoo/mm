@@ -33,13 +33,13 @@ public abstract class Model<T> {
 
     protected void positiveNumberValidator(String fieldName, Short num) {
         if (num != null) {
-            this.positiveNumberValidator(fieldName, num.intValue());
+            this.positiveNumberValidator(fieldName, num);
         }
     }
 
     protected void positiveNumberValidator(String fieldName, Long num) {
         if (num != null) {
-            this.positiveNumberValidator(fieldName, num.intValue());
+            this.positiveNumberValidator(fieldName, num);
         }
     }
 

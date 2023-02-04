@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import models.files.MusicFileSchema;
 import models.scanner.ScanOp;
-import models.scanner.ScanOpErrorSchema;
 import models.scanner.ScanOpSchema;
 import models.stats.Stats;
 import models.stats.StatsSchema;
@@ -20,7 +19,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ScannerTest {
 
@@ -29,7 +29,6 @@ public class ScannerTest {
     DbHelper.emptyTables(List.of(
       MusicFileSchema.TABLE_NAME,
       ScanOpSchema.TABLE_NAME,
-      ScanOpErrorSchema.TABLE_NAME,
       StatsSchema.TABLE_NAME
     ));
   }
@@ -56,7 +55,6 @@ public class ScannerTest {
     assertEquals(14, result.getTotalFilesScanned());
     assertEquals(0, result.getTotalElapsedTime());
     assertEquals(42656676, result.getTotalBytes());
-    assertNull(result.getScanErrors());
     rep.publishEntry(result.toString());
 
     StatsService statsService = injector.getInstance(StatsService.class);
