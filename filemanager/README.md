@@ -17,8 +17,8 @@ It also watches the specified music directory for changes, so that it can sync t
 
 ### Caveats
 
-* this app is deliberately intended to be run on a Solid State Disk and as such, there's no 
-single-threaded implementation. Using this code on a hard disk will defeat the fork-join strategy, worsening the overall
+* this app is deliberately intended to be run on a Solid State Disk. There's also a 
+single-threaded implementation that can be used forcing a param. Using this code on a hard disk will defeat the fork-join strategy, worsening the overall
 performance compared to a sequential scan (remember we're doing a lot of I/O access to the disk).
 * if you get the exception `java.io.IOException: User limit of inotify watches reached`, please consider to increase the
 inotify limits, for Debian, RedHat, or another similar Linux distribution, run the following in a terminal:
@@ -27,14 +27,8 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 ```
 
 ### Issues
-* Docker context: the watching utility does not work for DELETE events.
-
-## TODO
-
-- [ ] DB Schema has been updated, reflect the changes in the models/tests
-- [ ] {album=Length superior to 100}. Take the last part of the absolute part if the metadata are empty. If they're 
-not empty, truncate the string to 100.
-- [ ] duration sometimes is invalid. Evaluating a java eyeD3 mapper
+* Docker Desktop: the watching utility does not work for DELETE events regarding single files ([see GitHub issue](https://github.com/docker/desktop-linux/issues/99#issuecomment-1416803908)). Could be
+interesting trying this with Colima.
 
 ## Resources
 
