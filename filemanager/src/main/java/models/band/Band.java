@@ -50,8 +50,8 @@ public class Band extends Model<Band> {
         this.lengthValidator("country", this.country, 2);
         this.lengthValidator("website", this.website, 150);
         this.lengthValidator("twitter", this.twitter, 150);
-        this.positiveNumberValidator("activeFrom", this.activeFrom);
-        this.positiveNumberValidator("activeTo", this.activeTo);
+        this.positiveNumberValidator("activeFrom", this.activeFrom != null ? (long)this.activeFrom : null);
+        this.positiveNumberValidator("activeTo", this.activeTo != null ? (long)this.activeTo : null);
 
         return this.errorCode == null;
     }

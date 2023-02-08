@@ -63,7 +63,7 @@ public class WatcherTest {
 
     FileUtils.copyDirectory(targetDir.toFile(), destDir);
 
-    Thread.sleep(400);
+    Thread.sleep(3000);
 
     PaginatedResponse<MusicFile> files = musicFileService.getAll(
       new Pagination().setCount(20).setSortDir("desc")

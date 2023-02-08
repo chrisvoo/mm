@@ -1,6 +1,5 @@
 package models;
 
-import exceptions.ModelException;
 import models.files.MusicFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
@@ -18,33 +17,12 @@ public class MusicFileTest {
     }
 
     @Test
-    public void fromJsonEnumThrowsException(TestReporter rep) {
-        String json = """
-            {
-                "id": 5,
-                "absolutePath": "/a/path/file.mp3",
-                "size": 3236545,
-                "bitrate": 320,
-                "bitRateType": "Caio",
-                "duration": 158,
-                "artist": "Lucio",
-                "album": "Album di Lucio",
-                "year": 1986,
-                "title": "A tazzulella e cafè"
-            }     
-        """;
-        assertThrows(ModelException.class, () -> MusicFile.fromJson(json));
-    }
-
-    @Test
     public void fromJsonTest(TestReporter rep) {
         String json = """
             {
                 "id": 5,
                 "absolutePath": "/a/path/file.mp3",
                 "size": 3236545,
-                "bitrate": 320,
-                "bitRateType": "CBR",
                 "duration": 158,
                 "artist": "Lucio",
                 "album": "Album di Lucio",
@@ -59,7 +37,7 @@ public class MusicFileTest {
         file.setDuration(-15);
         assertFalse(file.isValid());
         assertEquals(1, file.getErrors().size());
-        assertEquals("Must be greater than or equal to 0", file.getErrors().values().toArray()[0]);
+        assertEquals("Must be greater than or equal to 0. Passed: -15", file.getErrors().values().toArray()[0]);
 
 //        rep.publishEntry(file.getErrors());
 //        rep.publishEntry(file.getErrorCode().toString());

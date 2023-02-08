@@ -10,6 +10,8 @@ RUN mvn clean -e -B package
 
 FROM amazoncorretto:19-alpine
 RUN apk update && apk add inotify-tools
+RUN apk add --no-cache python3 py3-pip
+RUN pip3 install eyeD3
 WORKDIR /app
 COPY --from=builder /app/target/filemanager.jar .
 #CMD ["java", "-Xms100m", "-Xmx1g", "-jar", "./filemanager.jar"]

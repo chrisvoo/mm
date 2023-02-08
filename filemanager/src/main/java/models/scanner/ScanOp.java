@@ -28,9 +28,9 @@ public class ScanOp extends Model<ScanOp> {
             return false;
         }
 
-        this.positiveNumberValidator("totalFilesScanned", this.totalFilesScanned);
-        this.positiveNumberValidator("totalFilesInserted", this.totalFilesInserted);
-        this.positiveNumberValidator("totalElapsedTime", this.totalElapsedTime);
+        this.positiveNumberValidator("totalFilesScanned", (long)this.totalFilesScanned);
+        this.positiveNumberValidator("totalFilesInserted", (long)this.totalFilesInserted);
+        this.positiveNumberValidator("totalElapsedTime", (long)this.totalElapsedTime);
         this.positiveNumberValidator("totalBytes", this.totalBytes);
 
         return this.errorCode == null;
@@ -159,7 +159,7 @@ public class ScanOp extends Model<ScanOp> {
         if (totalBytes <= 0) {
             logger.warning("joinBytes negative amount of bytes: " + totalBytes + ", passed: " + bytes);
         }
-        logger.info("bytes: " + bytes + ", total bytes: " + totalBytes);
+
         return this;
     }
 

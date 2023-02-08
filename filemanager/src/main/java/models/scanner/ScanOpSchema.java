@@ -15,15 +15,12 @@ public class ScanOpSchema extends Schema<ScanOp> {
     public static final String TOTAL_ELAPSED_TIME = "total_elapsed_time";
     public static final String TOTAL_BYTES = "total_bytes";
     public static final String FINISHED = "finished";
-    public static final String HAS_ERRORS = "has_errors";
-
     public static final String TABLE_NAME = "scan_ops";
 
     public ScanOpSchema() {
         this.fields = List.of(
             ScanOpSchema.STARTED, ScanOpSchema.TOTAL_FILES_SCANNED, ScanOpSchema.TOTAL_FILES_INSERTED,
-            ScanOpSchema.TOTAL_ELAPSED_TIME, ScanOpSchema.TOTAL_BYTES, ScanOpSchema.FINISHED,
-            ScanOpSchema.HAS_ERRORS
+            ScanOpSchema.TOTAL_ELAPSED_TIME, ScanOpSchema.TOTAL_BYTES, ScanOpSchema.FINISHED
         );
         this.primaryKeys = List.of(ScanOpSchema.ID);
     }

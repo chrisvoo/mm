@@ -2,8 +2,11 @@ package watcher;
 
 import com.google.inject.Inject;
 import models.files.MusicFile;
+import models.scanner.ScanOp;
 import services.MusicFileService;
+import services.StatsService;
 import utils.FileUtils;
+import utils.eyeD3.EyeD3;
 import utils.logging.LoggerInterface;
 
 import java.io.IOException;
@@ -14,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class Watcher extends Thread {
@@ -23,19 +25,18 @@ public class Watcher extends Thread {
   private final Map<WatchKey,Path> keys;
   private boolean closed = false;
   @Inject private MusicFileService musicFileService;
+  @Inject private StatsService statsService;
 
-  /**
-   * Watches recursively or not a provided path.
-   * @param dir The path
-   * @throws IOException thrown by newWatchService or registerAll
-   */
-  public Watcher(Path dir) throws IOException {
-    this.watcher = FileSystems.getDefault().newWatchService();
-    this.keys = new HashMap<>();
+  public WatchService getService() {
+    return this.watcher;
+  }
 
-    if (dir != null) {
-        registerAll(dir);
-    }
+  public LoggerInterface getLogger() {
+    return this.logger;
+  }
+
+  public Map<WatchKey,Path> getKeys() {
+    return this.keys;
   }
 
   /**
@@ -44,7 +45,8 @@ public class Watcher extends Thread {
    */
   @Inject
   public Watcher() throws IOException {
-    this(null);
+    this.watcher = FileSystems.getDefault().newWatchService();
+    this.keys = new HashMap<>();
   }
 
   @SuppressWarnings("unchecked")
@@ -126,33 +128,7 @@ public class Watcher extends Thread {
         Path name = ev.context();
         // Resolve the filename against the directory.
         Path child = dir.resolve(name);
-
-        try {
-          // if directory is created, then register it and its subdirectories
-          if (kind == ENTRY_CREATE) {
-              if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
-                  registerAll(child);
-                  saveDirFiles(child);
-              } else if (FileUtils.isMp3FileName(child)) {
-                  MusicFile audioFile = MusicFile.fromPath(child);
-                  musicFileService.upsert(audioFile);
-                  logger.info("audioFile create: " + child);
-              }
-          } else if ((kind == ENTRY_DELETE)) {
-              logger.info("audioFile delete: " + child);
-              musicFileService.delete(child);
-          }
-        } catch (Exception x) {
-          logger.severe(
-            String.format(
-              "Error for %s event %s, file %s: %s",
-              x.getClass().getName(),
-              kind.name(),
-              child,
-              x.getMessage())
-          );
-          x.printStackTrace();
-        }
+        WatcherHandler.forEvent(kind, child);
       }
 
       /* Reset the key -- this step is critical if you want to
@@ -174,19 +150,31 @@ public class Watcher extends Thread {
    * We save the first-level MP3 files into the database. FileUtils::isMp3 also checks that the path is a regular file.
    * @param dir The resource
    */
-  private void saveDirFiles(Path dir) {
+  private ScanOp saveDirFiles(Path dir) {
     try {
       List<Path> files = FileUtils.listMP3Files(dir);
       logger.info("saveDirFiles: " + dir + ": " + files.size());
 
+      ScanOp result = new ScanOp();
       List<MusicFile> musicFiles = new ArrayList<>();
       for (Path path : files) {
-        musicFiles.add(MusicFile.fromPath(path.normalize()));
+        MusicFile file = EyeD3.parse(path.normalize());
+        if (file != null) {
+          result
+            .joinBytes(file.getSize())
+            .joinInsertedFiles(1)
+            .joinScannedFiles(1);
+          musicFiles.add(file);
+        }
       }
 
-      musicFileService.bulkSave(musicFiles);
+      if (!musicFiles.isEmpty()) {
+        musicFileService.bulkSave(musicFiles);
+      }
+      return result;
     } catch (Exception e) {
       logger.severe("saveDirFiles: " + e.getMessage());
+      return null;
     }
   }
 

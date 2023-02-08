@@ -127,7 +127,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
         }
     }
 
-    public void upsert(MusicFile file) {
+    public int upsert(MusicFile file) {
         String sql = schema.getSqlForUpsert();
         logger.fine(sql);
 
@@ -138,6 +138,7 @@ public class MusicFileRepo extends Repo implements MusicFileService {
             schema.setStatementValuesForUpsert(stmt, file);
             int affectedRows = stmt.executeUpdate();
             logger.fine("MusicFile.upsert, affected rows: " + affectedRows);
+            return affectedRows;
         } catch (SQLException e) {
             logger.severe(e.getMessage());
             throw new DbException("Updating the file failed", DbException.SQL_EXCEPTION);

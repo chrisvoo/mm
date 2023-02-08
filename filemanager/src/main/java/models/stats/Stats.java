@@ -19,7 +19,7 @@ public class Stats extends Model<Stats> {
       return false;
     }
 
-    this.positiveNumberValidator("totalFilesInserted", this.totalFiles);
+    this.positiveNumberValidator("totalFilesInserted", (long)this.totalFiles);
     this.positiveNumberValidator("totalBytes", this.totalBytes);
 
     return this.errorCode == null;
@@ -58,6 +58,16 @@ public class Stats extends Model<Stats> {
 
   public Stats setLastUpdate(Timestamp lastUpdate) {
     this.lastUpdate = lastUpdate;
+    return this;
+  }
+
+  public Stats addTotalBytes(long totalBytes) {
+    this.totalBytes += totalBytes;
+    return this;
+  }
+
+  public Stats addTotalFiles(int totalFiles) {
+    this.totalFiles += totalFiles;
     return this;
   }
 }

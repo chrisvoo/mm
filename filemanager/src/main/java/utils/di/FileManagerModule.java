@@ -62,7 +62,9 @@ public class FileManagerModule extends AbstractModule {
         }
 
         // classes using logger inside static methods need to be added here
-        requestStaticInjection(MusicFile.class, FileUtils.class, Db.class, EyeD3.class);
+        requestStaticInjection(
+          MusicFile.class, FileUtils.class, Db.class, EyeD3.class
+        );
 
         bind(MusicFileService.class).to(MusicFileRepo.class);
         bind(ScannerService.class).to(ScannerRepo.class);

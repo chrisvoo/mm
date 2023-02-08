@@ -53,12 +53,12 @@ public class ScannerTest {
     assertNotNull(result.getId());
     assertEquals(14, result.getTotalFilesInserted());
     assertEquals(14, result.getTotalFilesScanned());
-    assertEquals(0, result.getTotalElapsedTime());
+    assertEquals(1, result.getTotalElapsedTime());
     assertEquals(42656676, result.getTotalBytes());
     rep.publishEntry(result.toString());
 
     StatsService statsService = injector.getInstance(StatsService.class);
-    Stats stats = statsService.getStats(true);
+    Stats stats = statsService.getStats();
     assertEquals(14, stats.getTotalFiles());
     assertEquals(42656676, stats.getTotalBytes());
     assertNotNull(stats.getLastUpdate());

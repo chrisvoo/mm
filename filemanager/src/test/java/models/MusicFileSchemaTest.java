@@ -29,8 +29,8 @@ public class MusicFileSchemaTest {
 
   @Test
   public void testUpdateSQLGeneration() {
-    String sql = "UPDATE music_files SET absolute_path = ?,size = ?,bitrate = ?,bitrate_type = ?,duration = ?," +
-      "artist = ?,album = ?,year = ?,genre = ?,title = ?,album_image = ?,album_image_mime_type = ? WHERE id = ?";
+    String sql = "UPDATE music_files SET absolute_path = ?,size = ?,duration = ?," +
+      "artist = ?,album = ?,year = ?,genre = ?,title = ? WHERE id = ?";
     Assertions.assertEquals(sql, schema.getSqlForUpdate());
   }
 
@@ -42,8 +42,8 @@ public class MusicFileSchemaTest {
 
     String insert = "INSERT INTO music_files (" + String.join(",", fields) + ") VALUES (" + placeholders + ")";
 
-    String update = "UPDATE absolute_path = ?,size = ?,bitrate = ?,bitrate_type = ?,duration = ?," +
-      "artist = ?,album = ?,year = ?,genre = ?,title = ?,album_image = ?,album_image_mime_type = ?";
+    String update = "UPDATE absolute_path = ?,size = ?,duration = ?," +
+      "artist = ?,album = ?,year = ?,genre = ?,title = ?";
 
     String sql = insert + " ON DUPLICATE KEY " + update;
 

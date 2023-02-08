@@ -44,7 +44,7 @@ public interface MusicFileService {
      */
     void delete(Path path);
 
-    void upsert(MusicFile file);
+    int upsert(MusicFile file);
 
     /**
      * Deletes both the physical file and the related database record.<br/>

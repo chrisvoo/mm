@@ -7,6 +7,7 @@ import services.MusicFileService;
 import services.ScannerService;
 import utils.FileUtils;
 import utils.di.GuiceUtils;
+import utils.eyeD3.EyeD3;
 import utils.logging.LoggerInterface;
 
 import java.nio.file.DirectoryStream;
@@ -31,6 +32,10 @@ public class Scanner extends Thread {
 
   public Scanner() {
     super("Scanner");
+  }
+
+  public ArrayList<Path> getScannedFiles() {
+    return this.files;
   }
 
   public Scanner setTargetDir(String dir) {
@@ -95,7 +100,7 @@ public class Scanner extends Thread {
 
         try {
           // If for some reasons, metadata aren't readable, we just store the file path
-          audioFile = new MusicFile(path);
+          audioFile = EyeD3.parse(path);
         } catch (Exception e) {
           String filePath = path.normalize().toAbsolutePath().toString();
           audioFile = new MusicFile()

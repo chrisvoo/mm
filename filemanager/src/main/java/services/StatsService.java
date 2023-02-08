@@ -1,14 +1,15 @@
 package services;
 
 
+import models.scanner.ScanOp;
 import models.stats.Stats;
 
 public interface StatsService {
     /**
-     * Return the last record from stats or all the history
+     * Return the single record from stats
      * @return Stats
      */
-    Stats getStats(boolean onlyLast);
+    Stats getStats();
 
     /**
      * Upsert of the stats into the database
@@ -16,4 +17,6 @@ public interface StatsService {
      * @return The stats
      */
     Stats save(Stats stats);
+
+    public Stats save(ScanOp op);
 }

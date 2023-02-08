@@ -1,5 +1,6 @@
 package routes;
 
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 import models.Model;
 import models.files.MusicFile;
@@ -62,7 +63,7 @@ public class ScannerRoutesTest {
         List<MusicFile> items = pRes.getItems();
         assertTrue(items.size() < 5);
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         getAllResponse = client.sendGet(
           "/files/list",
@@ -75,6 +76,7 @@ public class ScannerRoutesTest {
         );
         pRes = PaginatedResponse.fromJson(getAllResponse.body(), MusicFile.class);
         items = pRes.getItems();
+        rep.publishEntry(new Gson().toJson(items));
         assertEquals(14, items.size());
     }
 

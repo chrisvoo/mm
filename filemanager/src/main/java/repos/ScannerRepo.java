@@ -5,8 +5,8 @@ import exceptions.DbException;
 import exceptions.ModelException;
 import models.scanner.ScanOp;
 import models.scanner.ScanOpSchema;
-import models.stats.StatsSchema;
 import services.ScannerService;
+import services.StatsService;
 import utils.Db;
 import utils.logging.LoggerInterface;
 
@@ -16,7 +16,7 @@ public class ScannerRepo implements ScannerService {
     @Inject private LoggerInterface logger;
     @Inject private Db db;
     @Inject private ScanOpSchema schema;
-    @Inject private StatsSchema statsSchema;
+    @Inject private StatsService statsService;
 
 
     /**
@@ -87,34 +87,8 @@ public class ScannerRepo implements ScannerService {
             }
         }
 
-        this.saveStats(op);
+        this.statsService.save(op);
         return op;
-    }
-
-    /**
-     * Saves the stats of the last scan
-     * @param result The result of the scan
-     */
-    private void saveStats(ScanOp result) {
-        String sql = statsSchema.getSqlForInsert();
-        try (
-          Connection conn = db.getConnection();
-          PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            statsSchema.setStatementValues(stmt, result.getStats());
-            int affectedRows = stmt.executeUpdate();
-            logger.fine("statsSchema.create, affected rows: " + affectedRows);
-
-            if (affectedRows == 0) {
-                throw new DbException(
-                  "Insert new stats failed",
-                  DbException.SQL_EXCEPTION
-                );
-            }
-        } catch (SQLException e) {
-            logger.severe(e.getMessage());
-            throw new DbException("Cannot insert the stats", DbException.SQL_EXCEPTION);
-        }
     }
 
     /**
