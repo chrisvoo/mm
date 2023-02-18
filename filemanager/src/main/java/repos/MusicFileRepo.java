@@ -5,6 +5,7 @@ import exceptions.DbException;
 import exceptions.ModelException;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
+import models.stats.Stats;
 import routes.utils.PaginatedResponse;
 import routes.utils.Pagination;
 import routes.utils.PaginationMetadata;
@@ -336,6 +337,37 @@ public class MusicFileRepo extends Repo implements MusicFileService {
         } catch (SQLException e) {
             logger.severe(e.getMessage() + ", SQL: " + joiner);
             throw new DbException("Cannot get list of files", DbException.SQL_EXCEPTION);
+        }
+    }
+
+    /**
+     * Returns how many files and their global size are contained in a folder
+     * @param path The path
+     * @return The info in the stats object.
+     */
+    @Override
+    public Stats getInfoByPath(Path path) {
+        StringJoiner joiner = new StringJoiner(" ");
+        joiner.add("SELECT SUM(size) AS size, COUNT(*) AS count")
+              .add(String.format("FROM %s", this.schema.tableName()))
+              .add("WHERE LOWER(absolute_path) LIKE ?");
+
+        try (
+          Connection conn = db.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(joiner.toString())
+        ) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Stats()
+                      .setTotalFiles(rs.getInt("count"))
+                      .setTotalBytes(rs.getLong("size"));
+                }
+
+                return null;
+            }
+        } catch (SQLException e) {
+            logger.severe(e.getMessage() + ", SQL: " + joiner);
+            throw new DbException("Cannot get list of files for path", DbException.SQL_EXCEPTION);
         }
     }
 }

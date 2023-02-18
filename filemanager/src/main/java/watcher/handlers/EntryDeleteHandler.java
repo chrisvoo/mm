@@ -1,12 +1,9 @@
 package watcher.handlers;
 
-import models.files.MusicFile;
 import models.scanner.ScanOp;
-import scanner.Scanner;
-import utils.eyeD3.EyeD3;
+import models.stats.Stats;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 public class EntryDeleteHandler extends EntryHandler {
 
@@ -19,39 +16,27 @@ public class EntryDeleteHandler extends EntryHandler {
     musicFileService.delete(child);
   }
 
-  public void handleDirectory() {
-    delete();
+  /**
+   * In this particular case, we deal with single files or directory in the same way
+   */
+  private void handleCommon() {
+    Stats stats = musicFileService.getInfoByPath(this.child);
 
-    ScanOp result = new ScanOp();
-    Scanner scan = new scanner.Scanner();
-    if (scan.listFiles(child)) {
-      ArrayList<Path> files = scan.getScannedFiles();
-      for (Path entry: files) {
-        MusicFile file = EyeD3.parse(entry.normalize());
-        if (file != null) {
-          result
-            .joinBytes(-file.getSize())
-            .joinInsertedFiles(-1)
-            .joinScannedFiles(-1);
-        }
-      }
-
-      if (result.getTotalFilesInserted() != 0) {
-        statsService.save(result);
-      }
+    if (stats != null) {
+      ScanOp result = new ScanOp()
+        .joinBytes(-stats.getTotalBytes())
+        .joinInsertedFiles(-stats.getTotalFiles())
+        .joinScannedFiles(-stats.getTotalFiles());
+      delete();
+      statsService.save(result);
     }
   }
 
-  public void handleFile() {
-    delete();
+  public void handleDirectory() {
+    this.handleCommon();
+  }
 
-    MusicFile file = EyeD3.parse(child.normalize());
-    if (file != null) {
-      ScanOp result = new ScanOp()
-        .joinBytes(-file.getSize())
-        .joinInsertedFiles(-1)
-        .joinScannedFiles(-1);
-      statsService.save(result);
-    }
+  public void handleFile() {
+    this.handleCommon();
   }
 }
