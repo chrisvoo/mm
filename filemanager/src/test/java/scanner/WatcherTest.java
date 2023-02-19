@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import models.files.MusicFile;
 import models.files.MusicFileSchema;
+import models.stats.Stats;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,6 +50,10 @@ public class WatcherTest {
 
     destDir = new File(targetDir.toFile() + "/copy");
     watcher.registerAll(targetDir).start();
+
+    Scanner scanner = injector.getInstance(Scanner.class);
+    scanner.setTargetDir(targetDir);
+    scanner.scan();
   }
 
   @AfterAll
@@ -59,14 +64,27 @@ public class WatcherTest {
 
   @Test
   public void watcherTest() throws InterruptedException, IOException {
-    Thread.sleep(400);
+    Thread.sleep(2000);
 
     FileUtils.copyDirectory(targetDir.toFile(), destDir);
 
     Thread.sleep(3000);
 
     PaginatedResponse<MusicFile> files = musicFileService.getAll(
-      new Pagination().setCount(20).setSortDir("desc")
+      new Pagination().setCount(30).setSortDir("desc")
+    );
+    assertEquals(28, files.getItems().size());
+
+    Stats stats = musicFileService.getInfoByPath(destDir.toPath());
+    assertEquals(14, stats.getTotalFiles());
+    assertEquals(42656676, stats.getTotalBytes());
+
+    FileUtils.deleteDirectory(destDir);
+
+    Thread.sleep(3000);
+
+    files = musicFileService.getAll(
+      new Pagination().setCount(30).setSortDir("desc")
     );
     assertEquals(14, files.getItems().size());
   }

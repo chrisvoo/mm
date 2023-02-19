@@ -3,7 +3,6 @@ package models.scanner;
 import com.google.gson.Gson;
 import models.Model;
 import models.stats.Stats;
-import utils.logging.LoggerInterface;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -12,7 +11,6 @@ import java.time.Instant;
  * Scanner operation result
  */
 public class ScanOp extends Model<ScanOp> {
-    private LoggerInterface logger;
 
     private Long id;
     private Timestamp started;
@@ -150,16 +148,7 @@ public class ScanOp extends Model<ScanOp> {
      * @return This instance.
      */
     public ScanOp joinBytes(long bytes) {
-        if (bytes > 0) {
-            totalBytes += bytes;
-        } else {
-            logger.warning("Passing negative amount of bytes: " + bytes);
-        }
-
-        if (totalBytes <= 0) {
-            logger.warning("joinBytes negative amount of bytes: " + totalBytes + ", passed: " + bytes);
-        }
-
+        totalBytes += bytes;
         return this;
     }
 
@@ -178,9 +167,5 @@ public class ScanOp extends Model<ScanOp> {
           .joinScannedFiles(result.getTotalFilesScanned())
           .joinInsertedFiles(result.getTotalFilesInserted())
           .joinBytes(result.getTotalBytes());
-    }
-
-    public void setLogger(LoggerInterface logger) {
-        this.logger = logger;
     }
 }

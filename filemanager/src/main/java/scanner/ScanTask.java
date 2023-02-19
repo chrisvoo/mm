@@ -99,7 +99,6 @@ public class ScanTask extends RecursiveTask<ScanOp> {
   @Override
   protected ScanOp compute() {
     ScanOp scanOp = new ScanOp();
-    scanOp.setLogger(logger);
     try {
       return forkJoinComputation(scanOp);
     } catch (Throwable throwable) {

@@ -356,6 +356,8 @@ public class MusicFileRepo extends Repo implements MusicFileService {
           Connection conn = db.getConnection();
           PreparedStatement stmt = conn.prepareStatement(joiner.toString())
         ) {
+            stmt.setString(1, path + "%");
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Stats()
