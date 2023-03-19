@@ -1,13 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-html {
-  min-height: 100%;
-}
 
-body {
-  padding: 4rem 0;
-  background-image: url("/assets/background.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: bottom center;
-  background-color: lightgray;
-}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
